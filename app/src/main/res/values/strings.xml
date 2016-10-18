@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SingleTask</string>
+    <string name="email_hint">Электронная почта</string>
+    <string name="password_hint">Пароль</string>
+    <string name="password_repeat_hint">Повторите пароль</string>
+    <string name="sign_in_button_text">Вход</string>
+    <string name="sign_up_button_text">Регистрация</string>
+</resources>

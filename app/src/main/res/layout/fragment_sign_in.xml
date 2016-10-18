@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        style="@style/CardView.Auth">
+
+        <LinearLayout
+            style="@style/AuthLinearLayout">
+
+            <EditText
+                android:id="@+id/editTextEmailSigIn"
+                style="@style/AuthLinearLayoutItem.LineEdit.Email"/>
+
+            <EditText
+                android:id="@+id/editTextPasswordSignIn"
+                style="@style/AuthLinearLayoutItem.LineEdit.Password"/>
+
+            <Button
+                android:id="@+id/buttonSignIn"
+                style="@style/AuthLinearLayoutItem.Button.Primary"
+                android:text="@string/sign_in_button_text"/>
+
+            <Button
+                android:id="@+id/buttonGoToSignUp"
+                style="@style/AuthLinearLayoutItem.Button.Secondary"
+                android:text="@string/sign_up_button_text"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
