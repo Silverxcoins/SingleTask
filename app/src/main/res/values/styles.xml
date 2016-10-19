@@ -44,11 +44,13 @@
         <item name="android:inputType">textEmailAddress</item>
         <item name="android:hint">@string/email_hint</item>
         <item name="android:layout_marginTop">0dp</item>
+        <item name="android:maxLength">@integer/email_max_length</item>
     </style>
 
     <style name="AuthLinearLayoutItem.LineEdit.Password">
         <item name="android:inputType">textPassword</item>
         <item name="android:hint">@string/password_hint</item>
+        <item name="android:maxLength">@integer/password_max_length</item>
     </style>
 
     <style name="AuthLinearLayoutItem.LineEdit.Password.Repeat">

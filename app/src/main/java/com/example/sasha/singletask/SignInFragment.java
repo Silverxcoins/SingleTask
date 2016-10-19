@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 public class SignInFragment extends Fragment {
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
@@ -42,7 +41,6 @@ public class SignInFragment extends Fragment {
 
         return view;
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
