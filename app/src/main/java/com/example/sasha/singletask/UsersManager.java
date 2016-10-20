@@ -1,6 +1,5 @@
 package com.example.sasha.singletask;
 
-import android.provider.Settings;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -19,7 +18,7 @@ public class UsersManager {
 
     private static final String TAG = "UsersManager";
 
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static final String SIGN_UP_URL = "http://188.120.235.252/singletask/api/user/signup";
     private static final String SIGN_IN_URL = "http://188.120.235.252/singletask/api/user/signin";
@@ -94,7 +93,6 @@ public class UsersManager {
                 .build();
         Response response = Http.getClient().newCall(request).execute();
 
-        String responseBody = response.body().string();
-        return responseBody;
+        return response.body().string();
     }
 }

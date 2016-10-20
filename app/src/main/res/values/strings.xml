@@ -7,6 +7,9 @@
     <string name="sign_up_button_text">Регистрация</string>
 
     <string name="SOMETHING_WRONG">Что-то пошло не так</string>
+    <string name="PASSWORDS_DONT_MATCH">Введенные пароли не совпадают</string>
+    <string name="INVALID_EMAIL">Введите настоящий адрес электронной почты</string>
+    <string name="THERE_ARE_EMPTY_FIELDS">Все поля должны быть заполнены</string>
     <string name="NO_INTERNET_CONNECTION">Отсутствует соединение с интернетом</string>
     <string name="EMAIL_ALREADY_IN_USE">Данный электронный адрес уже используется</string>
     <string name="SIGN_UP_SUCCESSFULL">Вы успешно зарегестрировались</string>

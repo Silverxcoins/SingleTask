@@ -1,8 +1,6 @@
 package com.example.sasha.singletask;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,14 +13,8 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class SignUpFragment extends Fragment implements UsersManager.SignUpCallback {
-    private static String TAG = "SignUpFragment";
+    private static final String TAG = "SignUpFragment";
 
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
@@ -53,16 +45,8 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Sign Up Button Clicked");
-                if (Http.isNetworkAvailable(getActivity())) {
-                    UsersManager.getInstance().signUp(
-                            emailEditText.getText().toString(),
-                            passwordEditText.getText().toString()
-                    );
-                } else {
-                    Toast.makeText(getActivity(), R.string.NO_INTERNET_CONNECTION,
-                            Toast.LENGTH_SHORT).show();
-                }
+                Log.d(TAG, "signUpButton clicked");
+                signUp();
             }
         });
 
@@ -80,12 +64,38 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
         super.onSaveInstanceState(outState);
     }
 
+    private void signUp() {
+        Log.d(TAG, "SignUp()");
+        if (!Http.isNetworkAvailable(getActivity())) {
+            Toast.makeText(getActivity(), R.string.NO_INTERNET_CONNECTION,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (areThereEmptyFields()) {
+            Toast.makeText(getActivity(), R.string.THERE_ARE_EMPTY_FIELDS,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!isEmailValid()) {
+            Toast.makeText(getActivity(), R.string.INVALID_EMAIL, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!arePasswordsMatch()) {
+            Toast.makeText(getActivity(), R.string.PASSWORDS_DONT_MATCH, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        UsersManager.getInstance().signUp(
+                emailEditText.getText().toString(),
+                passwordEditText.getText().toString()
+        );
+    }
+
     @Override
     public void onSignUpFinished(String jsonString) {
         Log.d(TAG, "onSignUpFinished()");
         if (jsonString == null) {
-            Toast.makeText(getActivity(), R.string.SOMETHING_WRONG,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -96,16 +106,38 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
             if (code == Http.OK) {
                 Toast.makeText(getActivity(), R.string.SIGN_UP_SUCCESSFULL,
                         Toast.LENGTH_SHORT).show();
+                clearFields();
+                getActivity().onBackPressed();
             } else if (code == Http.ALREADY_EXIST) {
                 Toast.makeText(getActivity(), R.string.EMAIL_ALREADY_IN_USE,
                         Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
-                return;
             }
         } catch (JSONException e) {
             Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
-            return;
         }
+    }
+
+    private void clearFields() {
+        emailEditText.getText().clear();
+        passwordEditText.getText().clear();
+        passwordRepeatEditText.getText().clear();
+    }
+
+    private boolean areThereEmptyFields() {
+        return emailEditText.getText().toString().isEmpty()
+                || passwordEditText.getText().toString().isEmpty()
+                || passwordRepeatEditText.getText().toString().isEmpty();
+    }
+
+    private boolean isEmailValid() {
+        CharSequence email = emailEditText.getText().toString();
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean arePasswordsMatch() {
+        return passwordEditText.getText().toString()
+                .equals(passwordRepeatEditText.getText().toString());
     }
 }

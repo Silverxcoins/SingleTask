@@ -6,17 +6,6 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
 public class MainActivity extends Activity {
     private static final String FRAGMENT_SIGN_IN_KEY = "fragmentSignIn";
     private static final String FRAGMENT_SIGN_UP_KEY = "fragmentSignUp";
