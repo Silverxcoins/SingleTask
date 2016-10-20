@@ -5,4 +5,10 @@
     <string name="password_repeat_hint">Повторите пароль</string>
     <string name="sign_in_button_text">Вход</string>
     <string name="sign_up_button_text">Регистрация</string>
+
+    <string name="SOMETHING_WRONG">Что-то пошло не так</string>
+    <string name="NO_INTERNET_CONNECTION">Отсутствует соединение с интернетом</string>
+    <string name="EMAIL_ALREADY_IN_USE">Данный электронный адрес уже используется</string>
+    <string name="SIGN_UP_SUCCESSFULL">Вы успешно зарегестрировались</string>
+    <string name="WRONG_EMAIL_OR_PASSWORD">Неправильный эмейл или пароль</string>
 </resources>
