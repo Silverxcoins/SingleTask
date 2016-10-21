@@ -5,20 +5,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import okhttp3.MediaType;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class UsersManager {
 
     private static final String TAG = "UsersManager";
-
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     private static final String SIGN_UP_URL = "http://188.120.235.252/singletask/api/user/signup";
     private static final String SIGN_IN_URL = "http://188.120.235.252/singletask/api/user/signin";
@@ -30,20 +22,24 @@ public class UsersManager {
     }
 
     public interface SignUpCallback {
-        void onSignUpFinished(String json);
+        void onSignUpFinished(JSONObject json);
     }
 
     public interface SignInCallback {
-        void onSignInFinished(String json);
+        void onSignInFinished(JSONObject json);
     }
 
     private final Executor executor = Executors.newCachedThreadPool();
 
     private SignUpCallback signUpCallback;
-    private SignUpCallback signInCallback;
+    private SignInCallback signInCallback;
 
     public void setSignUpCallback(SignUpCallback signUpCallback) {
         this.signUpCallback = signUpCallback;
+    }
+
+    public void setSignInCallback(SignInCallback signInCallback) {
+        this.signInCallback = signInCallback;
     }
 
     public void signUp(final String email, final String password) {
@@ -51,19 +47,24 @@ public class UsersManager {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                String json;
-                try {
-                    json = signUpInternal(email, password);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    json = null;
-                }
+                JSONObject json = signUpInternal(email, password);
                 notifySignUpFinished(json);
             }
         });
     }
 
-    private void notifySignUpFinished(final String json) {
+    public void signIn(final String email, final String password) {
+        Log.d(TAG, "signIn()");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject json = signInInternal(email, password);
+                notifySignInFinished(json);
+            }
+        });
+    }
+
+    private void notifySignUpFinished(final JSONObject json) {
         Log.d(TAG, "notifySignUpFinished(), json: " + json);
         Ui.run(new Runnable() {
             @Override
@@ -75,24 +76,49 @@ public class UsersManager {
         });
     }
 
-    private String signUpInternal(String email, String password) throws IOException {
-        JSONObject json = new JSONObject();
+    private void notifySignInFinished(final JSONObject json) {
+        Log.d(TAG, "notifySignUpFinished(), json: " + json);
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (signInCallback != null) {
+                    signInCallback.onSignInFinished(json);
+                }
+            }
+        });
+    }
+
+    private JSONObject signUpInternal(String email, String password) {
+        Log.d(TAG, "signUpInternal()");
+        String json = formJson(email, password);
         try {
-            json.put("email", email);
-            json.put("password", password);
+            return new JSONObject(Http.sendPostRequest(SIGN_UP_URL, json));
         } catch (JSONException e) {
-            e.printStackTrace();
             return null;
         }
-        Log.d(TAG, "signUpInternal()");
+    }
 
-        RequestBody body = RequestBody.create(JSON, json.toString());
-        Request request = new Request.Builder()
-                .url(SIGN_UP_URL)
-                .post(body)
-                .build();
-        Response response = Http.getClient().newCall(request).execute();
+    private JSONObject signInInternal(String email, String password) {
+        Log.d(TAG, "signInInternal()");
+        String requestJson = formJson(email, password);
+        try {
+            String response = Http.sendPostRequest(SIGN_IN_URL, requestJson);
+            JSONObject responseJson = new JSONObject(response);
+            responseJson.put("email", email);
+            return responseJson;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
 
-        return response.body().string();
+    private String formJson(String email, String password) {
+        try {
+            JSONObject json = new JSONObject();
+            json.put("email", email);
+            json.put("password", password);
+            return json.toString();
+        } catch (JSONException e) {
+            return null;
+        }
     }
 }

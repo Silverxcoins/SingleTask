@@ -67,13 +67,13 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
     private void signUp() {
         Log.d(TAG, "SignUp()");
         if (!Http.isNetworkAvailable(getActivity())) {
-            Toast.makeText(getActivity(), R.string.NO_INTERNET_CONNECTION,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.NO_INTERNET_CONNECTION, Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         if (areThereEmptyFields()) {
-            Toast.makeText(getActivity(), R.string.THERE_ARE_EMPTY_FIELDS,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.THERE_ARE_EMPTY_FIELDS, Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         if(!isEmailValid()) {
@@ -92,20 +92,18 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
     }
 
     @Override
-    public void onSignUpFinished(String jsonString) {
+    public void onSignUpFinished(JSONObject json) {
         Log.d(TAG, "onSignUpFinished()");
-        if (jsonString == null) {
+        if (json == null) {
             Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        JSONObject json;
         try {
-            json = new JSONObject(jsonString);
             int code = json.getInt("code");
             if (code == Http.OK) {
-                Toast.makeText(getActivity(), R.string.SIGN_UP_SUCCESSFULL,
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.SIGN_UP_SUCCESSFULL, Toast.LENGTH_SHORT)
+                        .show();
                 clearFields();
                 getActivity().onBackPressed();
             } else if (code == Http.ALREADY_EXIST) {
