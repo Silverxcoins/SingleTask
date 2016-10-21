@@ -19,12 +19,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
-        if (settings.getBoolean("isSignedIn", false)) {
-            Intent intent = new Intent(this, ChoiceActivity.class);
-            startActivity(intent);
-            finish();
-        }
+//        SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
+//        if (settings.getBoolean("isSignedIn", false)) {
+//            Intent intent = new Intent(this, ChoiceActivity.class);
+//            startActivity(intent);
+//            finish();
+//        }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FRAGMENT_SIGN_UP_KEY)) {
             signUpFragment = getFragmentManager()

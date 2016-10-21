@@ -106,7 +106,7 @@ public class UsersManager {
             JSONObject responseJson = new JSONObject(response);
             responseJson.put("email", email);
             return responseJson;
-        } catch (JSONException e) {
+        } catch (JSONException | NullPointerException e) {
             return null;
         }
     }
