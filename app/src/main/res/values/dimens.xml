@@ -10,5 +10,6 @@
     <dimen name="authorization_button_text_size">16sp</dimen>
     <dimen name="authorization_linear_layout_item_margin">8dp</dimen>
     <dimen name="rectangle_button_corner_radius">3dp</dimen>
-    <dimen name="tab_indicator_height">2dp</dimen>
+    <dimen name="tab_indicator_height">3dp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
 </resources>

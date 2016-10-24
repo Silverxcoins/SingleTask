@@ -17,4 +17,8 @@
 
     <string name="PREFS_NAME">SingleTaskPreferences</string>
     <string name="settings_tag">Настройки</string>
+    <string name="synchronize_title">Synchronize</string>
+    <string name="settings_title">Settings</string>
+    <string name="logout_title">LogOut</string>
+    <string name="exit_title">Exit</string>
 </resources>

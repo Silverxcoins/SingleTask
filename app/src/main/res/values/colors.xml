@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#0097A7</color>
     <color name="colorPrimaryDark">#006064</color>
-    <color name="colorPrimaryLight">#E0F7FA</color>
+    <color name="colorPrimaryLight">#80DEEA</color>
     <color name="colorAccent">#03A9F4</color>
     <color name="colorAuthorizationFragment">#E0F7FA</color>
     <color name="colorAuthorizationFragmentDark">#B2EBF2</color>

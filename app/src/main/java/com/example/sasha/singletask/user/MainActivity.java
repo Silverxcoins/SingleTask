@@ -1,11 +1,14 @@
 package com.example.sasha.singletask.user;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.choice.ChoiceActivity;
 import com.example.sasha.singletask.helpers.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
-//        if (settings.getBoolean("isSignedIn", false)) {
-//            Intent intent = new Intent(this, ChoiceActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
+        SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
+        if (settings.getBoolean("isSignedIn", false)) {
+            Intent intent = new Intent(this, ChoiceActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         if (savedInstanceState != null && savedInstanceState.containsKey(FRAGMENT_SIGN_UP_KEY)) {
             signUpFragment = getSupportFragmentManager()
