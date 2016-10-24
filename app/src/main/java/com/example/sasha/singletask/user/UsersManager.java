@@ -1,6 +1,9 @@
-package com.example.sasha.singletask;
+package com.example.sasha.singletask.user;
 
 import android.util.Log;
+
+import com.example.sasha.singletask.helpers.Ui;
+import com.example.sasha.singletask.helpers.Http;
 
 import org.json.JSONException;
 import org.json.JSONObject;

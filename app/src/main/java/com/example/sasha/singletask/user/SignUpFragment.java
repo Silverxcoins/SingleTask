@@ -1,7 +1,7 @@
-package com.example.sasha.singletask;
+package com.example.sasha.singletask.user;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.sasha.singletask.helpers.Http;
+import com.example.sasha.singletask.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

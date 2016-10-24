@@ -16,4 +16,5 @@
     <string name="WRONG_EMAIL_OR_PASSWORD">Неправильный эмейл или пароль</string>
 
     <string name="PREFS_NAME">SingleTaskPreferences</string>
+    <string name="settings_tag">Настройки</string>
 </resources>

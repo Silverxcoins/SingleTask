@@ -1,11 +1,15 @@
-package com.example.sasha.singletask;
+package com.example.sasha.singletask.choice;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-public class ChoiceActivity extends Activity {
+import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.settings.SettingsActivity;
+
+public class ChoiceActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,5 +17,10 @@ public class ChoiceActivity extends Activity {
         setContentView(R.layout.activity_choice);
         SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
         ((TextView) findViewById(R.id.textView)).setText(settings.getString("token", ""));
+
+        ////
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+        ////
     }
 }

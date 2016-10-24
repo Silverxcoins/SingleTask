@@ -1,4 +1,4 @@
-package com.example.sasha.singletask;
+package com.example.sasha.singletask.helpers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
