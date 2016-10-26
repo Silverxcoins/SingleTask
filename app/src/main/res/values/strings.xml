@@ -21,4 +21,9 @@
     <string name="settings_title">Settings</string>
     <string name="logout_title">LogOut</string>
     <string name="exit_title">Exit</string>
+    <string name="db_name">SingleTask</string>
+    <string name="table_task_name">Task</string>
+    <string name="table_category_name">Category</string>
+    <string name="table_variant_name">Variant</string>
+    <string name="table_task_variant_name">VariantTask</string>
 </resources>

@@ -97,7 +97,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         try {
             int code = json.getInt("code");
             if (code == Http.OK) {
-                setUserSettings(json.getString("email"), json.getString("response"));
+                setUserSettings(json.getString("email"), json.getInt("response"));
                 Intent intent = new Intent(getActivity(), ChoiceActivity.class);
                 startActivity(intent);
                 getActivity().finish();
@@ -117,13 +117,13 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
                 || passwordEditText.getText().toString().isEmpty();
     }
 
-    private void setUserSettings(String email, String token) {
+    private void setUserSettings(String email, int id) {
         SharedPreferences settings = getActivity()
                 .getSharedPreferences(getString(R.string.PREFS_NAME), 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("isSignedIn", true);
         editor.putString("email", email);
-        editor.putString("token", token);
+        editor.putInt("id", id);
         editor.apply();
     }
 }
