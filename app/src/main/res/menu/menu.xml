@@ -6,7 +6,7 @@
         android:title="@string/synchronize_title"
         android:orderInCategory="1"
         android:icon="@drawable/ic_sync_white_24dp"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>/>
     <item android:id="@+id/settings"
         android:title="@string/settings_title"
         android:orderInCategory="2"

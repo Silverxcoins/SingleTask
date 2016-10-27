@@ -34,7 +34,6 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle() == getString(R.string.synchronize_title)) {
-                    Log.d("qwe", "QWEWQEQWE");
                     SyncManager.getInstance().sync(ChoiceActivity.this);
                 } else if (item.getTitle() == getString(R.string.settings_title)) {
                     startSettingsActivity();

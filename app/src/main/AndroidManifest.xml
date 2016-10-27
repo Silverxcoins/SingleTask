@@ -25,6 +25,13 @@
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value=".choice.ChoiceActivity"/>
         </activity>
+
+        <activity android:name=".settings.TaskActivity" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".settings.SettingsActivity"/>
+        </activity>
+
+        <activity android:name=".settings.CategoryActivity" />
     </application>
 
 </manifest>
