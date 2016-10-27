@@ -1,63 +1,66 @@
 package com.example.sasha.singletask.db.dataSets;
 
 
-import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
+
+import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 
-import java.security.Timestamp;
-
 public class TaskDataSet {
-    private static Integer userId;
 
-    public static void setUserId(int userId) {
-        if (TaskDataSet.userId == null) {
-            TaskDataSet.userId = userId;
-        }
-    }
-
-    int id;
-    int user;
-    String name;
-    String comment;
-    String date;
-    int time;
-    boolean isUpdated;
-    boolean isDeleted;
-    String lastUpdate;
+    private Integer serverId;
+    private Integer id;
+    private Integer oldId;
+    private int user;
+    private String name;
+    private String comment;
+    private String date;
+    private int time;
+    private boolean isUpdated;
+    private boolean isDeleted;
+    private String lastUpdate;
 
     public TaskDataSet(JsonNode json) {
-        if (json.has("id")) this.id = json.get("id").getIntValue();
+        if (json.has("id")) this.serverId = json.get("id").getIntValue();
+        if (json.has("clientId")) this.oldId = json.get("clientId").getIntValue();
         this.name = json.get("name").getTextValue();
         if (json.has("comment")) this.comment = json.get("comment").getTextValue();
         if (json.has("date")) this.date = json.get("date").getTextValue();
         this.time = json.get("time").getIntValue();
-        this.user = TaskDataSet.userId;
+        this.user = Utils.getUserId();
         if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
         if (json.has("isUpdated")) this.isUpdated = json.get("isUpdated").getBooleanValue();
         this.lastUpdate = json.get("lastUpdate").getTextValue();
     }
 
     public TaskDataSet(Cursor cursor) {
-        this.id = cursor.getInt(cursor.getColumnIndex("serverId"));
+        this.serverId = cursor.getInt(cursor.getColumnIndex("serverId"));
+        this.id = cursor.getInt(cursor.getColumnIndex("id"));
         this.name = cursor.getString(cursor.getColumnIndex("name"));
         this.comment = cursor.getString(cursor.getColumnIndex("comment"));
         this.date = cursor.getString(cursor.getColumnIndex("date"));
         this.time = cursor.getInt(cursor.getColumnIndex("time"));
-        this.user = TaskDataSet.userId;
+        this.user = Utils.getUserId();
         this.isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
         this.isUpdated = (cursor.getInt(cursor.getColumnIndex("isUpdated")) == 1);
         this.lastUpdate = cursor.getString(cursor.getColumnIndex("lastUpdate"));
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getOldId() {
+        return oldId;
+    }
+
+    public void setOldId(Integer oldId) {
+        this.oldId = oldId;
     }
 
     public int getUser() {
@@ -122,5 +125,13 @@ public class TaskDataSet {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public Integer getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Integer serverId) {
+        this.serverId = serverId;
     }
 }

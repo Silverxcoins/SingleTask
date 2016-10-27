@@ -34,9 +34,20 @@ public class Http {
                 .url(url)
                 .post(body)
                 .build();
-        Response response;
         try {
-            response = OK_HTTP_CLIENT.newCall(request).execute();
+            Response response = OK_HTTP_CLIENT.newCall(request).execute();
+            return response.body().string();
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static String sendGetRequest(String url) {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            Response response = OK_HTTP_CLIENT.newCall(request).execute();
             return response.body().string();
         } catch (IOException e) {
             return null;

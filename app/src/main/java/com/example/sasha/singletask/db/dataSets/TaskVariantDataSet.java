@@ -5,14 +5,6 @@ import android.database.Cursor;
 import org.codehaus.jackson.JsonNode;
 
 public class TaskVariantDataSet {
-    private static Integer userId;
-
-    public static void setUserId(int userId) {
-        if (TaskVariantDataSet.userId == null) {
-            TaskVariantDataSet.userId = userId;
-        }
-    }
-
     private int task;
     private int variant;
     private boolean isDeleted;

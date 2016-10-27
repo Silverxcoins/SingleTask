@@ -5,25 +5,24 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.db.DB;
-import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
-import com.example.sasha.singletask.db.dataSets.TaskDataSet;
-import com.example.sasha.singletask.db.dataSets.TaskVariantDataSet;
-import com.example.sasha.singletask.db.dataSets.VariantDataSet;
+import com.example.sasha.singletask.helpers.Utils;
 import com.example.sasha.singletask.settings.SettingsActivity;
 import com.example.sasha.singletask.user.MainActivity;
 
-public class ChoiceActivity extends AppCompatActivity {
+public class ChoiceActivity extends AppCompatActivity implements SyncManager.Callback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice);
         initToolbar();
+        setUserIdToUtils();
+
+        SyncManager.getInstance().setCallback(this);
+        SyncManager.getInstance().sync(this);
     }
 
     private void initToolbar() {
@@ -43,20 +42,10 @@ public class ChoiceActivity extends AppCompatActivity {
             }
         });
         toolbar.inflateMenu(R.menu.menu);
+    }
 
-
-        ///////
-        TaskDataSet.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt("id",0));
-        CategoryDataSet.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt("id",0));
-        VariantDataSet.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt("id",0));
-        TaskVariantDataSet.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt("id",0));
-        DB db = DB.getInstance(this);
-        db.open();
-
-        db.insertTasksVariantsFromJson("[{\"task\":11,\"variant\":5}]");
-        Log.d("!!!!!!!!!!!!!!!!!!!!!!!", db.getAllTasksVariantsInJson());
-        db.close();
-        ///////
+    private void setUserIdToUtils() {
+        Utils.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt("id",0));
     }
 
     private void startSettingsActivity() {
@@ -73,5 +62,14 @@ public class ChoiceActivity extends AppCompatActivity {
         Intent intent = new Intent(ChoiceActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onSyncFinished(boolean wasSuccessful) {
+        if (wasSuccessful) {
+            System.out.println("some kind of success!");
+        } else {
+            System.out.println("Ну ёбаный в рот :(");
+        }
     }
 }
