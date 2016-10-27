@@ -6,6 +6,7 @@ import android.app.FragmentManager;
 public class Utils {
     private static int userId;
 
+    // ASK: что тут происходит?
     public static void clearBackStack(Activity activity) {
         FragmentManager manager = activity.getFragmentManager();
         if (manager.getBackStackEntryCount() > 0) {

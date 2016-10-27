@@ -3,6 +3,7 @@ package com.example.sasha.singletask.helpers;
 import android.os.Handler;
 import android.os.Looper;
 
+// ASK: зачем это?
 public class Ui {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());

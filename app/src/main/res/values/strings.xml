@@ -26,4 +26,5 @@
     <string name="table_category_name">Category</string>
     <string name="table_variant_name">Variant</string>
     <string name="table_task_variant_name">VariantTask</string>
+    <string name="title_activity_categories">CategoriesActivity</string>
 </resources>

@@ -37,6 +37,8 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         signInButton = (Button) view.findViewById(R.id.buttonSignIn);
         signUpButton = (Button) view.findViewById(R.id.buttonGoToSignUp);
 
+        // ASK: почему проверяем только containsKey(EMAIL_KEY), а затем считываем getString(PASSWORD_KEY), 
+        // а вдруг его нет
         if (savedInstanceState != null && savedInstanceState.containsKey(EMAIL_KEY)) {
             emailEditText.setText(savedInstanceState.getString(EMAIL_KEY));
             passwordEditText.setText(savedInstanceState.getString(PASSWORD_KEY));
@@ -62,6 +64,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        // если поля не пустые, то запоминаем их
         if (emailEditText != null)
             outState.putString(EMAIL_KEY, emailEditText.getText().toString());
         if (passwordEditText != null)
@@ -87,6 +90,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         );
     }
 
+    // обработка серверного ответа на запрос авторизации
     @Override
     public void onSignInFinished(JSONObject json) {
         if (json == null) {
@@ -97,6 +101,8 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         try {
             int code = json.getInt("code");
             if (code == Http.OK) {
+                // если пришел статус 200 после запроса на авторизацию
+                // то запускаем ChoiceActivity
                 setUserSettings(json.getString("email"), json.getInt("response"));
                 Intent intent = new Intent(getActivity(), ChoiceActivity.class);
                 startActivity(intent);
@@ -117,6 +123,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
                 || passwordEditText.getText().toString().isEmpty();
     }
 
+    // запоминаем id, email, isSignedIn = true авторизаванного юзера в локальное хранилище
     private void setUserSettings(String email, int id) {
         SharedPreferences settings = getActivity()
                 .getSharedPreferences(getString(R.string.PREFS_NAME), 0);

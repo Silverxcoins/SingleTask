@@ -12,7 +12,9 @@ import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.helpers.TabsPagerFragmentAdapter;
 
 public class SettingsActivity extends AppCompatActivity {
+    // показ и прокрутка страниц (swipe)
     private ViewPager pager;
+    // вкладки
     private TabLayout tabs;
 
     @Override
@@ -30,14 +32,17 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initToolbar() {
+        // полоса меню в верхней части
         Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         toolbar.setTitle(R.string.settings_tag);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
+            // ASK: что они делают? у нас по-моему они не работают
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
     }
 
     private void initTabs() {

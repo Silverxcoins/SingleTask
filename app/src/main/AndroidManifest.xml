@@ -12,26 +12,36 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".user.MainActivity">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".choice.ChoiceActivity" />
+        <activity android:name=".settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".choice.ChoiceActivity" />
+        </activity>
+        <activity android:name=".settings.TaskActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".settings.SettingsActivity" />
+        </activity>
+        <activity android:name=".settings.CategoryActivity" />
+        <activity
+            android:name=".settings.CategoriesActivity"
+            android:label="@string/title_activity_categories"
+            android:theme="@style/AppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-
-        <activity android:name=".choice.ChoiceActivity" />
-
-        <activity android:name=".settings.SettingsActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".choice.ChoiceActivity"/>
-        </activity>
-
-        <activity android:name=".settings.TaskActivity" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".settings.SettingsActivity"/>
-        </activity>
-
-        <activity android:name=".settings.CategoryActivity" />
     </application>
 
 </manifest>

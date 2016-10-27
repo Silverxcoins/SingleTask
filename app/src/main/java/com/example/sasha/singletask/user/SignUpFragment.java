@@ -108,6 +108,8 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
                 Toast.makeText(getActivity(), R.string.SIGN_UP_SUCCESSFULL, Toast.LENGTH_SHORT)
                         .show();
                 clearFields();
+                // ASK: как он узнает какой activity? Может надо (MainActivity) getActivity() = ..
+                // ASK: onBackPressed?
                 getActivity().onBackPressed();
             } else if (code == Http.ALREADY_EXIST) {
                 Toast.makeText(getActivity(), R.string.EMAIL_ALREADY_IN_USE,

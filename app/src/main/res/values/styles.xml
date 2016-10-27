@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -44,7 +45,8 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/authorization_button_text_size</item>
         <item name="android:layout_marginTop">@dimen/authorization_linear_layout_item_margin</item>
-        <item name="android:layout_marginBottom">@dimen/authorization_linear_layout_item_margin</item>
+        <item name="android:layout_marginBottom">@dimen/authorization_linear_layout_item_margin
+        </item>
     </style>
 
     <style name="AuthLinearLayoutItem.LineEdit">
@@ -72,7 +74,8 @@
 
     <style name="AuthLinearLayoutItem.Button">
         <item name="android:layout_marginLeft">@dimen/authorization_linear_layout_item_margin</item>
-        <item name="android:layout_marginRight">@dimen/authorization_linear_layout_item_margin</item>
+        <item name="android:layout_marginRight">@dimen/authorization_linear_layout_item_margin
+        </item>
     </style>
 
     <style name="AuthLinearLayoutItem.Button.Primary">
@@ -84,4 +87,8 @@
         <item name="android:textColor">@color/colorTextPrimaryLight</item>
         <item name="android:background">@drawable/button_auth_secondary</item>
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
