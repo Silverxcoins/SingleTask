@@ -258,7 +258,7 @@ public class DB {
             tasks.add(task);
 
             ContentValues cv = new ContentValues();
-            cv.put("serverId", task.getId());
+            cv.put("serverId", task.getServerId());
             cv.put("name", task.getName());
             cv.put("comment", task.getComment());
             cv.put("date", task.getDate());
@@ -314,7 +314,7 @@ public class DB {
 
     private long insertCategory(CategoryDataSet category) {
         ContentValues cv = new ContentValues();
-        cv.put("serverId", category.getId());
+        cv.put("serverId", category.getServerId());
         cv.put("name", category.getName());
         cv.put("parent", category.getParent());
         cv.put("lastUpdate", category.getLastUpdate());
@@ -352,7 +352,7 @@ public class DB {
             }
 
             ContentValues cv = new ContentValues();
-            cv.put("serverId", variant.getId());
+            cv.put("serverId", variant.getServerId());
             cv.put("name", variant.getName());
             cv.put("category", variant.getCategory());
 

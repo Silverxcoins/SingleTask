@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.sasha.singletask.R;
@@ -20,9 +21,10 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         setContentView(R.layout.activity_choice);
         initToolbar();
         setUserIdToUtils();
-
         SyncManager.getInstance().setCallback(this);
-        SyncManager.getInstance().sync(this);
+        if (savedInstanceState == null) {
+            SyncManager.getInstance().sync(this);
+        }
     }
 
     private void initToolbar() {
@@ -32,7 +34,8 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle() == getString(R.string.synchronize_title)) {
-
+                    Log.d("qwe", "QWEWQEQWE");
+                    SyncManager.getInstance().sync(ChoiceActivity.this);
                 } else if (item.getTitle() == getString(R.string.settings_title)) {
                     startSettingsActivity();
                 } else {
