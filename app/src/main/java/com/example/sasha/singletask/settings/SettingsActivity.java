@@ -38,6 +38,9 @@ public class SettingsActivity extends AppCompatActivity  {
 
         initToolbar();
         initTabs();
+
+        Intent intent = new Intent(this, CategoryActivity.class);
+        startActivity(intent);
     }
 
     private void initToolbar() {

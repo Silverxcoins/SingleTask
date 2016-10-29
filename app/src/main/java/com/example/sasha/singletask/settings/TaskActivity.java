@@ -52,7 +52,7 @@ public class TaskActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        taskEditText = (EditText) findViewById(R.id.taskEditText);
+        taskEditText = (EditText) findViewById(R.id.nameEditText);
         initToolbar();
         setDateAndTimeListeners();
         setClearButtonsListeners();

@@ -16,7 +16,7 @@
 
             <include
                 android:id="@+id/task_toolbar"
-                layout="@layout/task_toolbar"
+                layout="@layout/task_category_toolbar"
                 />
 
         </android.support.design.widget.AppBarLayout>
