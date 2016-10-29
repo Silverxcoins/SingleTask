@@ -79,7 +79,6 @@ public class DB {
     }
 
 
-    // открыть подключение
     public void open() {
         dbHelper = new DbHelper(ctx, ctx.getString(R.string.db_name), null, 1);
         db = dbHelper.getWritableDatabase();
@@ -158,7 +157,6 @@ public class DB {
 
     }
 
-    // закрыть подключение
     public void close() {
         if (dbHelper!=null) dbHelper.close();
     }
