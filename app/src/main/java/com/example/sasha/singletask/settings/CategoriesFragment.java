@@ -26,6 +26,8 @@ public class CategoriesFragment extends Fragment {
     private RecyclerView.LayoutManager mLayoutManager;
     private ItemTouchHelper mItemTouchHelper;
 
+    public static final String tabName = "categories_tab";
+
     public static CategoriesFragment getInstance() {
         Bundle bundle = new Bundle();
         CategoriesFragment categoriesFragment = new CategoriesFragment();
@@ -50,7 +52,7 @@ public class CategoriesFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerListAdapter();
+        mAdapter = new RecyclerListAdapter(tabName);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);

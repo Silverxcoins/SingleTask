@@ -27,15 +27,31 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     private static final String TAG = "RecyclerListAdapter";
     private Context context;
 
-    public RecyclerListAdapter() {
-        String[] STRINGS = new String[]{
+    private int itemView;
+
+    public RecyclerListAdapter(String tabName) {
+        String[] CATEGORIES_STRINGS = new String[]{
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"
         };
-        mItems.addAll(Arrays.asList(STRINGS));
+
+        String[] TASKS_STRINGS = new String[]{
+                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
+                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
+                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
+                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
+                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
+        };
+        if (tabName == CategoriesFragment.tabName) {
+            itemView = R.id.category_item_view;
+            mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
+        } else if (tabName == TasksFragment.tabName) {
+            itemView = R.id.task_item_view;
+            mItems.addAll(Arrays.asList(TASKS_STRINGS));
+        }
     }
 
     @Override
