@@ -22,11 +22,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         initToolbar();
         initTabs();
-
-        ////
-        Intent intent = new Intent(this, TaskActivity.class);
-        startActivity(intent);
-        ////
     }
 
     private void initToolbar() {

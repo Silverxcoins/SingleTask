@@ -21,7 +21,6 @@ public class TaskVariantDataSet {
         this.isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
     }
 
-
     public int getTask() {
         return task;
     }

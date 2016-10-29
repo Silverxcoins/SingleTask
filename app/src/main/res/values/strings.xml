@@ -26,4 +26,6 @@
     <string name="table_category_name">Category</string>
     <string name="table_variant_name">Variant</string>
     <string name="table_task_variant_name">VariantTask</string>
+    <string name="task_needs_name">Заданию требуется название</string>
+    <string name="empty_variant_string">Не выбрано</string>
 </resources>

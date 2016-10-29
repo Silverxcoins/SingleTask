@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.Utils;
 import com.example.sasha.singletask.settings.SettingsActivity;
 import com.example.sasha.singletask.user.MainActivity;
@@ -73,5 +73,11 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         } else {
             System.out.println("Ну ёбаный в рот :(");
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        DB.getInstance(this).close();
+        super.onDestroy();
     }
 }

@@ -21,7 +21,7 @@
 
         </android.support.design.widget.AppBarLayout>
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/taskOkButton"
+            android:id="@+id/taskDoneButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_done_white_24dp"
@@ -31,87 +31,142 @@
             android:layout_marginTop="8dp"
             android:elevation="@dimen/toolbar_elevation"/>
 
-        <LinearLayout
-            android:orientation="vertical"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?android:attr/actionBarSize"
-            android:background="@android:color/white"
-            android:paddingTop="8dp">
+            android:background="@android:color/white">
 
-            <EditText
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="time"
-                android:ems="10"
-                android:id="@+id/editText2" />
+                android:layout_marginTop="?android:attr/actionBarSize"
+                android:background="@android:color/white"
+                android:paddingTop="8dp"
+                android:id="@+id/task_activity_main_linear_layout">
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <ImageView
-                    android:padding="24dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_query_builder_black_24dp"
-                    android:tint="@color/colorPrimary" />
+                    <ImageView
+                        android:padding="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_query_builder_black_24dp"
+                        android:tint="@color/colorPrimary" />
 
-                <EditText
-                    android:padding="16dp"
+                    <EditText
+                        android:padding="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:id="@+id/timeEditText"
+                        android:hint="Время выполнения"
+                        android:textColor="@color/colorTextPrimaryLight"
+                        android:layout_marginEnd="48dp"
+                        android:maxHeight="80dp"/>
+
+                    <ListView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:padding="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_date_range_black_24dp"
+                        android:tint="@color/colorPrimary" />
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:padding="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/dateEditText"
+                            android:hint="Дата"
+                            android:textColor="@color/colorTextPrimaryLight"
+                            android:layout_marginEnd="48dp"
+                            android:maxHeight="80dp"/>
+                        <ImageButton
+                            android:id="@+id/btnClearDate"
+                            android:paddingTop="24dp"
+                            android:paddingBottom="24dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="16dp"
+                            android:layout_gravity="right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_highlight_off_black_24dp"
+                            android:tint="#BBBBBB"
+                            android:background="@android:color/white"/>
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:padding="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_comment_black_24dp"
+                        android:tint="@color/colorPrimary" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:paddingLeft="16dp"
+                            android:paddingTop="16dp"
+                            android:paddingBottom="16dp"
+                            android:paddingRight="0dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Комментарий"
+                            android:id="@+id/commentEditText"
+                            android:textColor="@color/colorTextPrimaryLight"
+                            android:layout_marginEnd="48dp"
+                            android:maxHeight="96dp"/>
+
+                        <ImageButton
+                            android:id="@+id/btnClearComment"
+                            android:paddingTop="24dp"
+                            android:paddingBottom="24dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="16dp"
+                            android:layout_gravity="right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_highlight_off_black_24dp"
+                            android:tint="#BBBBBB"
+                            android:background="@android:color/white"/>
+                    </FrameLayout>
+                </LinearLayout>
+                <View
+                    android:layout_marginTop="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#EEEEEE"/>
+                <ListView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/time"
-                    android:textColor="@color/colorTextPrimaryLight"
-                    android:layout_marginEnd="48dp"
-                    android:maxHeight="80dp"/>
+                    android:id="@+id/lv" />
+
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:padding="24dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_date_range_black_24dp"
-                    android:tint="@color/colorPrimary" />
-
-                <EditText
-                    android:padding="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/date"
-                    android:textColor="@color/colorTextPrimaryLight"
-                    android:layout_marginEnd="48dp"
-                    android:maxHeight="80dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:padding="24dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_comment_black_24dp"
-                    android:tint="@color/colorPrimary" />
-
-                <EditText
-                    android:padding="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/commentEditText"
-                    android:textColor="@color/colorTextPrimaryLight"
-                    android:layout_marginEnd="48dp"
-                    android:maxHeight="80dp"/>
-            </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
 

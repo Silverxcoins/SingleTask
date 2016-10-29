@@ -10,4 +10,5 @@
     <color name="colorTextPrimaryDark">#ffffff</color>
     <color name="colorButtonAuthMain">#00838F</color>
     <color name="colorButtonAuthMainDark">#1A237E</color>
+    <color name="errorColor">#D32F2F</color>
 </resources>

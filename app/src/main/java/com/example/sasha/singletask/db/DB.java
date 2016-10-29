@@ -4,12 +4,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskVariantDataSet;
 import com.example.sasha.singletask.db.dataSets.VariantDataSet;
+import com.example.sasha.singletask.helpers.Ui;
+import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,14 +20,26 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class DB {
+    private static final String TAG = "DB";
     private static DB instance;
+
+    public enum Operation {
+        GET_CATEGORIES,
+        GET_VARIANT_BY_TASK_AND_CATEGORY,
+        GET_VARIANTS_BY_CATEGORY,
+        GET_TASK_BY_ID,
+        INSERT_NEW_TASK,
+        UPDATE_TASK
+    }
 
     private DbHelper dbHelper;
     private SQLiteDatabase db;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private static Context ctx;
 
@@ -37,6 +52,32 @@ public class DB {
     }
 
     private DB() {}
+
+    public interface Callback {
+        void onOperationFinished(Operation operation, Cursor result, int position);
+    }
+
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
+    private DB.Callback callback;
+
+    public void setCallback(DB.Callback callback) {
+        this.callback = callback;
+    }
+
+    private void notifyOperationFinished(final Operation operation, final Cursor result,
+                                         final int position) {
+        Log.d(TAG,"notifyOperationFinished");
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (callback != null) {
+                    callback.onOperationFinished(operation, result, position);
+                }
+            }
+        });
+    }
+
 
     // открыть подключение
     public void open() {
@@ -208,17 +249,16 @@ public class DB {
                 TaskVariantDataSet tv = new TaskVariantDataSet(cursor);
                 boolean isTaskExist = false;
                 boolean isVariantExist = false;
+
                 for (TaskDataSet task : tasks) {
-                    if (task.getOldId() == null) continue;
-                    if (task.getOldId() == tv.getTask()) {
+                    if (task.getOldId() != null && task.getOldId() == tv.getTask()) {
                         tv.setTask(task.getServerId());
                         isTaskExist = true;
                         break;
                     }
                 }
                 for (VariantDataSet variant : variants) {
-                    if (variant.getOldId() == null) continue;
-                    if (variant.getOldId() == tv.getVariant()) {
+                    if (variant.getOldId() != null && variant.getOldId() == tv.getVariant()) {
                         tv.setVariant(variant.getServerId());
                         isVariantExist = true;
                         break;
@@ -264,6 +304,8 @@ public class DB {
             cv.put("date", task.getDate());
             cv.put("time", task.getTime());
             cv.put("lastUpdate", task.getLastUpdate());
+            cv.put("isUpdated", 0);
+            cv.put("isDeleted", 0);
 
             insert(ctx.getString(R.string.table_task_name), cv);
         }
@@ -318,6 +360,8 @@ public class DB {
         cv.put("name", category.getName());
         cv.put("parent", category.getParent());
         cv.put("lastUpdate", category.getLastUpdate());
+        cv.put("isUpdated", 0);
+        cv.put("isDeleted", 0);
 
         long id = insert(ctx.getString(R.string.table_category_name), cv);
         category.setId((int)id);
@@ -355,6 +399,8 @@ public class DB {
             cv.put("serverId", variant.getServerId());
             cv.put("name", variant.getName());
             cv.put("category", variant.getCategory());
+            cv.put("isDeleted", 0);
+
 
             insert(ctx.getString(R.string.table_variant_name), cv);
         }
@@ -393,8 +439,192 @@ public class DB {
             ContentValues cv = new ContentValues();
             cv.put("task", tv.getTask());
             cv.put("variant", tv.getVariant());
+            cv.put("isDeleted", 0);
 
             insert(ctx.getString(R.string.table_task_variant_name), cv);
         }
+    }
+
+    public void getCategories() {
+        Log.d(TAG,"getCategories");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor categories = getCategoriesFromDb();
+                notifyOperationFinished(Operation.GET_CATEGORIES, categories, 0);
+            }
+        });
+    }
+
+    private Cursor getCategoriesFromDb() {
+        Log.d(TAG,"getCategoriesFromDB");
+        String selection = "isDeleted IS NULL OR isDeleted=0";
+        return db.query(ctx.getString(R.string.table_category_name), null, selection,
+                null, null, null, null);
+    }
+
+    public void getVariantsByCategory(final Long category, final int position) {
+        Log.d(TAG,"getVariantsByCategory");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor variants = getVariantsByCategoryFromDb(category);
+                notifyOperationFinished(Operation.GET_VARIANTS_BY_CATEGORY, variants, position);
+            }
+        });
+    }
+
+    private Cursor getVariantsByCategoryFromDb(Long category) {
+        Log.d(TAG,"getVariantsByCategoryFromDB");
+        String selection = "category=? AND (isDeleted IS NULL OR isDeleted=0)";
+        String[] selectionArgs = { String.valueOf(category) };
+        return db.query(ctx.getString(R.string.table_variant_name), null, selection, selectionArgs,
+                null, null, null);
+    }
+
+    public void getVariantByTaskAndCategory(final long task, final Long category,
+                                            final int position) {
+        Log.d(TAG,"getVariantByTaskAndCategory");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor variant = getVariantByTaskAndCategoryFromDb(task, category);
+                notifyOperationFinished(Operation.GET_VARIANT_BY_TASK_AND_CATEGORY, variant,
+                        position);
+            }
+        });
+    }
+
+    private Cursor getVariantByTaskAndCategoryFromDb(long task, Long category) {
+        Log.d(TAG,"getVariantByTaskAndCategoryFromDB");
+        String[] selectionArgs = { String.valueOf(task), String.valueOf(category) };
+        return db.rawQuery(SqlQueries.GET_VARIANT_BY_TASK_AND_CATEGORY, selectionArgs);
+    }
+
+    public void getTaskById(final long id) {
+        Log.d(TAG,"getTaskById");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor task = getTaskByIdFromDb(id);
+                notifyOperationFinished(Operation.GET_TASK_BY_ID, task, 0);
+            }
+        });
+
+    }
+
+    private Cursor getTaskByIdFromDb(long id) {
+        Log.d(TAG,"getTaskByIdFromDb");
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(id) };
+        return db.query(ctx.getString(R.string.table_task_name), null, selection, selectionArgs, null, null, null);
+    }
+
+    public void insertNewTask(final String name, final int time, final String date,
+                              final String comment, final ArrayList<Long> variants) {
+        Log.d(TAG,"insertNewTask");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                insertNewTaskInDb(name, time, date, comment, variants);
+                notifyOperationFinished(Operation.INSERT_NEW_TASK, null, 0);
+            }
+        });
+    }
+
+    private void insertNewTaskInDb(String name, int time, String date, String comment,
+                                   ArrayList<Long> variants) {
+        Log.d(TAG,"insertNewTaskInDb");
+        ContentValues cv = new ContentValues();
+        cv.put("name", name);
+        cv.put("time", time);
+        cv.put("date", !date.isEmpty() ? date : null);
+        cv.put("comment", !comment.isEmpty() ? comment : null);
+        cv.put("isUpdated", 1);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
+        long taskId = db.insert(ctx.getString(R.string.table_task_name), null, cv);
+
+        for (Long variantId : variants) {
+            if (variantId != 0) {
+                cv = new ContentValues();
+                cv.put("task", taskId);
+                cv.put("variant", variantId);
+                db.insert(ctx.getString(R.string.table_task_variant_name), null, cv);
+            }
+        }
+    }
+
+    public void updateTask(final long id, final String name, final int time, final String date,
+                           final String comment, final ArrayList<Long> variants,
+                           final ArrayList<Long> categories) {
+        Log.d(TAG,"updateTask");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                updateTaskInDb(id, name, time, date, comment, variants, categories);
+                notifyOperationFinished(Operation.UPDATE_TASK, null, 0);
+            }
+        });
+    }
+
+    private void updateTaskInDb(long taskId, String name, int time, String date, String comment,
+                                   ArrayList<Long> variants, ArrayList<Long> categories) {
+        Log.d(TAG,"updateTaskInDb");
+        ContentValues cv = new ContentValues();
+        cv.put("name", name);
+        cv.put("time", time);
+        cv.put("date", !date.isEmpty() ? date : null);
+        cv.put("comment", !comment.isEmpty() ? comment : null);
+        cv.put("isUpdated", 1);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
+
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(taskId) };
+        db.update(ctx.getString(R.string.table_task_name), cv, selection, selectionArgs);
+
+        for (int i = 0; i < variants.size(); i++) {
+            Long variantId = variants.get(i);
+            Long categoryId = categories.get(i);
+            Cursor c = selectTaskVariantByTaskAndCategoryFromDb(taskId, categoryId);
+            boolean doesExist = false;
+            if (c.moveToFirst()) {
+                do {
+                    long variantFromDb = c.getLong(c.getColumnIndex("variant"));
+                    boolean isDeleted = (c.getInt(c.getColumnIndex("isDeleted")) == 1);
+                    if (variantFromDb == variantId) {
+                        doesExist = true;
+                        if (isDeleted) {
+                            updateTaskVariantInDb(taskId, variantId, false);
+                        }
+                    } else {
+                        if (!isDeleted) {
+                            updateTaskVariantInDb(taskId, variantFromDb, true);
+                        }
+                    }
+                } while (c.moveToNext());
+            }
+            if (!doesExist && variantId != 0) {
+                cv = new ContentValues();
+                cv.put("task", taskId);
+                cv.put("variant", variantId);
+                cv.put("isDeleted", 0);
+                db.insert(ctx.getString(R.string.table_task_variant_name), null, cv);
+            }
+        }
+    }
+
+    private Cursor selectTaskVariantByTaskAndCategoryFromDb(long task, long category) {
+        Log.d(TAG,"selectTaskVariantByTaskAndCategoryFromDb");
+        String[] tVselectionArgs = { String.valueOf(task), String.valueOf(category) };
+        return db.rawQuery(SqlQueries.GET_TASKS_VARIANTS_BY_TASK_AND_CATEGORY, tVselectionArgs);
+    }
+
+    private void updateTaskVariantInDb(long task, long variant, boolean isDeleted) {
+        Log.d(TAG,"updateTaskVariantInDb");
+        ContentValues cv = new ContentValues();
+        cv.put("isDeleted", (isDeleted) ? 1 : 0);
+        String selection = "task=? AND variant=?";
+        String[] selectionArgs = { String.valueOf(task), String.valueOf(variant) };
+        db.update(ctx.getString(R.string.table_task_variant_name), cv, selection, selectionArgs);
     }
 }
