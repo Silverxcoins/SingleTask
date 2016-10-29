@@ -1,6 +1,8 @@
 package com.example.sasha.singletask.settings;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     private static final String TAG = "RecyclerListAdapter";
     private Context context;
 
-
     public RecyclerListAdapter() {
         String[] STRINGS = new String[]{
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
@@ -40,6 +41,7 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
+        context = parent.getContext();
         return itemViewHolder;
     }
 
@@ -55,9 +57,23 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     }
 
     @Override
-    public void onItemDismiss(int position) {
-        mItems.remove(position);
-        notifyItemRemoved(position);
+    public void onItemDismiss(final int position) {
+
+        new AlertDialog.Builder(context)
+        .setMessage("Are you sure you want to delete it?")
+        .setCancelable(false)
+        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                mItems.remove(position);
+                notifyItemRemoved(position);
+            }
+        })
+        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                notifyItemChanged(position);
+            }
+        })
+        .show();
     }
 
     @Override
