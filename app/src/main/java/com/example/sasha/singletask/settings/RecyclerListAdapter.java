@@ -16,6 +16,7 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.ItemTouchHelperAdapter;
 import com.example.sasha.singletask.helpers.ItemTouchHelperViewHolder;
 import com.example.sasha.singletask.R;
@@ -64,6 +65,11 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
         }
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         context = parent.getContext();
+
+        DB.getInstance(context).open();
+        DB.getInstance(context).getCategories();
+
+
         return itemViewHolder;
     }
 
