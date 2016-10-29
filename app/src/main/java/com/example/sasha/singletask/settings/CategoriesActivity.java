@@ -30,3 +30,6 @@ public class CategoriesActivity extends AppCompatActivity {
         Log.d(TAG, "success onCreate() CategoriesActivity");
     }
 }
+
+// https://guides.codepath.com/android/using-the-recyclerview
+// http://www.fandroid.info/primer-ispolzovaniya-cardview-i-recyclerview-v-android/

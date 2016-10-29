@@ -24,7 +24,8 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (position == 1) {
-            return TasksFragment.getInstance();
+//            return TasksFragment.getInstance();
+            return CategoriesFragment.getInstance();
         } else {
             return CategoriesFragment.getInstance();
         }

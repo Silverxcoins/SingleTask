@@ -2,16 +2,20 @@ package com.example.sasha.singletask.settings;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.util.Log;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.helpers.TabsPagerFragmentAdapter;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity  {
+
+    private static final String TAG = "SettingsActivity";
     // показ и прокрутка страниц (swipe)
     private ViewPager pager;
     // вкладки
@@ -22,12 +26,25 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+//        initToolbar();
+//        initTabs();
+
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_categories);
+
+//        if (savedInstanceState == null) {
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            CategoriesFragment fragment = new CategoriesFragment();
+//            transaction.replace(R.id.categories_list_container, fragment);
+//            transaction.commit();
+//        }
+
         initToolbar();
         initTabs();
 
         ////
-        Intent intent = new Intent(this, TaskActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, TaskActivity.class);
+//        startActivity(intent);
         ////
     }
 
