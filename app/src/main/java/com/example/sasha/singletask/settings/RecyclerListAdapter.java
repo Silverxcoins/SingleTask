@@ -27,7 +27,7 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     private static final String TAG = "RecyclerListAdapter";
     private Context context;
 
-    private int itemView;
+    public static String mTabName;
 
     public RecyclerListAdapter(String tabName) {
         String[] CATEGORIES_STRINGS = new String[]{
@@ -45,18 +45,23 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                 "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
                 "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
         };
+        mTabName = tabName;
         if (tabName == CategoriesFragment.tabName) {
-            itemView = R.id.category_item_view;
             mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
         } else if (tabName == TasksFragment.tabName) {
-            itemView = R.id.task_item_view;
             mItems.addAll(Arrays.asList(TASKS_STRINGS));
         }
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
+        View view;
+        // TODO: refactor it without if
+        if (mTabName == CategoriesFragment.tabName) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
+        }
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         context = parent.getContext();
         return itemViewHolder;
@@ -78,15 +83,15 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     public void onItemDismiss(final int position) {
 
         new AlertDialog.Builder(context)
-        .setMessage("Are you sure you want to delete it?")
+        .setMessage("Вы действительно хотите удалить?")
         .setCancelable(false)
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 mItems.remove(position);
                 notifyItemRemoved(position);
             }
         })
-        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+        .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 notifyItemChanged(position);
             }
@@ -115,7 +120,12 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
         public ItemViewHolder(View itemView) {
             super(itemView);
             wrapView = itemView;
-            textView = (TextView) itemView.findViewById(R.id.category_item_view);
+            // TODO: rewrite it without if
+            if (mTabName == CategoriesFragment.tabName) {
+                textView = (TextView) itemView.findViewById(R.id.category_item_view);
+            } else {
+                textView = (TextView) itemView.findViewById(R.id.task_item_view);
+            }
         }
 
         @Override
