@@ -40,10 +40,9 @@ public class SyncManager {
     private static final String LIST_TASKS_VARIANTS_URL =
             "http://188.120.235.252/singletask/api/task-variant/list?user=" + Utils.getUserId();
 
-    private Context ctx;
     private DB db;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private static final SyncManager SYNC_MANAGER = new SyncManager();
 
@@ -64,7 +63,6 @@ public class SyncManager {
     }
 
     public void sync(Context ctx) {
-        this.ctx = ctx;
         this.db = DB.getInstance(ctx);
         db.open();
         executor.execute(new Runnable() {
@@ -119,19 +117,20 @@ public class SyncManager {
             return false;
         }
         db.insertTasksVariantsFromJson(Http.sendGetRequest(LIST_TASKS_VARIANTS_URL));
-        db.close();
         return true;
     }
 
     private boolean isServerOperationSuccessful(String response) {
         System.out.println("ответ от сервера: " + response);
         try {
-            JsonNode node = mapper.readValue(response, JsonNode.class);
-            if (node.has("code") && node.get("code").getIntValue() == Http.OK) {
-                return true;
-            } else {
-                return false;
+            if (response != null) {
+                JsonNode node = mapper.readValue(response, JsonNode.class);
+                if (node.has("code") && node.get("code").getIntValue() == Http.OK) {
+                    return true;
+                }
             }
+            return false;
+
         } catch (IOException e) {
             return false;
         }

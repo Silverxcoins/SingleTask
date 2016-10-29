@@ -107,7 +107,7 @@ public class TaskDataSet {
         return isDeleted;
     }
 
-    public void setIsDeleted(boolean deleted) {
+    public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 
