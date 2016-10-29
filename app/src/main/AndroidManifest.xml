@@ -30,18 +30,6 @@
                 android:value=".settings.SettingsActivity" />
         </activity>
         <activity android:name=".settings.CategoryActivity" />
-        <activity
-            android:name=".settings.CategoriesActivity"
-            android:label="@string/title_activity_categories"
-            android:theme="@style/AppTheme">
-
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-
-        </activity>
     </application>
 
 </manifest>

@@ -1,14 +1,10 @@
 package com.example.sasha.singletask.settings;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -17,7 +13,6 @@ import java.util.List;
 
 import android.util.Log;
 
-import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;
 import com.example.sasha.singletask.helpers.ItemTouchHelperAdapter;
 import com.example.sasha.singletask.helpers.ItemTouchHelperViewHolder;
 import com.example.sasha.singletask.R;
@@ -45,22 +40,16 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
-        context = parent.getContext();
         return itemViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-        TextView textView = (TextView) holder.itemView.findViewById(R.id.category_item_view);
         holder.textView.setText(mItems.get(position));
-        textView.setOnClickListener(new View.OnClickListener() {
+        holder.wrapView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(context, "Recycle Click" + position, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "------" + position);
-//                view.setBackgroundColor(Color.LTGRAY);
-//                Animation myAnimation = AnimationUtils.loadAnimation(context, R.anim.click_anim);
-//                view.startAnimation(myAnimation);
+                Log.d(TAG, "------ clicked " + position);
             }
         });
     }
@@ -87,21 +76,22 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
             ItemTouchHelperViewHolder {
 
         public final TextView textView;
+        public final View wrapView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-//            textView = (TextView) itemView;
+            wrapView = itemView;
             textView = (TextView) itemView.findViewById(R.id.category_item_view);
         }
 
         @Override
         public void onItemSelected() {
-            textView.setBackgroundColor(Color.LTGRAY);
+            /*wrapView.setBackgroundColor(Color.LTGRAY);*/
         }
 
         @Override
         public void onItemClear() {
-            textView.setBackgroundColor(0);
+            /*wrapView.setBackgroundColor(0)*/;
         }
     }
 }
