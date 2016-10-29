@@ -35,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity  {
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
             }
         });
-        
+
         initToolbar();
         initTabs();
 
