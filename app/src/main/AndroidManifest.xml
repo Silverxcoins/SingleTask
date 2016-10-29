@@ -31,7 +31,10 @@
                 android:value=".settings.SettingsActivity"/>
         </activity>
 
-        <activity android:name=".settings.CategoryActivity" />
+        <activity android:name=".settings.CategoryActivity" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".settings.SettingsActivity"/>
+        </activity>
     </application>
 
 </manifest>
