@@ -39,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
+                Intent intent = new Intent(getBaseContext(), TaskActivity.class);
+                startActivity(intent);
             }
         });
 
