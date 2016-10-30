@@ -2,6 +2,7 @@ package com.example.sasha.singletask.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -93,6 +94,12 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                         public void onClick(View view) {
                             view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
                             Log.d(TAG, mItems.get(position).get("taskId").toString() + " clicked");
+
+                            // TODO: handle exceptions
+                            Long taskId = Long.parseLong(mItems.get(position).get("taskId").toString());
+                            Intent intent = new Intent(context, TaskActivity.class);
+                            intent.putExtra("task", taskId);
+                            context.startActivity(intent);
                         }
                     });
                 } catch (NullPointerException e2) {
