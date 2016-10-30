@@ -24,10 +24,10 @@ import java.util.Map;
 public class SettingsActivity extends AppCompatActivity implements DB.Callback {
 
     private static final String TAG = "SettingsActivity";
-    // показ и прокрутка страниц (swipe)
     private ViewPager pager;
-    // вкладки
     private TabLayout tabs;
+    public ArrayList<Map> categoryItems = new ArrayList<Map>();
+    public ArrayList<Map> taskItems = new ArrayList<Map>();
 
     private ArrayList<Map> catItems = new ArrayList<Map>();
     private ArrayList<Map> tasksItems = new ArrayList<Map>();
@@ -42,41 +42,40 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
+                Intent intent = new Intent(getBaseContext(), TaskActivity.class);
+                startActivity(intent);
             }
         });
 
-        DB.getInstance(this).open();
-        DB.getInstance(this).setCallback(this);
-        DB.getInstance(this).getCategories();
-        DB.getInstance(this).getTasks();
-
         initToolbar();
         initTabs();
+
+        DB.getInstance(this).open();
+        DB.getInstance(this).setCallback(this);
+        DB.getInstance(this).getTasks();
+        DB.getInstance(this).getCategories();
 
 //        Intent intent = new Intent(this, TaskActivity.class);
 //        startActivity(intent);
     }
 
     private void initToolbar() {
-        // полоса меню в верхней части
         Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         toolbar.setTitle(R.string.settings_tag);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
-            // ASK: что они делают? у нас по-моему они не работают
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
     }
+
+    private TabsPagerFragmentAdapter mAdapter;
 
     private void initTabs() {
         pager = (ViewPager) findViewById(R.id.pager);
-        Log.d(TAG, "CALLCALLCALLCALLCALLCALLCALL");
-        Log.d(TAG, catItems.toString() + "*****************");
-        Log.d(TAG, tasksItems.toString() + "*****************");
-        pager.setAdapter(new TabsPagerFragmentAdapter(getSupportFragmentManager(), catItems, tasksItems));
+        mAdapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(), taskItems, categoryItems);
+        pager.setAdapter(mAdapter);
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(pager);
     }
@@ -114,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         return super.onOptionsItemSelected(item);
     }
 
-    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
+    public void getAllCategories(DB.Operation operation, Cursor result, int position) {
         if (result.moveToFirst()) {
             do {
                 String categoryName = result.getString(result.getColumnIndex("name"));
@@ -122,40 +121,33 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
                 Map helper = new HashMap();
                 helper.put("categoryId", categoryId);
                 helper.put("categoryName", categoryName);
-                catItems.add(helper);
+                categoryItems.add(helper);
             } while (result.moveToNext());
         }
     }
 
-    private void getAllTasks(DB.Operation operation, Cursor result, int position) {
+    public void getAllTasks(DB.Operation operation, Cursor result, int position) {
         if (result.moveToFirst()) {
             do {
                 String taskName = result.getString(result.getColumnIndex("name"));
                 Long taskId = result.getLong(result.getColumnIndex("id"));
+                // TODO FIX: allocating too much memory! optimize this code!
                 Map helper = new HashMap();
                 helper.put("taskId", taskId);
                 helper.put("taskName", taskName);
-                tasksItems.add(helper);
+                taskItems.add(helper);
             } while (result.moveToNext());
         }
     }
 
     @Override
     public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+        Log.d(TAG, "onOperationFinished()");
         if (operation == DB.Operation.GET_CATEGORIES) {
             getAllCategories(operation, result, position);
         } else if (operation == DB.Operation.GET_TASKS) {
             getAllTasks(operation, result, position);
         }
-        Log.d(TAG, "+++++++++++++++++++++++++++++categories");
-
-//        getAllTasks(operation, result, position);
-        Log.d(TAG, tasksItems.toString() + "///////////////////");
-        Log.d(TAG, catItems.toString() + "///////////////////");
-//        mAdapter.updateItems(items);
-
-//        initTabs();
-//        initToolbar();
-        pager.getAdapter().notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 }

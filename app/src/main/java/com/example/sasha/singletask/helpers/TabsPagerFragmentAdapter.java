@@ -4,6 +4,7 @@ import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,18 +15,20 @@ import java.util.Set;
 import com.example.sasha.singletask.settings.CategoriesFragment;
 import com.example.sasha.singletask.settings.TasksFragment;
 
-public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
+import java.util.ArrayList;
+import java.util.Map;
+
+public class TabsPagerFragmentAdapter extends FragmentStatePagerAdapter {
 
     private final String[] tabs;
+    private ArrayList<Map> categoryItems = new ArrayList<>();
+    private ArrayList<Map> taskItems = new ArrayList<>();
 
-    private ArrayList<Map> catItems = new ArrayList<Map>();
-    private ArrayList<Map> taskItems = new ArrayList<Map>();
-
-    public TabsPagerFragmentAdapter(FragmentManager fm, ArrayList<Map> mCatItems, ArrayList<Map> mTaskItems) {
+    public TabsPagerFragmentAdapter(FragmentManager fm, ArrayList<Map> categories, ArrayList<Map> tasks) {
         super(fm);
         tabs = new String[] {"Задания", "Категории"};
-        catItems = mCatItems;
-        taskItems = mTaskItems;
+        taskItems = tasks;
+        categoryItems = categories;
     }
 
     @Override
@@ -35,19 +38,22 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        System.out.println("JJJJJJJJJJJJ" + catItems.toString());
-        System.out.println("JJJJJJJJJJJJ" + taskItems.toString());
-        if (position == 1) {
-            return TasksFragment.getInstance(taskItems);
-//            return CategoriesFragment.getInstance();
+        // TODO FIX: swap positions (Tasks must be first)
+        // tabs = new String[] {"Задания", "Категории"};
+        if (position == 0) {
+            return CategoriesFragment.getInstance(categoryItems);
         } else {
-            return CategoriesFragment.getInstance(catItems);
+            return TasksFragment.getInstance(taskItems);
         }
-//        return CategoriesFragment.getInstance();
     }
 
     @Override
     public int getCount() {
         return tabs.length;
+    }
+
+    @Override
+    public int getItemPosition(Object item) {
+        return POSITION_NONE;
     }
 }

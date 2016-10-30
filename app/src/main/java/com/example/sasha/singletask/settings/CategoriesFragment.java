@@ -31,32 +31,30 @@ public class CategoriesFragment extends Fragment {
     private static final String TAG = "CategoriesFragment";
 
     private View rootView;
-    private static ArrayList<Map> items = new ArrayList<Map>();
-    private RecyclerListAdapter mAdapter;
+    public static ArrayList<Map> items = new ArrayList<Map>();
+    public static RecyclerListAdapter mAdapter;
     public static final String tabName = "categories_tab";
 
-    public static CategoriesFragment getInstance(ArrayList<Map> mItems) {
-        items = mItems;
-        Log.d(TAG, "getInstance() =======" + items.toString());
-        Bundle bundle = new Bundle();
-        CategoriesFragment categoriesFragment = new CategoriesFragment();
-        categoriesFragment.setArguments(bundle);
+    private static CategoriesFragment categoriesFragment;
 
+    public static CategoriesFragment getInstance(ArrayList<Map> mItems) {
+        Bundle bundle = new Bundle();
+
+        if (categoriesFragment == null) {
+            categoriesFragment = new CategoriesFragment();
+            categoriesFragment.setArguments(bundle);
+        } else {
+            items.clear();
+            items.addAll(mItems);
+//            mAdapter.notifyDataSetChanged();
+        }
         return categoriesFragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        initData();
     }
-
-//    private void initData() {
-//        Log.d(TAG, "initData()-----------");
-//        DB.getInstance(getActivity()).open();
-//        DB.getInstance(getActivity()).setCallback(this);
-//        DB.getInstance(getActivity()).getCategories();
-//    }
 
     @Nullable
     @Override
@@ -66,23 +64,12 @@ public class CategoriesFragment extends Fragment {
         return rootView;
     }
 
-//    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
-//        if (result.moveToFirst()) {
-//            do {
-//                String categoryName = result.getString(result.getColumnIndex("name"));
-//                Long categoryId = result.getLong(result.getColumnIndex("id"));
-//                Map helper = new HashMap();
-//                helper.put("categoryId", categoryId);
-//                helper.put("categoryName", categoryName);
-//                items.add(helper);
-//            } while (result.moveToNext());
-//        }
-//    }
+    // TODO FIX: this method calls multiple times and creates a lot of the same objects
 
     private void configureView() {
         int scrollPosition = 0;
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager    mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
         mRecyclerView.setHasFixedSize(true);
@@ -90,20 +77,8 @@ public class CategoriesFragment extends Fragment {
         mAdapter = new RecyclerListAdapter(tabName, items);
         mRecyclerView.setAdapter(mAdapter);
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper.Callback    callback = new SimpleItemTouchHelperCallback(mAdapter);
         ItemTouchHelper  mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
-
-//    @Override
-//    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
-//        Log.d(TAG, "+++++++++++++++++++++++++++++categories");
-//        getAllCategories(operation, result, position);
-//        Log.d(TAG, items.toString());
-//        mAdapter.updateItems(items);
-////        DB.getInstance(getActivity()).close();
-////        configureView();
-////        mAdapter.notifyDataSetChanged();
-////        DB.getInstance(getActivity()).close();
-//    }
 }
