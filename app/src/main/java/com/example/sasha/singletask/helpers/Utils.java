@@ -31,37 +31,26 @@ public class Utils {
     public static void setListViewHeightBasedOnItems(ListView listView) {
 
         ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
 
-            int numberOfItems = listAdapter.getCount();
+        int numberOfItems = listAdapter.getCount();
 
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            int measureHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                measureHeight = item.getMeasuredHeight();
-                totalItemsHeight += measureHeight;
-            }
+        int totalItemsHeight = 0;
+        int measureHeight = 0;
+        for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+            View item = listAdapter.getView(itemPos, null, listView);
+            item.measure(0, 0);
+            measureHeight = item.getMeasuredHeight();
             totalItemsHeight += measureHeight;
-
-            // Get total height of all item dividers.
-            int totalDividersHeight = listView.getDividerHeight() *
-                    (numberOfItems - 1);
-
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalItemsHeight + totalDividersHeight;
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-
-            return;
-
-        } else {
-            return;
         }
+        totalItemsHeight += measureHeight;
 
+        int totalDividersHeight = listView.getDividerHeight() *
+                (numberOfItems - 1);
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalItemsHeight + totalDividersHeight;
+        listView.setLayoutParams(params);
+        listView.requestLayout();
     }
     
     public static String getTimeAsString(int minutes) {
@@ -114,14 +103,10 @@ public class Utils {
 
     public static boolean isDateEarlierThanNow(int year, int month, int day) {
         Calendar c = Calendar.getInstance();
-        if (year < c.get(Calendar.YEAR)
+        return year < c.get(Calendar.YEAR)
                 || (year == c.get(Calendar.YEAR) && month < c.get(Calendar.MONTH) + 1)
                 || (year == c.get(Calendar.YEAR) && month == c.get(Calendar.MONTH) + 1
-                && day < c.get(Calendar.DAY_OF_MONTH))) {
-            return true;
-        } else {
-            return false;
-        }
+                && day < c.get(Calendar.DAY_OF_MONTH));
     }
 
     public static String getCurrentTimeAsString() {

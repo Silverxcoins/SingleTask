@@ -74,6 +74,18 @@ public class SyncManager {
         });
     }
 
+    public void getDataFromServer(Context ctx) {
+        this.db = DB.getInstance(ctx);
+        db.open();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean wasSuccessful = getDataFromServerInternal();
+                notifySyncFinished(wasSuccessful);
+            }
+        });
+    }
+
     private void notifySyncFinished(final boolean wasSuccessfull) {
         Log.d(TAG, "notifySignUpFinished(), success: " + wasSuccessfull);
         Ui.run(new Runnable() {
@@ -84,6 +96,28 @@ public class SyncManager {
                 }
             }
         });
+    }
+
+    private boolean getDataFromServerInternal() {
+        Log.d(TAG, "getDataFromServerInternal()");
+
+        String response = Http.sendGetRequest(LIST_TASKS_URL);
+        if (!isServerOperationSuccessful(response)) return false;
+        db.insertTasksFromJson(response);
+
+        response = Http.sendGetRequest(LIST_CATEGORIES_URL);
+        if (!isServerOperationSuccessful(response)) return false;
+        db.insertCategoriesFromJson(response);
+
+        response = Http.sendGetRequest(LIST_VARIANTS_URL);
+        if (!isServerOperationSuccessful(response)) return false;
+        db.insertVariantsFromJson(response);
+
+        response = Http.sendGetRequest(LIST_TASKS_VARIANTS_URL);
+        if (!isServerOperationSuccessful(response)) return false;
+        db.insertTasksVariantsFromJson(response);
+
+        return true;
     }
 
     private boolean syncInternal() {
@@ -121,7 +155,6 @@ public class SyncManager {
     }
 
     private boolean isServerOperationSuccessful(String response) {
-        System.out.println("ответ от сервера: " + response);
         try {
             if (response != null) {
                 JsonNode node = mapper.readValue(response, JsonNode.class);

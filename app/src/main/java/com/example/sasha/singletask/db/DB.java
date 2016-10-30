@@ -33,7 +33,10 @@ public class DB {
         GET_VARIANTS_BY_CATEGORY,
         GET_TASK_BY_ID,
         INSERT_NEW_TASK,
-        UPDATE_TASK
+        UPDATE_TASK,
+        GET_CATEGORY_BY_ID,
+        INSERT_NEW_CATEGORY,
+        UPDATE_CATEGORY
     }
 
     private DbHelper dbHelper;
@@ -159,10 +162,6 @@ public class DB {
 
     public void close() {
         if (dbHelper!=null) dbHelper.close();
-    }
-
-    private long insert(String tableName, ContentValues cv) {
-        return db.insert(tableName, null, cv);
     }
 
     private Cursor selectByServerId(String tableName, int serverId) {
@@ -305,7 +304,7 @@ public class DB {
             cv.put("isUpdated", 0);
             cv.put("isDeleted", 0);
 
-            insert(ctx.getString(R.string.table_task_name), cv);
+            db.insert(ctx.getString(R.string.table_task_name), null, cv);
         }
         return tasks;
     }
@@ -361,7 +360,7 @@ public class DB {
         cv.put("isUpdated", 0);
         cv.put("isDeleted", 0);
 
-        long id = insert(ctx.getString(R.string.table_category_name), cv);
+        long id = db.insert(ctx.getString(R.string.table_category_name), null, cv);
         category.setId((int)id);
         return id;
     }
@@ -400,7 +399,7 @@ public class DB {
             cv.put("isDeleted", 0);
 
 
-            insert(ctx.getString(R.string.table_variant_name), cv);
+            db.insert(ctx.getString(R.string.table_variant_name), null, cv);
         }
 
         return variants;
@@ -439,7 +438,7 @@ public class DB {
             cv.put("variant", tv.getVariant());
             cv.put("isDeleted", 0);
 
-            insert(ctx.getString(R.string.table_task_variant_name), cv);
+            db.insert(ctx.getString(R.string.table_task_variant_name), null, cv);
         }
     }
 
@@ -466,15 +465,18 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor variants = getVariantsByCategoryFromDb(category);
+                Cursor variants = getVariantsByCategoryFromDb(category, false);
                 notifyOperationFinished(Operation.GET_VARIANTS_BY_CATEGORY, variants, position);
             }
         });
     }
 
-    private Cursor getVariantsByCategoryFromDb(Long category) {
+    private Cursor getVariantsByCategoryFromDb(Long category, boolean withDeleted) {
         Log.d(TAG,"getVariantsByCategoryFromDB");
-        String selection = "category=? AND (isDeleted IS NULL OR isDeleted=0)";
+        String selection = "category=?";
+        if (!withDeleted) {
+            selection += " AND (isDeleted IS NULL OR isDeleted=0)";
+        }
         String[] selectionArgs = { String.valueOf(category) };
         return db.query(ctx.getString(R.string.table_variant_name), null, selection, selectionArgs,
                 null, null, null);
@@ -539,6 +541,7 @@ public class DB {
         cv.put("date", !date.isEmpty() ? date : null);
         cv.put("comment", !comment.isEmpty() ? comment : null);
         cv.put("isUpdated", 1);
+        cv.put("isDeleted", 0);
         cv.put("lastUpdate", Utils.getCurrentTimeAsString());
         long taskId = db.insert(ctx.getString(R.string.table_task_name), null, cv);
 
@@ -624,5 +627,140 @@ public class DB {
         String selection = "task=? AND variant=?";
         String[] selectionArgs = { String.valueOf(task), String.valueOf(variant) };
         db.update(ctx.getString(R.string.table_task_variant_name), cv, selection, selectionArgs);
+    }
+
+    public void insertNewCategory(final String categoryName, final List<String> variantsNames) {
+        Log.d(TAG,"updateCategory");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                insertNewCategoryInDb(categoryName, variantsNames);
+                notifyOperationFinished(Operation.INSERT_NEW_CATEGORY, null, 0);
+            }
+        });
+    }
+
+    private void insertNewCategoryInDb(String categoryName, List<String> variantsNames) {
+        Log.d(TAG,"insertCategoryInDb");
+        ContentValues cv = new ContentValues();
+        cv.put("name", categoryName);
+        cv.put("isUpdated", 1);
+        cv.put("isDeleted", 0);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
+        long categoryId = db.insert(ctx.getString(R.string.table_category_name), null, cv);
+
+        for (String variantName : variantsNames) {
+            cv = new ContentValues();
+            cv.put("name", variantName);
+            cv.put("category", categoryId);
+            cv.put("isDeleted", 0);
+            db.insert(ctx.getString(R.string.table_variant_name), null, cv);
+        }
+    }
+
+    public void updateCategory(final long categoryId, final String categoryName,
+                               final List<String> variantsNames) {
+        Log.d(TAG,"updateCategory");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                updateCategoryInDb(categoryId, categoryName, variantsNames);
+                notifyOperationFinished(Operation.UPDATE_CATEGORY, null, 0);
+            }
+        });
+    }
+
+    private void updateCategoryInDb(long categoryId, String categoryName,
+                                    List<String> variantsNames) {
+        Log.d(TAG,"updateCategoryInDb");
+        ContentValues cv = new ContentValues();
+        cv.put("name", categoryName);
+        cv.put("isUpdated", 1);
+        cv.put("isDeleted", 0);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
+
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(categoryId) };
+        db.update(ctx.getString(R.string.table_category_name), cv, selection, selectionArgs);
+
+        Cursor cursor = getVariantsByCategoryFromDb(categoryId, true);
+        for (String variantName : variantsNames) {
+            boolean isInDb = false;
+            if (cursor.moveToFirst()) {
+                do {
+                    long variantFromDbId = cursor.getLong(cursor.getColumnIndex("id"));
+                    String variantFromDbName = cursor.getString(cursor.getColumnIndex("name"));
+                    boolean isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
+                    if (variantName != null && variantFromDbName != null
+                            && variantFromDbName.equals(variantName)) {
+                        isInDb = true;
+                        if (isDeleted) {
+                            updateVariantInDb(variantFromDbId, false);
+                        }
+                    }
+                } while (cursor.moveToNext());
+            }
+            if (!isInDb) {
+                cv = new ContentValues();
+                cv.put("name", variantName);
+                cv.put("category", categoryId);
+                cv.put("isDeleted", 0);
+                db.insert(ctx.getString(R.string.table_variant_name), null, cv);
+            }
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                String variantFromDbName = cursor.getString(cursor.getColumnIndex("name"));
+                long variantFromDbId = cursor.getLong(cursor.getColumnIndex("id"));
+                boolean isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
+
+                boolean isInNewVariants = false;
+                for (String variantName : variantsNames) {
+                    if (variantName.equals(variantFromDbName)) {
+                        isInNewVariants = true;
+                        break;
+                    }
+                }
+                if (!isInNewVariants && !isDeleted) {
+                    updateVariantInDb(variantFromDbId, true);
+
+                    cv = new ContentValues();
+                    cv.put("isDeleted", 1);
+                    String tvSelection = "variant=?";
+                    String[] tvSelectionArgs = { String.valueOf(variantFromDbId) };
+                    db.update(ctx.getString(R.string.table_task_variant_name), cv, tvSelection,
+                            tvSelectionArgs);
+                }
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private void updateVariantInDb(long id, boolean isDeleted) {
+        ContentValues cv = new ContentValues();
+        cv.put("isDeleted", isDeleted ? 1 : 0);
+
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(id) };
+        db.update(ctx.getString(R.string.table_variant_name), cv, selection, selectionArgs);
+    }
+
+    public void getCategoryById(final long id) {
+        Log.d(TAG,"getCategoryById");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor result = getCategoryByIdFromDb(id);
+                notifyOperationFinished(Operation.GET_CATEGORY_BY_ID, result, 0);
+            }
+        });
+    }
+
+    private Cursor getCategoryByIdFromDb(long id) {
+        Log.d(TAG, "getCateforyByIdFromDb");
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(id) };
+        return db.query(ctx.getString(R.string.table_category_name), null, selection, selectionArgs,
+                null, null, null);
     }
 }

@@ -23,7 +23,8 @@ public class SettingsActivity extends AppCompatActivity {
         initToolbar();
         initTabs();
 
-        Intent intent = new Intent(this, TaskActivity.class);
+        Intent intent = new Intent(this, CategoryActivity.class);
+        intent.putExtra("category", new Long(1022));
         startActivity(intent);
     }
 
