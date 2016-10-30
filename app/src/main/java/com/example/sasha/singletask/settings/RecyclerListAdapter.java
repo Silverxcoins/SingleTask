@@ -49,6 +49,7 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                 "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
         };
         mTabName = tabName;
+        mItems = list;
 //        if (tabName == CategoriesFragment.tabName) {
 //            mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
 //        } else if (tabName == TasksFragment.tabName) {

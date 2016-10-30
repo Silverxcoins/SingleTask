@@ -26,17 +26,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class CategoriesFragment extends Fragment implements DB.Callback {
+public class CategoriesFragment extends Fragment {
 
     private static final String TAG = "CategoriesFragment";
 
     private View rootView;
-    private ArrayList<Map> items = new ArrayList<Map>();
+    private static ArrayList<Map> items = new ArrayList<Map>();
     private RecyclerListAdapter mAdapter;
     public static final String tabName = "categories_tab";
 
-    public static CategoriesFragment getInstance() {
-        Log.d(TAG, "getInstance() =======");
+    public static CategoriesFragment getInstance(ArrayList<Map> mItems) {
+        items = mItems;
+        Log.d(TAG, "getInstance() =======" + items.toString());
         Bundle bundle = new Bundle();
         CategoriesFragment categoriesFragment = new CategoriesFragment();
         categoriesFragment.setArguments(bundle);
@@ -47,15 +48,15 @@ public class CategoriesFragment extends Fragment implements DB.Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
+//        initData();
     }
 
-    private void initData() {
-        Log.d(TAG, "initData()-----------");
-        DB.getInstance(getActivity()).open();
-        DB.getInstance(getActivity()).setCallback(this);
-        DB.getInstance(getActivity()).getCategories();
-    }
+//    private void initData() {
+//        Log.d(TAG, "initData()-----------");
+//        DB.getInstance(getActivity()).open();
+//        DB.getInstance(getActivity()).setCallback(this);
+//        DB.getInstance(getActivity()).getCategories();
+//    }
 
     @Nullable
     @Override
@@ -65,18 +66,18 @@ public class CategoriesFragment extends Fragment implements DB.Callback {
         return rootView;
     }
 
-    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
-        if (result.moveToFirst()) {
-            do {
-                String categoryName = result.getString(result.getColumnIndex("name"));
-                Long categoryId = result.getLong(result.getColumnIndex("id"));
-                Map helper = new HashMap();
-                helper.put("categoryId", categoryId);
-                helper.put("categoryName", categoryName);
-                items.add(helper);
-            } while (result.moveToNext());
-        }
-    }
+//    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
+//        if (result.moveToFirst()) {
+//            do {
+//                String categoryName = result.getString(result.getColumnIndex("name"));
+//                Long categoryId = result.getLong(result.getColumnIndex("id"));
+//                Map helper = new HashMap();
+//                helper.put("categoryId", categoryId);
+//                helper.put("categoryName", categoryName);
+//                items.add(helper);
+//            } while (result.moveToNext());
+//        }
+//    }
 
     private void configureView() {
         int scrollPosition = 0;
@@ -94,15 +95,15 @@ public class CategoriesFragment extends Fragment implements DB.Callback {
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
-    @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
-        Log.d(TAG, "+++++++++++++++++++++++++++++categories");
-        getAllCategories(operation, result, position);
-        Log.d(TAG, items.toString());
-        mAdapter.updateItems(items);
-//        DB.getInstance(getActivity()).close();
-//        configureView();
-//        mAdapter.notifyDataSetChanged();
-//        DB.getInstance(getActivity()).close();
-    }
+//    @Override
+//    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+//        Log.d(TAG, "+++++++++++++++++++++++++++++categories");
+//        getAllCategories(operation, result, position);
+//        Log.d(TAG, items.toString());
+//        mAdapter.updateItems(items);
+////        DB.getInstance(getActivity()).close();
+////        configureView();
+////        mAdapter.notifyDataSetChanged();
+////        DB.getInstance(getActivity()).close();
+//    }
 }

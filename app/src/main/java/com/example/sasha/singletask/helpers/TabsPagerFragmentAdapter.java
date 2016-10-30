@@ -5,6 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.example.sasha.singletask.settings.CategoriesFragment;
 import com.example.sasha.singletask.settings.TasksFragment;
 
@@ -12,9 +18,14 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     private final String[] tabs;
 
-    public TabsPagerFragmentAdapter(FragmentManager fm) {
+    private ArrayList<Map> catItems = new ArrayList<Map>();
+    private ArrayList<Map> taskItems = new ArrayList<Map>();
+
+    public TabsPagerFragmentAdapter(FragmentManager fm, ArrayList<Map> mCatItems, ArrayList<Map> mTaskItems) {
         super(fm);
         tabs = new String[] {"Задания", "Категории"};
+        catItems = mCatItems;
+        taskItems = mTaskItems;
     }
 
     @Override
@@ -24,12 +35,13 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        System.out.println("JJJJJJJJJJJJJJJJJJJJJJJJJJJ");
+        System.out.println("JJJJJJJJJJJJ" + catItems.toString());
+        System.out.println("JJJJJJJJJJJJ" + taskItems.toString());
         if (position == 1) {
-            return TasksFragment.getInstance();
+            return TasksFragment.getInstance(taskItems);
 //            return CategoriesFragment.getInstance();
         } else {
-            return CategoriesFragment.getInstance();
+            return CategoriesFragment.getInstance(catItems);
         }
 //        return CategoriesFragment.getInstance();
     }
