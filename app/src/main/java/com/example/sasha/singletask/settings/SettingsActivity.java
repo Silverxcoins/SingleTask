@@ -39,8 +39,8 @@ public class SettingsActivity extends AppCompatActivity  {
         initToolbar();
         initTabs();
 
-        Intent intent = new Intent(this, TaskActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, TaskActivity.class);
+//        startActivity(intent);
     }
 
     private void initToolbar() {
@@ -59,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity  {
 
     private void initTabs() {
         pager = (ViewPager) findViewById(R.id.pager);
+        Log.d(TAG, "CALLCALLCALLCALLCALLCALLCALL");
         pager.setAdapter(new TabsPagerFragmentAdapter(getSupportFragmentManager()));
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.setupWithViewPager(pager);
@@ -72,6 +73,7 @@ public class SettingsActivity extends AppCompatActivity  {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, "restore");
         if (savedInstanceState != null
                 && savedInstanceState.containsKey("tab")
                 && savedInstanceState.getInt("tab") == 2) {

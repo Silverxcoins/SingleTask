@@ -1,8 +1,9 @@
 package com.example.sasha.singletask.settings;
 
-// arrange imports
+// TODO: arrange imports and remove not used modules
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,27 +16,27 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.choice.SyncManager;
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class CategoriesFragment extends Fragment implements DB.Callback {
 
     private static final String TAG = "CategoriesFragment";
 
     private View rootView;
-    private RecyclerView mRecyclerView;
+    private ArrayList<Map> items = new ArrayList<Map>();
     private RecyclerListAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private ItemTouchHelper mItemTouchHelper;
-
-    private ArrayList<Long> categoriesId = new ArrayList<>();
-    private ArrayList<String> categoriesNames = new ArrayList<>();
-
     public static final String tabName = "categories_tab";
 
     public static CategoriesFragment getInstance() {
+        Log.d(TAG, "getInstance() =======");
         Bundle bundle = new Bundle();
         CategoriesFragment categoriesFragment = new CategoriesFragment();
         categoriesFragment.setArguments(bundle);
@@ -43,61 +44,65 @@ public class CategoriesFragment extends Fragment implements DB.Callback {
         return categoriesFragment;
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        initDataset();
-//    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initData();
+    }
+
+    private void initData() {
+        Log.d(TAG, "initData()-----------");
+        DB.getInstance(getActivity()).open();
+        DB.getInstance(getActivity()).setCallback(this);
+        DB.getInstance(getActivity()).getCategories();
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        int scrollPosition = 0;
         rootView = inflater.inflate(R.layout.fragment_categories, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.scrollToPosition(scrollPosition);
-        mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerListAdapter(tabName);
-        mRecyclerView.setAdapter(mAdapter);
-
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-        Log.d(TAG, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
-//        onOperationFinished(DB.Operation.GET_CATEGORIES, );
-//        DB.getInstance(getActivity()).open();
-//        DB.getInstance(getActivity()).setCallback(this);
-//        DB.getInstance(getActivity()).getCategories();
-
+        configureView();
         return rootView;
     }
 
-    @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
-        Log.d(TAG,"onOperationFinished----------");
+    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
         if (result.moveToFirst()) {
             do {
                 String categoryName = result.getString(result.getColumnIndex("name"));
                 Long categoryId = result.getLong(result.getColumnIndex("id"));
-                categoriesNames.add(categoryName);
-                categoriesId.add(categoryId);
-//                String itemString = categoryName + ": ";
-//                if (getIntent().hasExtra("task")) {
-//                    long taskId = getIntent().getLongExtra("task", 0);
-//                    DB.getInstance(this).getVariantByTaskAndCategory(taskId, categoryId,
-//                            categoriesId.size() - 1);
-//                } else {
-//                    String variantName = getString(R.string.empty_variant_string);
-//                    itemString += variantName;
-//                    variantsNames.add(variantName);
-//                    variantsId.add(0L);
-//                }
-//                itemsStrings.add(itemString);
+                Map helper = new HashMap();
+                helper.put("categoryId", categoryId);
+                helper.put("categoryName", categoryName);
+                items.add(helper);
             } while (result.moveToNext());
         }
-        Log.d(TAG, categoriesNames.toString());
-        Log.d(TAG, categoriesId.toString());
+    }
+
+    private void configureView() {
+        int scrollPosition = 0;
+        RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.scrollToPosition(scrollPosition);
+        mRecyclerView.setHasFixedSize(true);
+
+        mAdapter = new RecyclerListAdapter(tabName, items);
+        mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper  mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+    }
+
+    @Override
+    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+        Log.d(TAG, "+++++++++++++++++++++++++++++categories");
+        getAllCategories(operation, result, position);
+        Log.d(TAG, items.toString());
+        mAdapter.updateItems(items);
+//        DB.getInstance(getActivity()).close();
+//        configureView();
+//        mAdapter.notifyDataSetChanged();
+//        DB.getInstance(getActivity()).close();
     }
 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import android.util.Log;
 
@@ -24,13 +25,14 @@ import com.example.sasha.singletask.R;
 public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
-    private final List<String> mItems = new ArrayList<>();
+//    private final List<String> mItems = new ArrayList<>();
     private static final String TAG = "RecyclerListAdapter";
     private Context context;
-
+    private ArrayList<Map> mItems = new ArrayList<Map>();
     public static String mTabName;
 
-    public RecyclerListAdapter(String tabName) {
+    // TODO: rename list
+    public RecyclerListAdapter(String tabName, ArrayList<Map> list) {
         String[] CATEGORIES_STRINGS = new String[]{
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
                 "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
@@ -47,11 +49,21 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                 "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
         };
         mTabName = tabName;
-        if (tabName == CategoriesFragment.tabName) {
-            mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
-        } else if (tabName == TasksFragment.tabName) {
-            mItems.addAll(Arrays.asList(TASKS_STRINGS));
-        }
+//        if (tabName == CategoriesFragment.tabName) {
+//            mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
+//        } else if (tabName == TasksFragment.tabName) {
+//            mItems.addAll(Arrays.asList(TASKS_STRINGS));
+//        }
+//        for (Map item : list) {
+//            mItems.add(item.get("categoryName").toString());
+//        }
+        Log.d(TAG, "LIST_ADAPTER_____________" + tabName);
+    }
+
+    public void updateItems(ArrayList<Map> list) {
+        mItems.clear();
+        mItems.addAll(list);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -66,23 +78,27 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         context = parent.getContext();
 
-        DB.getInstance(context).open();
-        DB.getInstance(context).getCategories();
-
-
         return itemViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-        holder.textView.setText(mItems.get(position));
-        holder.wrapView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
-                Log.d(TAG, "------ clicked " + position);
+        System.out.println(mItems);
+        if (mItems.size() != 0) {
+            if (mTabName == CategoriesFragment.tabName) {
+                holder.textView.setText(mItems.get(position).get("categoryName").toString());
+            } else if (mTabName == TasksFragment.tabName) {
+                holder.textView.setText(mItems.get(position).get("taskName").toString());
             }
-        });
+
+            holder.wrapView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
+                    Log.d(TAG, "------ clicked " + position + mItems.get(position).get("categoryId"));
+                }
+            });
+        }
     }
 
     @Override
@@ -107,7 +123,7 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        String prev = mItems.remove(fromPosition);
+        Map prev = mItems.remove(fromPosition);
         mItems.add(toPosition > fromPosition ? toPosition - 1 : toPosition, prev);
         notifyItemMoved(fromPosition, toPosition);
     }

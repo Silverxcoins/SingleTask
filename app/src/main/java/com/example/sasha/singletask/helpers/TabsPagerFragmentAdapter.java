@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.helpers;
 
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -23,11 +24,14 @@ public class TabsPagerFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        System.out.println("JJJJJJJJJJJJJJJJJJJJJJJJJJJ");
         if (position == 1) {
             return TasksFragment.getInstance();
+//            return CategoriesFragment.getInstance();
         } else {
             return CategoriesFragment.getInstance();
         }
+//        return CategoriesFragment.getInstance();
     }
 
     @Override

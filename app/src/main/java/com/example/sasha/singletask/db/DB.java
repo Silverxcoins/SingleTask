@@ -33,7 +33,8 @@ public class DB {
         GET_VARIANTS_BY_CATEGORY,
         GET_TASK_BY_ID,
         INSERT_NEW_TASK,
-        UPDATE_TASK
+        UPDATE_TASK,
+        GET_TASKS
     }
 
     private DbHelper dbHelper;
@@ -441,6 +442,24 @@ public class DB {
 
             insert(ctx.getString(R.string.table_task_variant_name), cv);
         }
+    }
+
+    public void getTasks() {
+        Log.d(TAG,"getTasks()");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor tasks = getTasksFromDb();
+                notifyOperationFinished(Operation.GET_TASKS, tasks, 0);
+            }
+        });
+    }
+
+    private Cursor getTasksFromDb() {
+        Log.d(TAG,"getTasksFromDB");
+        String selection = "isDeleted IS NULL OR isDeleted=0";
+        return db.query(ctx.getString(R.string.table_task_name), null, selection,
+                null, null, null, null);
     }
 
     public void getCategories() {
