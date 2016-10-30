@@ -26,22 +26,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class TasksFragment extends Fragment implements DB.Callback {
+// TODO: implement onSavedInstance (onRestore)
+public class TasksFragment extends Fragment {
 
+    // TODO: arrange these fields in right order
     private static final String TAG = "TasksFragment";
 
     private View rootView;
-    private ArrayList<Map> items = new ArrayList<Map>();
-    private RecyclerListAdapter mAdapter;
+    public static ArrayList<Map> items = new ArrayList<Map>();
+    public static RecyclerListAdapter mAdapter;
     public static final String tabName = "tasks_tab";
 
-//    private CategoriesFragment categoriesFragment;
+    private static TasksFragment tasksFragment;
 
-    public static TasksFragment getInstance() {
-        Log.d(TAG, "getInstance() =======");
+    public static TasksFragment getInstance(ArrayList<Map> mItems) {
         Bundle bundle = new Bundle();
-        TasksFragment tasksFragment = new TasksFragment();
-        tasksFragment.setArguments(bundle);
+
+        if (tasksFragment == null) {
+            tasksFragment = new TasksFragment();
+            tasksFragment.setArguments(bundle);
+        } else {
+            items.clear();
+            items.addAll(mItems);
+            mAdapter.notifyDataSetChanged();
+        }
 
         return tasksFragment;
     }
@@ -49,14 +57,6 @@ public class TasksFragment extends Fragment implements DB.Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
-    }
-
-    private void initData() {
-        Log.d(TAG, "initData()-----------");
-        DB.getInstance(getActivity()).open();
-        DB.getInstance(getActivity()).setCallback(this);
-        DB.getInstance(getActivity()).getTasks();
     }
 
     @Nullable
@@ -65,19 +65,6 @@ public class TasksFragment extends Fragment implements DB.Callback {
         rootView = inflater.inflate(R.layout.fragment_tasks, container, false);
         configureView();
         return rootView;
-    }
-
-    private void getAllTasks(DB.Operation operation, Cursor result, int position) {
-        if (result.moveToFirst()) {
-            do {
-                String taskName = result.getString(result.getColumnIndex("name"));
-                Long taskId = result.getLong(result.getColumnIndex("id"));
-                Map helper = new HashMap();
-                helper.put("taskId", taskId);
-                helper.put("taskName", taskName);
-                items.add(helper);
-            } while (result.moveToNext());
-        }
     }
 
     private void configureView() {
@@ -94,16 +81,5 @@ public class TasksFragment extends Fragment implements DB.Callback {
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         ItemTouchHelper  mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
-    }
-
-    @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
-        Log.d(TAG, "+++++++++++++++++++++++++++++tasks");
-        getAllTasks(operation, result, position);
-        Log.d(TAG, items.toString());
-        mAdapter.updateItems(items);
-//        DB.getInstance(getActivity()).close();
-//        configureView();
-//        mAdapter.notifyDataSetChanged();
     }
 }

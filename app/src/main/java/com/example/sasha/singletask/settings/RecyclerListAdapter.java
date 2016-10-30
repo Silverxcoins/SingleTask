@@ -2,6 +2,7 @@ package com.example.sasha.singletask.settings;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.ItemTouchHelperAdapter;
@@ -25,7 +27,7 @@ import com.example.sasha.singletask.R;
 public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
-//    private final List<String> mItems = new ArrayList<>();
+    // TODO: arrange fields
     private static final String TAG = "RecyclerListAdapter";
     private Context context;
     private ArrayList<Map> mItems = new ArrayList<Map>();
@@ -49,76 +51,77 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                 "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
         };
         mTabName = tabName;
-//        if (tabName == CategoriesFragment.tabName) {
-//            mItems.addAll(Arrays.asList(CATEGORIES_STRINGS));
-//        } else if (tabName == TasksFragment.tabName) {
-//            mItems.addAll(Arrays.asList(TASKS_STRINGS));
-//        }
-//        for (Map item : list) {
-//            mItems.add(item.get("categoryName").toString());
-//        }
-        Log.d(TAG, "LIST_ADAPTER_____________" + tabName);
-    }
-
-    public void updateItems(ArrayList<Map> list) {
+        // TODO ASK: remove it?
         mItems.clear();
         mItems.addAll(list);
-        this.notifyDataSetChanged();
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view;
         // TODO: refactor it without if
+        View view;
         if (mTabName == CategoriesFragment.tabName) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
-        } else {
+        } else  {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
         }
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         context = parent.getContext();
-
         return itemViewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
-        System.out.println(mItems);
         if (mItems.size() != 0) {
-            if (mTabName == CategoriesFragment.tabName) {
+            // TODO FIX: the realization via <if tabName == CategoriesFragment.tabName>
+            // doesn't work cause of not clear reason - tabNames for Category and Task fragments
+            // tabNames equal tasks!!
+            try {
                 holder.textView.setText(mItems.get(position).get("categoryName").toString());
-            } else if (mTabName == TasksFragment.tabName) {
-                holder.textView.setText(mItems.get(position).get("taskName").toString());
-            }
-
-            holder.wrapView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
-                    Log.d(TAG, "------ clicked " + position + mItems.get(position).get("categoryId"));
+                holder.wrapView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
+                        Log.d(TAG, mItems.get(position).get("categoryId").toString() + " clicked");
+                    }
+                });
+            } catch (NullPointerException e1) {
+                try {
+                    holder.textView.setText(mItems.get(position).get("taskName").toString());
+                    holder.wrapView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
+                            Log.d(TAG, mItems.get(position).get("taskId").toString() + " clicked");
+                        }
+                    });
+                } catch (NullPointerException e2) {
+                    Toast.makeText(context, R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT)
+                            .show();
                 }
-            });
+            }
         }
     }
 
     @Override
     public void onItemDismiss(final int position) {
 
+        // TODO: don't hardcode! remove it in resources
         new AlertDialog.Builder(context)
-        .setMessage("Вы действительно хотите удалить?")
-        .setCancelable(false)
-        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                mItems.remove(position);
-                notifyItemRemoved(position);
-            }
-        })
-        .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                notifyItemChanged(position);
-            }
-        })
-        .show();
+            .setMessage("Вы действительно хотите удалить?")
+            .setCancelable(false)
+            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    mItems.remove(position);
+                    notifyItemRemoved(position);
+                }
+            })
+            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    notifyItemChanged(position);
+                }
+            })
+            .show();
     }
 
     @Override
