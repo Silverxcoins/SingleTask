@@ -84,6 +84,12 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                     public void onClick(View view) {
                         view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
                         Log.d(TAG, mItems.get(position).get("categoryId").toString() + " clicked");
+
+                        // TODO: handle exceptions
+                        Long categoryId = Long.parseLong(mItems.get(position).get("categoryId").toString());
+                        Intent intent = new Intent(context, CategoryActivity.class);
+                        intent.putExtra("category", categoryId);
+                        context.startActivity(intent);
                     }
                 });
             } catch (NullPointerException e1) {
