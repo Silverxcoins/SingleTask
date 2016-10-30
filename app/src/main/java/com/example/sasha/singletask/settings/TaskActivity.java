@@ -115,7 +115,7 @@ public class TaskActivity extends AppCompatActivity implements
         }
     }
 
-    public void setDateAndTimeListeners() {
+    private void setDateAndTimeListeners() {
         timeEditText = (EditText) findViewById(R.id.timeEditText);
         timeEditText.setText("1 час");
         timeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

@@ -21,10 +21,14 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         setContentView(R.layout.activity_choice);
         initToolbar();
         setUserIdToUtils();
-//        SyncManager.getInstance().setCallback(this);
-//        if (savedInstanceState == null) {
-//            SyncManager.getInstance().sync(this);
-//        }
+        SyncManager.getInstance().setCallback(this);
+        if (savedInstanceState == null) {
+            if (getIntent().hasExtra("afterSignIn")) {
+                SyncManager.getInstance().getDataFromServer(this);
+            } else {
+                SyncManager.getInstance().sync(this);
+            }
+        }
     }
 
     private void initToolbar() {

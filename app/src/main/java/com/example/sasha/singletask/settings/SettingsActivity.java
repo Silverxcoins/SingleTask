@@ -37,18 +37,30 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+//        System.out.println(pager.getCurrentItem() + " aaaaaaaaaaaaaaaa");
+
+        initToolbar();
+        initTabs();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
-                Intent intent = new Intent(getBaseContext(), TaskActivity.class);
-                startActivity(intent);
+                Intent intent;
+                if (pager.getCurrentItem() == 0) {
+                    Log.d(TAG, "CURRENT TAB IS FIRST");
+                    intent = new Intent(getBaseContext(), TaskActivity.class);
+                    startActivity(intent);
+                } else if (pager.getCurrentItem() == 1) {
+                    Log.d(TAG, "CURRENT TAB IS SECONDE");
+                    intent = new Intent(getBaseContext(), CategoryActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
-        initToolbar();
-        initTabs();
+
 
         DB.getInstance(this).open();
         DB.getInstance(this).setCallback(this);

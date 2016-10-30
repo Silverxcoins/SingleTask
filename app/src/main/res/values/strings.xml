@@ -29,4 +29,5 @@
     <string name="title_activity_categories">CategoriesActivity</string>
     <string name="task_needs_name">Заданию требуется название</string>
     <string name="empty_variant_string">Не выбрано</string>
+    <string name="category_need_name">Категории требуется название</string>
 </resources>

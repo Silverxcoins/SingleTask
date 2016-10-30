@@ -105,6 +105,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
                 // то запускаем ChoiceActivity
                 setUserSettings(json.getString("email"), json.getInt("response"));
                 Intent intent = new Intent(getActivity(), ChoiceActivity.class);
+                intent.putExtra("afterSignIn", true);
                 startActivity(intent);
                 getActivity().finish();
             } else if (code == Http.NOT_FOUND) {
