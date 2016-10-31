@@ -106,6 +106,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
                 setUserSettings(json.getString("email"), json.getInt("response"));
                 Intent intent = new Intent(getActivity(), ChoiceActivity.class);
                 intent.putExtra("afterSignIn", true);
+                intent.putExtra("id", json.getInt("response"));
                 startActivity(intent);
                 getActivity().finish();
             } else if (code == Http.NOT_FOUND) {
@@ -126,6 +127,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
 
     // запоминаем id, email, isSignedIn = true авторизаванного юзера в локальное хранилище
     private void setUserSettings(String email, int id) {
+        System.out.println( "THIS IS ID " + id);
         SharedPreferences settings = getActivity()
                 .getSharedPreferences(getString(R.string.PREFS_NAME), 0);
         SharedPreferences.Editor editor = settings.edit();

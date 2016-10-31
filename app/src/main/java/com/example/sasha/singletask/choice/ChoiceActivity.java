@@ -24,6 +24,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
             if (getIntent().hasExtra("afterSignIn")) {
+                Utils.setUserId(getIntent().getIntExtra("id", 0));
                 SyncManager.getInstance().getDataFromServer(this);
             } else {
                 SyncManager.getInstance().sync(this);

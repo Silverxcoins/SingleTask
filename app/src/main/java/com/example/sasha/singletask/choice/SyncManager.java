@@ -32,13 +32,13 @@ public class SyncManager {
     private static final String SYNC_TASKS_VARIANTS_URL =
             "http://188.120.235.252/singletask/api/task-variant/sync";
     private static final String LIST_TASKS_URL =
-            "http://188.120.235.252/singletask/api/task/list?user=" + Utils.getUserId();
+            "http://188.120.235.252/singletask/api/task/list?user=";
     private static final String LIST_CATEGORIES_URL =
-            "http://188.120.235.252/singletask/api/category/list?user=" + Utils.getUserId();
+            "http://188.120.235.252/singletask/api/category/list?user=";
     private static final String LIST_VARIANTS_URL =
-            "http://188.120.235.252/singletask/api/variant/list?user=" + Utils.getUserId();
+            "http://188.120.235.252/singletask/api/variant/list?user=";
     private static final String LIST_TASKS_VARIANTS_URL =
-            "http://188.120.235.252/singletask/api/task-variant/list?user=" + Utils.getUserId();
+            "http://188.120.235.252/singletask/api/task-variant/list?user=";
 
     private DB db;
 
@@ -101,19 +101,19 @@ public class SyncManager {
     private boolean getDataFromServerInternal() {
         Log.d(TAG, "getDataFromServerInternal()");
 
-        String response = Http.sendGetRequest(LIST_TASKS_URL);
+        String response = Http.sendGetRequest(LIST_TASKS_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
         db.insertTasksFromJson(response);
 
-        response = Http.sendGetRequest(LIST_CATEGORIES_URL);
+        response = Http.sendGetRequest(LIST_CATEGORIES_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
         db.insertCategoriesFromJson(response);
 
-        response = Http.sendGetRequest(LIST_VARIANTS_URL);
+        response = Http.sendGetRequest(LIST_VARIANTS_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
         db.insertVariantsFromJson(response);
 
-        response = Http.sendGetRequest(LIST_TASKS_VARIANTS_URL);
+        response = Http.sendGetRequest(LIST_TASKS_VARIANTS_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
         db.insertTasksVariantsFromJson(response);
 
@@ -127,7 +127,7 @@ public class SyncManager {
             return false;
         }
         List<TaskDataSet> insertedTasks =
-                db.insertTasksFromJson(Http.sendGetRequest(LIST_TASKS_URL));
+                db.insertTasksFromJson(Http.sendGetRequest(LIST_TASKS_URL + Utils.getUserId()));
 
         String categoriesResponse = Http.sendPostRequest(SYNC_CATEGORIES_URL,
                 db.getAllCategoriesInJson());
@@ -135,7 +135,8 @@ public class SyncManager {
             return false;
         }
         List<CategoryDataSet> insertedCategories =
-                db.insertCategoriesFromJson(Http.sendGetRequest(LIST_CATEGORIES_URL));
+                db.insertCategoriesFromJson(Http.sendGetRequest(LIST_CATEGORIES_URL
+                        + Utils.getUserId()));
 
         String variantsResponse = Http.sendPostRequest(SYNC_VARIANTS_URL,
                 db.getAllVariantsInJson(insertedCategories));
@@ -143,14 +144,16 @@ public class SyncManager {
             return false;
         }
         List<VariantDataSet> insertedVariants =
-                db.insertVariantsFromJson(Http.sendGetRequest(LIST_VARIANTS_URL));
+                db.insertVariantsFromJson(Http.sendGetRequest(LIST_VARIANTS_URL
+                        + Utils.getUserId()));
 
         String tasksVariantsResponse = Http.sendPostRequest(SYNC_TASKS_VARIANTS_URL,
                 db.getAllTasksVariantsInJson(insertedTasks, insertedVariants));
         if (!isServerOperationSuccessful(tasksVariantsResponse)) {
             return false;
         }
-        db.insertTasksVariantsFromJson(Http.sendGetRequest(LIST_TASKS_VARIANTS_URL));
+        db.insertTasksVariantsFromJson(Http.sendGetRequest(LIST_TASKS_VARIANTS_URL
+                + Utils.getUserId()));
         return true;
     }
 

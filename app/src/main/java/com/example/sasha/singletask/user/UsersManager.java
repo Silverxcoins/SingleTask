@@ -80,7 +80,7 @@ public class UsersManager {
     }
 
     private void notifySignInFinished(final JSONObject json) {
-        Log.d(TAG, "notifySignUpFinished(), json: " + json);
+        Log.d(TAG, "notifySignInFinished(), json: " + json);
         Ui.run(new Runnable() {
             @Override
             public void run() {

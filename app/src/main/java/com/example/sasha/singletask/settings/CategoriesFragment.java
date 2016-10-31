@@ -69,7 +69,7 @@ public class CategoriesFragment extends Fragment {
     private void configureView() {
         int scrollPosition = 0;
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.categories_recycler_view);
-        RecyclerView.LayoutManager    mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.scrollToPosition(scrollPosition);
         mRecyclerView.setHasFixedSize(true);
@@ -77,7 +77,7 @@ public class CategoriesFragment extends Fragment {
         mAdapter = new RecyclerListAdapter(tabName, items);
         mRecyclerView.setAdapter(mAdapter);
 
-        ItemTouchHelper.Callback    callback = new SimpleItemTouchHelperCallback(mAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         ItemTouchHelper  mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
