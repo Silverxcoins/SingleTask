@@ -5,11 +5,11 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:background="#fff"
-    android:elevation="6dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp">
+    android:background="@android:color/white"
+    android:elevation="@dimen/task_item_elevation"
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
 
     <!--android:background="@drawable/ripple_effect"-->
     <TextView

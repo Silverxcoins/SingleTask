@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -17,65 +16,52 @@
 
             <include
                 android:id="@+id/category_toolbar"
-                layout="@layout/task_category_toolbar"
-                />
+                layout="@layout/task_category_toolbar" />
 
         </android.support.design.widget.AppBarLayout>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btnDoneCategory"
+            style="@style/ToolbarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_done_white_24dp"
-            android:layout_gravity="end|top"
-            android:clickable="true"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:elevation="@dimen/toolbar_elevation"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="64dp"
-                android:background="@android:color/white">
+                android:layout_marginTop="@dimen/activity_category_content_top_margin"
+                android:background="@android:color/white"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:paddingTop="24dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="8dp"
-                    android:paddingBottom="24dp"
+                    style="@style/variants_label_style"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Варианты"
-                    android:textColor="@color/colorTextPrimaryLight"
-                    android:textSize="16sp"/>
+                    android:text="@string/variants_label_text" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <View
+                        style="@style/CategoryActivityDividerStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="0.5dp"
-                        android:background="#BBBBBB"
-                        android:layout_gravity="center_vertical"/>
+                        android:layout_height="@dimen/divider_height" />
+
                     <ImageButton
                         android:id="@+id/btnAddVariant"
-                        android:paddingTop="16dp"
-                        android:paddingBottom="16dp"
-                        android:paddingRight="16dp"
-                        android:layout_gravity="right"
+                        style="@style/AddVariantBtnStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_add_black_36dp"
-                        android:tint="#666666"
-                        android:background="@android:color/white"/>
+                        android:src="@drawable/ic_add_black_36dp" />
                 </FrameLayout>
             </LinearLayout>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/variantsRecyclerView"
                 android:layout_width="match_parent"
@@ -83,7 +69,6 @@
 
             </android.support.v7.widget.RecyclerView>
         </LinearLayout>
-
 
     </android.support.design.widget.CoordinatorLayout>
 

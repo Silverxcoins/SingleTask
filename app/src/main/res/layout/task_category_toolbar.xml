@@ -2,15 +2,9 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:theme="@style/TaskCategoryToolBarStyle"
-    android:background="@android:color/white"
-    android:elevation="@dimen/toolbar_elevation">
+    android:theme="@style/TaskCategoryToolBarStyle">
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/nameEditText"
         android:hint="Название"
-        android:textColor="@color/colorPrimaryDark"
-        android:layout_marginRight="64dp"
-        android:background="#00000000"/>
+        style="@style/ToolbarEditTextStyle" />
 </android.support.v7.widget.Toolbar>

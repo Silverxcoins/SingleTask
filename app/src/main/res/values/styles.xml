@@ -12,12 +12,15 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
         <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
     </style>
 
     <style name="TaskCategoryToolBarStyle" parent="Theme.AppCompat">
         <item name="android:textColorPrimary">@color/colorPrimaryDark</item>
         <item name="android:textColorSecondary">@color/colorPrimaryDark</item>
         <item name="actionMenuTextColor">@color/colorPrimaryDark</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:elevation">@dimen/toolbar_elevation</item>
     </style>
 
     <style name="AuthLinearLayout">
@@ -91,4 +94,149 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="VariantsItemMainLinearLayoutStyle">
+        <item name="android:layout_marginLeft">@dimen/variants_item_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/variants_item_margin_right</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/variants_item_padding</item>
+    </style>
+
+    <style name="VariantsItemDeleteButtonStyle">
+        <item name="android:layout_gravity">right</item>
+        <item name="android:background">@color/colorVariantsItemBackground</item>
+        <item name="android:padding">@dimen/variants_delete_button_padding</item>
+        <item name="android:tint">@color/colorVariantsDeleteButtonTint</item>
+    </style>
+
+    <style name="ToolbarEditTextStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:layout_marginRight">@dimen/toolbar_edit_text_margin_right</item>
+        <item name="android:background">@color/colorToolbarEditTextBackground</item>
+    </style>
+
+    <style name="DialogNumberPickerStyle">
+        <item name="android:layout_marginLeft">@dimen/DialogNumberPickerHorizontalMargin</item>
+        <item name="android:layout_marginRight">@dimen/DialogNumberPickerHorizontalMargin</item>
+    </style>
+
+    <style name="ListItemStyle">
+        <item name="android:textAppearance">?android:attr/textAppearanceListItemSmall</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorTextPrimaryLight</item>
+        <item name="android:paddingStart">?android:attr/listPreferredItemPaddingStart</item>
+        <item name="android:paddingEnd">?android:attr/listPreferredItemPaddingEnd</item>
+        <item name="android:minHeight">?android:attr/listPreferredItemHeightSmall</item>
+    </style>
+
+    <style name="ChoiceActivityLinearLayoutStyle">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">
+            @dimen/ChoiceActivityFragmentSecondaryLinearLayoutBottomMargin
+        </item>
+        <item name="android:layout_marginLeft">
+            @dimen/ChoiceActivityFragmentSecondaryLinearLayoutHMargin
+        </item>
+        <item name="android:layout_marginRight">
+            @dimen/ChoiceActivityFragmentSecondaryLinearLayoutHMargin
+        </item>
+        <item name="android:layout_marginTop">
+            @dimen/ChoiceActivityFragmentSecondaryLinearLayoutTopMargin
+        </item>
+        <item name="android:padding">@dimen/ChoiceActivityFragmentSecondaryLinearLayoutPadding
+        </item>
+    </style>
+
+    <style name="textViewIHaveTimeStyle">
+        <item name="android:layout_marginBottom">@dimen/textViewIHaveTimeBottomMargin</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/ChoiceActivityPrimaryLabelSize</item>
+    </style>
+
+    <style name="ToolbarButtonStyle">
+        <item name="android:layout_gravity">end|top</item>
+        <item name="android:layout_marginRight">@dimen/toolbar_button_top_right_margin</item>
+        <item name="android:layout_marginTop">@dimen/toolbar_button_top_right_margin</item>
+        <item name="android:clickable">true</item>
+        <item name="android:elevation">@dimen/toolbar_elevation</item>
+    </style>
+
+    <style name="TaskActivityFieldsLinearLayoutStyle">
+        <item name="android:layout_marginTop">?android:attr/actionBarSize</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingTop">@dimen/task_activity_fields_linear_layout_padding</item>
+    </style>
+
+    <style name="TaskActivityIconStyle">
+        <item name="android:padding">@dimen/task_activity_icon_padding</item>
+        <item name="android:tint">@color/colorPrimary</item>
+    </style>
+
+    <style name="TaskActivityDividerStyle">
+        <item name="android:layout_marginTop">@dimen/task_activity_divider_top_margin</item>
+        <item name="android:background">@color/colorTaskActivityDivider</item>
+    </style>
+
+    <style name="TaskActivityDeleteBtnStyle">
+        <item name="android:layout_gravity">right</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:paddingBottom">@dimen/task_activity_delete_btn_v_padding</item>
+        <item name="android:paddingLeft">@dimen/task_activity_delete_btn_left_padding</item>
+        <item name="android:paddingRight">@dimen/task_activity_delete_btn_right_padding</item>
+        <item name="android:paddingTop">@dimen/task_activity_delete_btn_v_padding</item>
+        <item name="android:tint">@color/colorTaskActivityDeleteBtnTint</item>
+    </style>
+
+    <style name="TaskActivityEditTextStyle">
+        <item name="android:layout_marginEnd">@dimen/task_activity_edittext_end_margin</item>
+        <item name="android:clickable">true</item>
+        <item name="android:maxHeight">@dimen/task_activity_edittext_max_height</item>
+        <item name="android:padding">@dimen/task_activity_edittext_padding</item>
+        <item name="android:textColor">@color/colorTextPrimaryLight</item>
+    </style>
+
+    <style name="TaskActivityCommentEditTextStyle">
+        <item name="android:layout_marginEnd">@dimen/task_activity_edittext_end_margin</item>
+        <item name="android:maxHeight">@dimen/task_activity_comment_max_height</item>
+        <item name="android:paddingBottom">@dimen/task_activity_comment_left_bottom_top_padding
+        </item>
+        <item name="android:paddingLeft">@dimen/task_activity_comment_left_bottom_top_padding</item>
+        <item name="android:paddingRight">@dimen/task_activity_comment_right_padding</item>
+        <item name="android:paddingTop">@dimen/task_activity_comment_left_bottom_top_padding</item>
+        <item name="android:textColor">@color/colorTextPrimaryLight</item>
+    </style>
+
+    <style name="MainActivityMainLayoutStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:padding">@dimen/main_layout_padding</item>
+        <item name="android:background">@drawable/phphsmall</item>
+    </style>
+
+    <style name="variants_label_style">
+        <item name="android:paddingTop">@dimen/variants_label_v_padding</item>
+        <item name="android:paddingLeft">@dimen/variants_label_left_padding</item>
+        <item name="android:paddingRight">@dimen/variants_label_right_padding</item>
+        <item name="android:paddingBottom">@dimen/variants_label_v_padding</item>
+        <item name="android:textColor">@color/colorTextPrimaryLight</item>
+        <item name="android:textSize">@dimen/variants_label_text_size</item>
+    </style>
+
+    <style name="CategoryActivityDividerStyle">
+        <item name="android:background">@color/colorCategoryActivityDivider</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+
+    <style name="AddVariantBtnStyle">
+        <item name="android:paddingTop">@dimen/add_variant_btn_top_right_bottom_padding</item>
+        <item name="android:paddingBottom">@dimen/add_variant_btn_top_right_bottom_padding</item>
+        <item name="android:paddingRight">@dimen/add_variant_btn_top_right_bottom_padding</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:tint">@color/colorAddVariantButtonTint</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
 </resources>

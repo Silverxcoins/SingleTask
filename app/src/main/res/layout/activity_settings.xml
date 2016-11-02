@@ -16,7 +16,7 @@
 
             <include
                 android:id="@+id/settings_toolbar"
-                layout="@layout/settings_toolbar"
+                layout="@layout/main_toolbar"
                 />
 
             <android.support.design.widget.TabLayout

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -16,15 +15,35 @@
 
             <include
                 android:id="@+id/choice_toolbar"
-                layout="@layout/choice_toolbar"
+                layout="@layout/main_toolbar"
                 />
 
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v4.view.ViewPager
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/pager"/>
+            android:layout_height="match_parent">
+            <FrameLayout
+                android:id="@+id/choice_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
+            </FrameLayout>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                android:layout_gravity="left"
+                android:tint="@color/colorPrimary"
+                android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#00ffffff"
+                android:layout_gravity="right"
+                android:tint="@color/colorPrimary"
+                android:src="@drawable/ic_keyboard_arrow_right_black_48dp"/>
+        </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

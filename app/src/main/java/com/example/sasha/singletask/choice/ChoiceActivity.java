@@ -3,6 +3,8 @@ package com.example.sasha.singletask.choice;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -30,6 +32,8 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
                 SyncManager.getInstance().sync(this);
             }
         }
+
+        setSelectTimeFragment();
     }
 
     private void initToolbar() {
@@ -84,5 +88,12 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
     protected void onDestroy() {
         DB.getInstance(this).close();
         super.onDestroy();
+    }
+
+    public void setSelectTimeFragment() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left);
+        ft.replace(R.id.choice_container, new SelectTimeFragment());
+        ft.commit();
     }
 }
