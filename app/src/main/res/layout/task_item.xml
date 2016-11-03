@@ -21,7 +21,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
-        android:id="@+id/category_item_burger"
+        android:id="@+id/task_item_delete"
         android:layout_width="?listPreferredItemHeight"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical|right"
