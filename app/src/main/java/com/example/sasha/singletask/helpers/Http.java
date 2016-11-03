@@ -3,6 +3,9 @@ package com.example.sasha.singletask.helpers;
 import android.content.Context;
 import android.net.ConnectivityManager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -13,6 +16,8 @@ import okhttp3.Response;
 
 public class Http {
 
+    private static final Logger logger = LoggerFactory.getLogger(Http.class);
+
     public static final int OK = 0;
     public static final int NOT_FOUND = 1;
     public static final int ALREADY_EXIST = 5;
@@ -22,6 +27,9 @@ public class Http {
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient();
 
     public static boolean isNetworkAvailable(final Context context) {
+
+        logger.debug("isNetworkAvailable()");
+
         final ConnectivityManager connectivityManager =
                 ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null
@@ -29,6 +37,9 @@ public class Http {
     }
 
     public static String sendPostRequest(String url, String json) {
+
+        logger.debug("sendPostRequest()");
+
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
@@ -43,6 +54,9 @@ public class Http {
     }
 
     public static String sendGetRequest(String url) {
+
+        logger.debug("sendGetRequest()");
+
         Request request = new Request.Builder()
                 .url(url)
                 .build();

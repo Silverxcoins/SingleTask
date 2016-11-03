@@ -32,8 +32,10 @@
     <string name="category_need_name">Категории требуется название</string>
     <string name="hour_short_text">ч</string>
     <string name="minute_short_text">м</string>
-    <string name="i_have_time_string">У меня есть</string>
+    <string name="i_have_time_string">Сколько у Вас есть времени?</string>
     <string name="run_time_string">Время выполнения</string>
     <string name="date_string">Дата</string>
     <string name="variants_label_text">Варианты</string>
+    <string name="default_time_string">1 час</string>
+    <string name="ok_btn_text">OK</string>
 </resources>

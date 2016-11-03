@@ -3,7 +3,6 @@ package com.example.sasha.singletask.settings;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentTransaction;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,12 +13,17 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.analytics.AnalyticsApplication;
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.TabsPagerFragmentAdapter;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.R.attr.name;
 
 public class SettingsActivity extends AppCompatActivity implements DB.Callback {
 
@@ -29,13 +33,15 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
     public ArrayList<Map> categoryItems = new ArrayList<Map>();
     public ArrayList<Map> taskItems = new ArrayList<Map>();
 
-    private ArrayList<Map> catItems = new ArrayList<Map>();
-    private ArrayList<Map> tasksItems = new ArrayList<Map>();
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
 
         initToolbar();
         initTabs();
@@ -44,6 +50,10 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("Share")
+                        .build());
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
                 Intent intent;
                 if (pager.getCurrentItem() == 0) {
@@ -73,6 +83,19 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "Setting screen name: " +  name);
+        mTracker.setScreenName("Image~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Share")
+                .build());
     }
 
     private TabsPagerFragmentAdapter mAdapter;

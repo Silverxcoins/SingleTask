@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
@@ -16,6 +15,8 @@ import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class DB {
-    private static final String TAG = "DB";
+
+    private static final Logger logger = LoggerFactory.getLogger(DB.class);
+
     private static DB instance;
 
     public enum Operation {
@@ -68,12 +71,17 @@ public class DB {
     private DB.Callback callback;
 
     public void setCallback(DB.Callback callback) {
+
+        logger.debug("setCallback()");
+
         this.callback = callback;
     }
 
     private void notifyOperationFinished(final Operation operation, final Cursor result,
                                          final int position) {
-        Log.d(TAG,"notifyOperationFinished");
+
+        logger.debug("notifyOperationFinished()");
+
         Ui.run(new Runnable() {
             @Override
             public void run() {
@@ -86,95 +94,37 @@ public class DB {
 
 
     public void open() {
+
+        logger.debug("open()");
+
         dbHelper = new DbHelper(ctx, ctx.getString(R.string.db_name), null, 1);
         db = dbHelper.getWritableDatabase();
-
-//        db.delete("Task", null, null);
-//        db.delete("Category", null, null);
-//        db.delete("Variant", null, null);
-//        db.delete("VariantTask", null, null);
-//
-//        ContentValues cv = new ContentValues();
-//        cv.put("name", "firstTask");
-//        cv.put("comment", "firstTaskComment");
-//        cv.put("time", 90);
-//        cv.put("lastUpdate", "2002-12-12 01:01:01");
-//        db.insert("Task", null, cv);
-//
-//        Cursor cursor = db.rawQuery("SELECT MAX(id) AS q FROM Task", new String[] {});
-//        cursor.moveToFirst();
-//        long firstTaskId = cursor.getLong(cursor.getColumnIndex("q"));
-//
-//        cv = new ContentValues();
-//        cv.put("name", "secondTask");
-//        cv.put("date", "2006-12-12 01:01:01");
-//        cv.put("time", 60);
-//        cv.put("lastUpdate", "2003-12-12 01:01:01");
-//        db.insert("Task", null, cv);
-//
-//        cursor = db.rawQuery("SELECT MAX(id) AS q FROM Task", new String[] {});
-//        cursor.moveToFirst();
-//        long secondTaskId = cursor.getLong(cursor.getColumnIndex("q"));
-//
-//        cv = new ContentValues();
-//        cv.put("name", "firstCategory");
-//        cv.put("parent", 0);
-//        cv.put("lastUpdate", "2002-12-12 01:01:01");
-//        db.insert("Category", null, cv);
-//        cursor = db.rawQuery("SELECT MAX(id) AS q FROM Category", new String[] {});
-//        cursor.moveToFirst();
-//        long catId = cursor.getInt(cursor.getColumnIndex("q"));
-//        System.out.println("!!!!!!!!!!!! " + catId);
-//
-//        cv = new ContentValues();
-//        cv.put("name", "secondCategory");
-//        cv.put("parent", catId);
-//        cv.put("lastUpdate", "2002-12-12 01:01:01");
-//        db.insert("Category", null, cv);
-//        cursor = db.rawQuery("SELECT MAX(id) AS q FROM Category", new String[] {});
-//        cursor.moveToFirst();
-//        long cat2Id = cursor.getLong(cursor.getColumnIndex("q"));
-//
-//        cv = new ContentValues();
-//        cv.put("name", "firstVariant");
-//        cv.put("category", catId);
-//        db.insert("Variant", null, cv);
-//        cursor = db.rawQuery("SELECT MAX(id) AS q FROM Variant", new String[] {});
-//        cursor.moveToFirst();
-//        long varId = cursor.getLong(cursor.getColumnIndex("q"));
-//
-//        cv = new ContentValues();
-//        cv.put("name", "secondVariant");
-//        cv.put("category", cat2Id);
-//        db.insert("Variant", null, cv);
-//        cursor = db.rawQuery("SELECT MAX(id) AS q FROM Variant", new String[] {});
-//        cursor.moveToFirst();
-//        long var2Id = cursor.getLong(cursor.getColumnIndex("q"));
-//
-//        cv = new ContentValues();
-//        cv.put("task", firstTaskId);
-//        cv.put("variant", varId);
-//        db.insert("VariantTask", null, cv);
-//
-//        cv = new ContentValues();
-//        cv.put("task", firstTaskId);
-//        cv.put("variant", var2Id);
-//        db.insert("VariantTask", null, cv);
-
+        logger.info("Db opened");
     }
 
     public void close() {
+
+        logger.debug("close()");
+
         if (dbHelper!=null) dbHelper.close();
+        logger.info("Db closed");
     }
 
-    private Cursor selectByServerId(String tableName, int serverId) {
+    private Cursor selectByServerId(String tableName, long serverId) {
+
+        logger.debug("selectByServerId()");
+
         String selection = "serverId = ?";
         String[] selectionArgs = { String.valueOf(serverId) };
         return db.query(tableName, null, selection, selectionArgs, null, null, null);
     }
 
     public String getAllTasksInJson() {
-        Cursor cursor = db.query(ctx.getString(R.string.table_task_name), null, null, null, null, null, null);
+
+        logger.debug("getAllTasksInJson()");
+
+        Cursor cursor = db.query(ctx.getString(R.string.table_task_name),
+                null, null, null, null, null, null);
 
         List<TaskDataSet> tasks = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -184,7 +134,7 @@ public class DB {
         }
 
         try {
-            System.out.println("ПОЛУЧИЛИ ТАСКИ ИЗ ДБ" + mapper.writeValueAsString(tasks));
+            logger.info("Tasks received from db : {}", mapper.writeValueAsString(tasks));
             return mapper.writeValueAsString(tasks);
         } catch (IOException e) {
             return null;
@@ -192,7 +142,11 @@ public class DB {
     }
 
     public String getAllCategoriesInJson() {
-        Cursor cursor = db.query(ctx.getString(R.string.table_category_name), null, null, null, null, null, null);
+
+        logger.debug("getAllCategoriesInJson()");
+
+        Cursor cursor = db.query(ctx.getString(R.string.table_category_name),
+                null, null, null, null, null, null);
 
         List<CategoryDataSet> categories = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -202,7 +156,7 @@ public class DB {
         }
 
         try {
-            System.out.println("ПОЛУЧИЛИ КАТЕГОРИИ ИЗ ДБ" + mapper.writeValueAsString(categories));
+            logger.info("Categories received from db: {}", mapper.writeValueAsString(categories));
             return mapper.writeValueAsString(categories);
         } catch (IOException e) {
             return null;
@@ -210,6 +164,9 @@ public class DB {
     }
 
     public String getAllVariantsInJson(List<CategoryDataSet> categories) {
+
+        logger.debug("getAllVariantsInJson()");
+
         Cursor cursor = db.query(ctx.getString(R.string.table_variant_name), null, null, null, null, null, null);
 
         List<VariantDataSet> variants = new ArrayList<>();
@@ -232,7 +189,7 @@ public class DB {
         }
 
         try {
-            System.out.println("ПОЛУЧИЛИ ВАРИАНТЫ ИЗ ДБ" + mapper.writeValueAsString(variants));
+            logger.info("Variants received from db: {}", mapper.writeValueAsString(variants));
             return mapper.writeValueAsString(variants);
         } catch (IOException e) {
             return null;
@@ -241,7 +198,11 @@ public class DB {
 
     public String getAllTasksVariantsInJson(List<TaskDataSet> tasks,
                                             List<VariantDataSet> variants) {
-        Cursor cursor = db.query(ctx.getString(R.string.table_task_variant_name), null, null, null, null, null, null);
+
+        logger.debug("getAllTasksVariantsInJson()");
+
+        Cursor cursor = db.query(ctx.getString(R.string.table_task_variant_name),
+                null, null, null, null, null, null);
 
         List<TaskVariantDataSet> tvs = new ArrayList<>();
         if (cursor.moveToFirst()) {
@@ -271,7 +232,7 @@ public class DB {
         }
 
         try {
-            System.out.println("ПОЛУЧИЛИ ТАСКОВАРИАНТЫ ИЗ ДБ" + mapper.writeValueAsString(tvs));
+            logger.info("TasksVariants received from db: {}", mapper.writeValueAsString(tvs));
             return mapper.writeValueAsString(tvs);
         } catch (IOException e) {
             return null;
@@ -279,7 +240,10 @@ public class DB {
     }
 
     public List<TaskDataSet> insertTasksFromJson(String json) {
-        System.out.println("ПОЛУЧИЛИ ТАСКИ С СЕРВЕРА" + json);
+
+        logger.debug("insertTasksFromJson()");
+        logger.info("Tasks received from server: {}", json);
+
         db.delete(ctx.getString(R.string.table_task_name), null, null);
 
         final JsonNode mainNode;
@@ -313,7 +277,11 @@ public class DB {
     }
 
     public List<CategoryDataSet> insertCategoriesFromJson(String json) {
-        System.out.println("ПОЛУЧИЛИ КАТЕГОРИИ С СЕРВЕРА" + json);
+
+        logger.debug("insertCategoriesFromJson()");
+        logger.info("Categories received from server: {}", json);
+
+
         db.delete(ctx.getString(R.string.table_category_name), null, null);
 
         final JsonNode mainNode;
@@ -341,7 +309,7 @@ public class DB {
                         if (inserted.contains(c)) {
                             category.setParent(c.getId());
                         } else {
-                            category.setParent((int) insertCategory(c));
+                            category.setParent((long) insertCategory(c));
                             inserted.add(c);
                         }
                         break;
@@ -355,6 +323,9 @@ public class DB {
     }
 
     private long insertCategory(CategoryDataSet category) {
+
+        logger.debug("insertCategory()");
+
         ContentValues cv = new ContentValues();
         cv.put("serverId", category.getServerId());
         cv.put("name", category.getName());
@@ -364,12 +335,15 @@ public class DB {
         cv.put("isDeleted", 0);
 
         long id = db.insert(ctx.getString(R.string.table_category_name), null, cv);
-        category.setId((int)id);
+        category.setId((long)id);
         return id;
     }
 
     public List<VariantDataSet> insertVariantsFromJson(String json) {
-        System.out.println("ПОЛУЧИЛИ ВАРИАНТЫ С СЕРВЕРА" + json);
+
+        logger.debug("insertVariantsFromJson()");
+        logger.info("Variants received from server: {}", json);
+
         db.delete(ctx.getString(R.string.table_variant_name), null, null);
 
         final JsonNode mainNode;
@@ -387,9 +361,10 @@ public class DB {
             VariantDataSet variant = new VariantDataSet(node);
             variants.add(variant);
 
-            Cursor categoryCursor = selectByServerId(ctx.getString(R.string.table_category_name), variant.getCategory());
+            Cursor categoryCursor = selectByServerId(ctx.getString(R.string.table_category_name),
+                    variant.getCategory());
             if (categoryCursor.moveToFirst()) {
-                int id = categoryCursor.getInt(categoryCursor.getColumnIndex("id"));
+                long id = categoryCursor.getLong(categoryCursor.getColumnIndex("id"));
                 variant.setCategory(id);
             } else {
                 continue;
@@ -409,7 +384,10 @@ public class DB {
     }
 
     public void insertTasksVariantsFromJson(String json) {
-        System.out.println("ПОЛУЧИЛИ ТАСКОВАРИАНТЫ С СЕРВЕРА" + json);
+
+        logger.debug("insertTasksVariantsFromJson()");
+        logger.info("TasksVariants received from server: {}", json);
+
         db.delete(ctx.getString(R.string.table_task_variant_name), null, null);
 
         final JsonNode mainNode;
@@ -428,9 +406,9 @@ public class DB {
             Cursor taskCursor = selectByServerId(ctx.getString(R.string.table_task_name), tv.getTask());
             Cursor variantCursor = selectByServerId(ctx.getString(R.string.table_variant_name), tv.getVariant());
             if (taskCursor.moveToFirst() && variantCursor.moveToFirst()) {
-                int task = taskCursor.getInt(taskCursor.getColumnIndex("id"));
+                long task = taskCursor.getLong(taskCursor.getColumnIndex("id"));
                 tv.setTask(task);
-                int variant = variantCursor.getInt(variantCursor.getColumnIndex("id"));
+                long variant = variantCursor.getLong(variantCursor.getColumnIndex("id"));
                 tv.setVariant(variant);
             } else {
                 return;
@@ -446,7 +424,7 @@ public class DB {
     }
 
     public void markCategoryDeleted(final Long category, final int position) {
-        Log.d(TAG,"markCategoryDeleted()");
+//        Log.d(TAG,"markCategoryDeleted()");
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -457,7 +435,7 @@ public class DB {
     }
 
     private void markTaskDeletedInDB(Long category) {
-        Log.d(TAG, "markTaskDeletedInDB");
+//        Log.d(TAG, "markTaskDeletedInDB");
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", 1);
         String selection = "id=?";
@@ -466,7 +444,7 @@ public class DB {
     }
 
     public void markTaskDeleted(final Long task, final int position) {
-        Log.d(TAG, "markTaskDeleted()");
+//        Log.d(TAG, "markTaskDeleted()");
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -477,7 +455,7 @@ public class DB {
     }
 
     private void markCategoryDeletedInDB(Long category) {
-        Log.d(TAG, "markCategoryDeletedinDB");
+//        Log.d(TAG, "markCategoryDeletedinDB");
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", 1);
         String selection = "id=?";
@@ -486,7 +464,9 @@ public class DB {
     }
 
     public void getTasks() {
-        Log.d(TAG,"getTasks()");
+
+        logger.debug("getTasks()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -497,14 +477,18 @@ public class DB {
     }
 
     private Cursor getTasksFromDb() {
-        Log.d(TAG,"getTasksFromDB");
+
+        logger.debug("getTasksFromDb()");
+
         String selection = "isDeleted IS NULL OR isDeleted=0";
         return db.query(ctx.getString(R.string.table_task_name), null, selection,
                 null, null, null, null);
     }
 
     public void getCategories() {
-        Log.d(TAG,"getCategories");
+
+        logger.debug("getCategories()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -515,14 +499,18 @@ public class DB {
     }
 
     private Cursor getCategoriesFromDb() {
-        Log.d(TAG,"getCategoriesFromDB");
+
+        logger.debug("getCategoriesFromDb()");
+
         String selection = "isDeleted IS NULL OR isDeleted=0";
         return db.query(ctx.getString(R.string.table_category_name), null, selection,
                 null, null, null, null);
     }
 
     public void getVariantsByCategory(final Long category, final int position) {
-        Log.d(TAG,"getVariantsByCategory");
+
+        logger.debug("getVariantsByCategory()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -533,7 +521,9 @@ public class DB {
     }
 
     private Cursor getVariantsByCategoryFromDb(Long category, boolean withDeleted) {
-        Log.d(TAG,"getVariantsByCategoryFromDB");
+
+        logger.debug("getVariantsByCategoryFromDB()");
+
         String selection = "category=?";
         if (!withDeleted) {
             selection += " AND (isDeleted IS NULL OR isDeleted=0)";
@@ -545,7 +535,9 @@ public class DB {
 
     public void getVariantByTaskAndCategory(final long task, final Long category,
                                             final int position) {
-        Log.d(TAG,"getVariantByTaskAndCategory");
+
+        logger.debug("getVariantByTaskAndCategory()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -557,13 +549,17 @@ public class DB {
     }
 
     private Cursor getVariantByTaskAndCategoryFromDb(long task, Long category) {
-        Log.d(TAG,"getVariantByTaskAndCategoryFromDB");
+
+        logger.debug("getVariantsByTaskAndCategoryFromDb()");
+
         String[] selectionArgs = { String.valueOf(task), String.valueOf(category) };
         return db.rawQuery(SqlQueries.GET_VARIANT_BY_TASK_AND_CATEGORY, selectionArgs);
     }
 
     public void getTaskById(final long id) {
-        Log.d(TAG,"getTaskById");
+
+        logger.debug("getTaskById()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -575,7 +571,9 @@ public class DB {
     }
 
     private Cursor getTaskByIdFromDb(long id) {
-        Log.d(TAG,"getTaskByIdFromDb");
+
+        logger.debug("getTaskByIdFromDb()");
+
         String selection = "id=?";
         String[] selectionArgs = { String.valueOf(id) };
         return db.query(ctx.getString(R.string.table_task_name), null, selection, selectionArgs, null, null, null);
@@ -583,7 +581,9 @@ public class DB {
 
     public void insertNewTask(final String name, final int time, final String date,
                               final String comment, final ArrayList<Long> variants) {
-        Log.d(TAG,"insertNewTask");
+
+        logger.debug("insertNewTask()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -595,7 +595,9 @@ public class DB {
 
     private void insertNewTaskInDb(String name, int time, String date, String comment,
                                    ArrayList<Long> variants) {
-        Log.d(TAG,"insertNewTaskInDb");
+
+        logger.debug("insertNewTaskInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("name", name);
         cv.put("time", time);
@@ -619,7 +621,9 @@ public class DB {
     public void updateTask(final long id, final String name, final int time, final String date,
                            final String comment, final ArrayList<Long> variants,
                            final ArrayList<Long> categories) {
-        Log.d(TAG,"updateTask");
+
+        logger.debug("updateTask()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -631,7 +635,9 @@ public class DB {
 
     private void updateTaskInDb(long taskId, String name, int time, String date, String comment,
                                    ArrayList<Long> variants, ArrayList<Long> categories) {
-        Log.d(TAG,"updateTaskInDb");
+
+        logger.debug("updateTaskInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("name", name);
         cv.put("time", time);
@@ -676,13 +682,17 @@ public class DB {
     }
 
     private Cursor selectTaskVariantByTaskAndCategoryFromDb(long task, long category) {
-        Log.d(TAG,"selectTaskVariantByTaskAndCategoryFromDb");
+
+        logger.debug("selectTaskVariantByTaskAndCategoryFromDb()");
+
         String[] tVselectionArgs = { String.valueOf(task), String.valueOf(category) };
         return db.rawQuery(SqlQueries.GET_TASKS_VARIANTS_BY_TASK_AND_CATEGORY, tVselectionArgs);
     }
 
     private void updateTaskVariantInDb(long task, long variant, boolean isDeleted) {
-        Log.d(TAG,"updateTaskVariantInDb");
+
+        logger.debug("updateTaskVariantInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", (isDeleted) ? 1 : 0);
         String selection = "task=? AND variant=?";
@@ -691,7 +701,9 @@ public class DB {
     }
 
     public void insertNewCategory(final String categoryName, final List<String> variantsNames) {
-        Log.d(TAG,"updateCategory");
+
+        logger.debug("insertNewCategory()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -702,7 +714,9 @@ public class DB {
     }
 
     private void insertNewCategoryInDb(String categoryName, List<String> variantsNames) {
-        Log.d(TAG,"insertCategoryInDb");
+
+        logger.debug("insertNewCategoryInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("name", categoryName);
         cv.put("isUpdated", 1);
@@ -721,7 +735,9 @@ public class DB {
 
     public void updateCategory(final long categoryId, final String categoryName,
                                final List<String> variantsNames) {
-        Log.d(TAG,"updateCategory");
+
+        logger.debug("updateCategory()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -733,7 +749,9 @@ public class DB {
 
     private void updateCategoryInDb(long categoryId, String categoryName,
                                     List<String> variantsNames) {
-        Log.d(TAG,"updateCategoryInDb");
+
+        logger.debug("updateCategoryInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("name", categoryName);
         cv.put("isUpdated", 1);
@@ -798,6 +816,9 @@ public class DB {
     }
 
     private void updateVariantInDb(long id, boolean isDeleted) {
+
+        logger.debug("updateVariantInDb()");
+
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", isDeleted ? 1 : 0);
 
@@ -807,7 +828,9 @@ public class DB {
     }
 
     public void getCategoryById(final long id) {
-        Log.d(TAG,"getCategoryById");
+
+        logger.debug("getCategoryById()");
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -818,7 +841,9 @@ public class DB {
     }
 
     private Cursor getCategoryByIdFromDb(long id) {
-        Log.d(TAG, "getCateforyByIdFromDb");
+
+        logger.debug("getCateforyByIdFromDb()");
+
         String selection = "id=?";
         String[] selectionArgs = { String.valueOf(id) };
         return db.query(ctx.getString(R.string.table_category_name), null, selection, selectionArgs,

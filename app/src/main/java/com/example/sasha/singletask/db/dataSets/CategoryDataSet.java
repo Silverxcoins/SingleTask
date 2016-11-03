@@ -8,19 +8,19 @@ import org.codehaus.jackson.JsonNode;
 
 public class CategoryDataSet {
 
-    private Integer serverId;
-    private Integer id;
-    private Integer oldId;
+    private Long serverId;
+    private Long id;
+    private Long oldId;
     private String name;
-    private int parent;
-    private int user;
+    private long parent;
+    private long user;
     private boolean isDeleted;
     private boolean isUpdated;
     private String lastUpdate;
 
     public CategoryDataSet(JsonNode json) {
-        if (json.has("id")) this.serverId = json.get("id").getIntValue();
-        if (json.has("clientId")) this.oldId = json.get("clientId").getIntValue();
+        if (json.has("id")) this.serverId = json.get("id").getLongValue();
+        if (json.has("clientId")) this.oldId = json.get("clientId").getLongValue();
         this.name = json.get("name").getTextValue();
         if (json.has("parent")) this.parent = json.get("parent").getIntValue();
         this.user = Utils.getUserId();
@@ -30,8 +30,8 @@ public class CategoryDataSet {
     }
 
     public CategoryDataSet(Cursor cursor) {
-        this.serverId = cursor.getInt(cursor.getColumnIndex("serverId"));
-        this.id = cursor.getInt(cursor.getColumnIndex("id"));
+        this.serverId = cursor.getLong(cursor.getColumnIndex("serverId"));
+        this.id = cursor.getLong(cursor.getColumnIndex("id"));
         this.name = cursor.getString(cursor.getColumnIndex("name"));
         this.parent = cursor.getInt(cursor.getColumnIndex("parent"));
         this.isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
@@ -64,19 +64,19 @@ public class CategoryDataSet {
         this.isDeleted = isDeleted;
     }
 
-    public int getUser() {
+    public long getUser() {
         return user;
     }
 
-    public void setUser(int user) {
+    public void setUser(long user) {
         this.user = user;
     }
 
-    public int getParent() {
+    public long getParent() {
         return parent;
     }
 
-    public void setParent(int parent) {
+    public void setParent(long parent) {
         this.parent = parent;
     }
 
@@ -88,27 +88,27 @@ public class CategoryDataSet {
         this.name = name;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getOldId() {
+    public Long getOldId() {
         return oldId;
     }
 
-    public void setOldId(Integer oldId) {
+    public void setOldId(Long oldId) {
         this.oldId = oldId;
     }
 
-    public Integer getServerId() {
+    public Long getServerId() {
         return serverId;
     }
 
-    public void setServerId(Integer serverId) {
+    public void setServerId(Long serverId) {
         this.serverId = serverId;
     }
 }

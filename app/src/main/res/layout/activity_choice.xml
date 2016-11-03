@@ -45,6 +45,13 @@
                 android:tint="@color/colorPrimary"
                 />
             <!--android:src="@drawable/ic_keyboard_arrow_right_black_48dp"-->
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center" />
         </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>

@@ -1,7 +1,6 @@
 package com.example.sasha.singletask.choice;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
@@ -13,6 +12,8 @@ import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +22,9 @@ import java.util.concurrent.Executors;
 
 public class SyncManager {
 
-    private static final String TAG = "SyncManager";
+    private static final Logger logger = LoggerFactory.getLogger(SyncManager.class);
+
+    private static final String CODE_KEY = "code";
 
     private static final String SYNC_TASKS_URL =
             "http://188.120.235.252/singletask/api/task/sync";
@@ -59,10 +62,16 @@ public class SyncManager {
     private SyncManager.Callback callback;
 
     public void setCallback(SyncManager.Callback callback) {
+
+        logger.debug("setCallback()");
+
         this.callback = callback;
     }
 
     public void sync(Context ctx) {
+
+        logger.debug("sync()");
+
         this.db = DB.getInstance(ctx);
         db.open();
         executor.execute(new Runnable() {
@@ -75,6 +84,9 @@ public class SyncManager {
     }
 
     public void getDataFromServer(Context ctx) {
+
+        logger.debug("getDataFromServer()");
+
         this.db = DB.getInstance(ctx);
         db.open();
         executor.execute(new Runnable() {
@@ -87,7 +99,9 @@ public class SyncManager {
     }
 
     private void notifySyncFinished(final boolean wasSuccessfull) {
-        Log.d(TAG, "notifySignUpFinished(), success: " + wasSuccessfull);
+
+        logger.debug("notifySyncFinished()");
+
         Ui.run(new Runnable() {
             @Override
             public void run() {
@@ -99,7 +113,8 @@ public class SyncManager {
     }
 
     private boolean getDataFromServerInternal() {
-        Log.d(TAG, "getDataFromServerInternal()");
+
+        logger.debug("getDataFromServerInternal()");
 
         String response = Http.sendGetRequest(LIST_TASKS_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
@@ -121,6 +136,9 @@ public class SyncManager {
     }
 
     private boolean syncInternal() {
+
+        logger.debug("syncInternal()");
+
         String tasksResponse = Http.sendPostRequest(SYNC_TASKS_URL,
                 db.getAllTasksInJson());
         if (!isServerOperationSuccessful(tasksResponse)) {
@@ -158,10 +176,13 @@ public class SyncManager {
     }
 
     private boolean isServerOperationSuccessful(String response) {
+
+        logger.debug("isServerOperationSuccess()");
+
         try {
             if (response != null) {
                 JsonNode node = mapper.readValue(response, JsonNode.class);
-                if (node.has("code") && node.get("code").getIntValue() == Http.OK) {
+                if (node.has(CODE_KEY) && node.get(CODE_KEY).getIntValue() == Http.OK) {
                     return true;
                 }
             }

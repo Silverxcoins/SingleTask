@@ -6,34 +6,34 @@ import org.codehaus.jackson.JsonNode;
 
 public class VariantDataSet {
 
-    private Integer serverId;
-    private Integer id;
-    private Integer oldId;
+    private Long serverId;
+    private Long id;
+    private Long oldId;
     private String name;
-    private int category;
+    private long category;
     private boolean isDeleted;
 
     public VariantDataSet(JsonNode json) {
-        if (json.has("id")) this.serverId = json.get("id").getIntValue();
-        if (json.has("clientId")) this.oldId = json.get("clientId").getIntValue();
+        if (json.has("id")) this.serverId = json.get("id").getLongValue();
+        if (json.has("clientId")) this.oldId = json.get("clientId").getLongValue();
         this.name = json.get("name").getTextValue();
         this.category = json.get("category").getIntValue();
         if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
     }
 
     public VariantDataSet(Cursor cursor) {
-        this.serverId = cursor.getInt(cursor.getColumnIndex("serverId"));
-        this.id = cursor.getInt(cursor.getColumnIndex("id"));
+        this.serverId = cursor.getLong(cursor.getColumnIndex("serverId"));
+        this.id = cursor.getLong(cursor.getColumnIndex("id"));
         this.name = cursor.getString(cursor.getColumnIndex("name"));
         this.category = cursor.getInt(cursor.getColumnIndex("category"));
         this.isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -45,11 +45,11 @@ public class VariantDataSet {
         this.name = name;
     }
 
-    public int getCategory() {
+    public long getCategory() {
         return category;
     }
 
-    public void setCategory(int category) {
+    public void setCategory(long category) {
         this.category = category;
     }
 
@@ -61,19 +61,19 @@ public class VariantDataSet {
         this.isDeleted = isDeleted;
     }
 
-    public Integer getOldId() {
+    public Long getOldId() {
         return oldId;
     }
 
-    public void setOldId(Integer oldId) {
+    public void setOldId(Long oldId) {
         this.oldId = oldId;
     }
 
-    public Integer getServerId() {
+    public Long getServerId() {
         return serverId;
     }
 
-    public void setServerId(Integer serverId) {
+    public void setServerId(Long serverId) {
         this.serverId = serverId;
     }
 }

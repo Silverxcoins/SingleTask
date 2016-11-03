@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "4214798554",
+    "project_id": "firebase-singletask"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:4214798554:android:c499cdde354bc212",
+        "android_client_info": {
+          "package_name": "com.example.sasha.singletask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8GWQn_b9C7-XnZ8J1AtrKJdxCt1LzuwA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-86835217-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

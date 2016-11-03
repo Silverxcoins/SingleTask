@@ -11,9 +11,16 @@ import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.choice.ChoiceActivity;
 import com.example.sasha.singletask.helpers.Utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainActivity.class);
+
     private static final String FRAGMENT_SIGN_IN_KEY = "fragmentSignIn";
     private static final String FRAGMENT_SIGN_UP_KEY = "fragmentSignUp";
+    private static final String IS_SIGNED_IN_KEY = "isSignedIn";
 
     private Fragment signInFragment;
     private Fragment signUpFragment;
@@ -23,8 +30,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        logger.info("Started");
+        logger.debug("onCreate()");
+
         SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
-        if (settings.getBoolean("isSignedIn", false)) {
+        if (settings.getBoolean(IS_SIGNED_IN_KEY, false)) {
             Intent intent = new Intent(this, ChoiceActivity.class);
             startActivity(intent);
             finish();
@@ -51,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+
+        logger.debug("onSaveInstanceState()");
+
         Utils.clearBackStack(this);
         if (signInFragment != null)
             getSupportFragmentManager().putFragment(outState,FRAGMENT_SIGN_IN_KEY, signInFragment);
@@ -60,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setSignInFragment() {
+
+        logger.debug("setSignInFragment()");
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left);
         ft.replace(R.id.authFragmantContainer, signInFragment);
@@ -67,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setSignUpFragment() {
+
+        logger.debug("setSignUpFragment()");
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
