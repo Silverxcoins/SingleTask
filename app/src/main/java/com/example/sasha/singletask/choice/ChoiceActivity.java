@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
@@ -25,6 +28,8 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
     private static final String IS_SIGNED_IN_KEY = "isSignedIn";
     private static final String ID_KEY = "id";
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +38,12 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         logger.debug("onCreate()");
 
         initToolbar();
+        initProgressBar();
         setUserIdToUtils();
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
+            setLoading(true);
             if (getIntent().hasExtra(AFTER_SIGN_IN_KEY)) {
-                Utils.setUserId(getIntent().getIntExtra(ID_KEY, 0));
                 SyncManager.getInstance().getDataFromServer(this);
             } else {
                 SyncManager.getInstance().sync(this);
@@ -57,6 +63,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getTitle() == getString(R.string.synchronize_title)) {
+                    setLoading(true);
                     SyncManager.getInstance().sync(ChoiceActivity.this);
                 } else if (item.getTitle() == getString(R.string.settings_title)) {
                     startSettingsActivity();
@@ -69,11 +76,28 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         toolbar.inflateMenu(R.menu.menu);
     }
 
+    private void initProgressBar() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            progressBar.setVisibility(View.VISIBLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        } else {
+            progressBar.setVisibility(View.INVISIBLE);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
     private void setUserIdToUtils() {
 
         logger.debug("setUserIdToUtils()");
 
-        Utils.setUserId(getSharedPreferences(getString(R.string.PREFS_NAME),0).getInt(ID_KEY,0));
+        Long userId = getSharedPreferences(getString(R.string.PREFS_NAME),0).getLong(ID_KEY,0);
+        Utils.setUserId(userId);
     }
 
     private void startSettingsActivity() {
@@ -103,6 +127,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("onSyncFinished()");
 
+        setLoading(false);
         if (wasSuccessful) {
             logger.info("Sync success");
         } else {

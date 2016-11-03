@@ -129,10 +129,9 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         try {
             int code = json.getInt(CODE_KEY);
             if (code == Http.OK) {
-                setUserSettings(json.getString(EMAIL_KEY), json.getInt(RESPONSE_KEY));
+                setUserSettings(json.getString(EMAIL_KEY), json.getLong(RESPONSE_KEY));
                 Intent intent = new Intent(getActivity(), ChoiceActivity.class);
                 intent.putExtra(AFTER_SIGN_IN_KEY, true);
-                intent.putExtra(ID_KEY, json.getInt(RESPONSE_KEY));
 
                 logger.info("Sign in success");
                 startActivity(intent);
@@ -158,7 +157,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
                 || passwordEditText.getText().toString().isEmpty();
     }
 
-    private void setUserSettings(String email, int id) {
+    private void setUserSettings(String email, long id) {
 
         logger.debug("setUserSettings()");
 
@@ -167,7 +166,7 @@ public class SignInFragment extends Fragment implements UsersManager.SignInCallb
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean(IS_SIGNED_IN_KEY, true);
         editor.putString(EMAIL_KEY, email);
-        editor.putInt(ID_KEY, id);
+        editor.putLong(ID_KEY, id);
         editor.apply();
     }
 }

@@ -16,7 +16,7 @@ public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
-    private static int userId;
+    private static long userId;
 
     public static void clearBackStack(Activity activity) {
 
@@ -29,11 +29,11 @@ public class Utils {
         }
     }
 
-    public static void setUserId(int userId) {
+    public static void setUserId(long userId) {
         Utils.userId = userId;
     }
 
-    public static int getUserId() {
+    public static long getUserId() {
         return userId;
     }
 

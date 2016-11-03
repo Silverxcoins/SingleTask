@@ -2,6 +2,7 @@ package com.example.sasha.singletask.db.dataSets;
 
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.example.sasha.singletask.helpers.Utils;
 
@@ -9,10 +10,10 @@ import org.codehaus.jackson.JsonNode;
 
 public class TaskDataSet {
 
-    private Integer serverId;
-    private Integer id;
-    private Integer oldId;
-    private int user;
+    private Long serverId;
+    private Long id;
+    private Long oldId;
+    private long user;
     private String name;
     private String comment;
     private String date;
@@ -22,8 +23,8 @@ public class TaskDataSet {
     private String lastUpdate;
 
     public TaskDataSet(JsonNode json) {
-        if (json.has("id")) this.serverId = json.get("id").getIntValue();
-        if (json.has("clientId")) this.oldId = json.get("clientId").getIntValue();
+        if (json.has("id")) this.serverId = json.get("id").getLongValue();
+        if (json.has("clientId")) this.oldId = json.get("clientId").getLongValue();
         this.name = json.get("name").getTextValue();
         if (json.has("comment")) this.comment = json.get("comment").getTextValue();
         if (json.has("date")) this.date = json.get("date").getTextValue();
@@ -35,8 +36,8 @@ public class TaskDataSet {
     }
 
     public TaskDataSet(Cursor cursor) {
-        this.serverId = cursor.getInt(cursor.getColumnIndex("serverId"));
-        this.id = cursor.getInt(cursor.getColumnIndex("id"));
+        this.serverId = cursor.getLong(cursor.getColumnIndex("serverId"));
+        this.id = cursor.getLong(cursor.getColumnIndex("id"));
         this.name = cursor.getString(cursor.getColumnIndex("name"));
         this.comment = cursor.getString(cursor.getColumnIndex("comment"));
         this.date = cursor.getString(cursor.getColumnIndex("date"));
@@ -47,27 +48,27 @@ public class TaskDataSet {
         this.lastUpdate = cursor.getString(cursor.getColumnIndex("lastUpdate"));
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getOldId() {
+    public Long getOldId() {
         return oldId;
     }
 
-    public void setOldId(Integer oldId) {
+    public void setOldId(Long oldId) {
         this.oldId = oldId;
     }
 
-    public int getUser() {
+    public long getUser() {
         return user;
     }
 
-    public void setUser(int user) {
+    public void setUser(long user) {
         this.user = user;
     }
 
@@ -127,11 +128,11 @@ public class TaskDataSet {
         this.lastUpdate = lastUpdate;
     }
 
-    public Integer getServerId() {
+    public Long getServerId() {
         return serverId;
     }
 
-    public void setServerId(Integer serverId) {
+    public void setServerId(Long serverId) {
         this.serverId = serverId;
     }
 }

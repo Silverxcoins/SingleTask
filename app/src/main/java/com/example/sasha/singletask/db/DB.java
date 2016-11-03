@@ -108,7 +108,7 @@ public class DB {
         logger.info("Db closed");
     }
 
-    private Cursor selectByServerId(String tableName, int serverId) {
+    private Cursor selectByServerId(String tableName, long serverId) {
 
         logger.debug("selectByServerId()");
 
@@ -307,7 +307,7 @@ public class DB {
                         if (inserted.contains(c)) {
                             category.setParent(c.getId());
                         } else {
-                            category.setParent((int) insertCategory(c));
+                            category.setParent((long) insertCategory(c));
                             inserted.add(c);
                         }
                         break;
@@ -333,7 +333,7 @@ public class DB {
         cv.put("isDeleted", 0);
 
         long id = db.insert(ctx.getString(R.string.table_category_name), null, cv);
-        category.setId((int)id);
+        category.setId((long)id);
         return id;
     }
 
@@ -359,9 +359,10 @@ public class DB {
             VariantDataSet variant = new VariantDataSet(node);
             variants.add(variant);
 
-            Cursor categoryCursor = selectByServerId(ctx.getString(R.string.table_category_name), variant.getCategory());
+            Cursor categoryCursor = selectByServerId(ctx.getString(R.string.table_category_name),
+                    variant.getCategory());
             if (categoryCursor.moveToFirst()) {
-                int id = categoryCursor.getInt(categoryCursor.getColumnIndex("id"));
+                long id = categoryCursor.getLong(categoryCursor.getColumnIndex("id"));
                 variant.setCategory(id);
             } else {
                 continue;
@@ -403,9 +404,9 @@ public class DB {
             Cursor taskCursor = selectByServerId(ctx.getString(R.string.table_task_name), tv.getTask());
             Cursor variantCursor = selectByServerId(ctx.getString(R.string.table_variant_name), tv.getVariant());
             if (taskCursor.moveToFirst() && variantCursor.moveToFirst()) {
-                int task = taskCursor.getInt(taskCursor.getColumnIndex("id"));
+                long task = taskCursor.getLong(taskCursor.getColumnIndex("id"));
                 tv.setTask(task);
-                int variant = variantCursor.getInt(variantCursor.getColumnIndex("id"));
+                long variant = variantCursor.getLong(variantCursor.getColumnIndex("id"));
                 tv.setVariant(variant);
             } else {
                 return;

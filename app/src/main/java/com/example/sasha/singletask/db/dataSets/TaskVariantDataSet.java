@@ -5,35 +5,35 @@ import android.database.Cursor;
 import org.codehaus.jackson.JsonNode;
 
 public class TaskVariantDataSet {
-    private int task;
-    private int variant;
+    private long task;
+    private long variant;
     private boolean isDeleted;
 
     public TaskVariantDataSet(JsonNode json) {
-        this.task = json.get("task").getIntValue();
-        this.variant = json.get("variant").getIntValue();
+        this.task = json.get("task").getLongValue();
+        this.variant = json.get("variant").getLongValue();
         if (json.has("isDeleted")) this.isDeleted = json.get("isDeleted").getBooleanValue();
     }
 
     public TaskVariantDataSet(Cursor cursor) {
-        this.task = cursor.getInt(cursor.getColumnIndex("task"));
-        this.variant = cursor.getInt(cursor.getColumnIndex("variant"));
+        this.task = cursor.getLong(cursor.getColumnIndex("task"));
+        this.variant = cursor.getLong(cursor.getColumnIndex("variant"));
         this.isDeleted = (cursor.getInt(cursor.getColumnIndex("isDeleted")) == 1);
     }
 
-    public int getTask() {
+    public long getTask() {
         return task;
     }
 
-    public void setTask(int task) {
+    public void setTask(long task) {
         this.task = task;
     }
 
-    public int getVariant() {
+    public long getVariant() {
         return variant;
     }
 
-    public void setVariant(int variant) {
+    public void setVariant(long variant) {
         this.variant = variant;
     }
 
