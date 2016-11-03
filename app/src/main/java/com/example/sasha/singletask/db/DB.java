@@ -423,26 +423,6 @@ public class DB {
         }
     }
 
-    public void markCategoryDeleted(final Long category, final int position) {
-//        Log.d(TAG,"markCategoryDeleted()");
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                markCategoryDeletedInDB(category);
-                notifyOperationFinished(Operation.MARK_CATEGORY_DELETED, null, position);
-            }
-        });
-    }
-
-    private void markTaskDeletedInDB(Long category) {
-//        Log.d(TAG, "markTaskDeletedInDB");
-        ContentValues cv = new ContentValues();
-        cv.put("isDeleted", 1);
-        String selection = "id=?";
-        String[] selectionArgs = { String.valueOf(category)  };
-        db.update(ctx.getString(R.string.table_category_name), cv, selection, selectionArgs);
-    }
-
     public void markTaskDeleted(final Long task, final int position) {
 //        Log.d(TAG, "markTaskDeleted()");
         executor.execute(new Runnable() {
@@ -454,10 +434,33 @@ public class DB {
         });
     }
 
+    private void markTaskDeletedInDB(Long category) {
+//        Log.d(TAG, "markTaskDeletedInDB");
+        ContentValues cv = new ContentValues();
+        cv.put("isDeleted", 1);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(category)  };
+        db.update(ctx.getString(R.string.table_task_name), cv, selection, selectionArgs);
+    }
+
+    public void markCategoryDeleted(final Long category, final int position) {
+//        Log.d(TAG,"markCategoryDeleted()");
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                markCategoryDeletedInDB(category);
+                notifyOperationFinished(Operation.MARK_CATEGORY_DELETED, null, position);
+            }
+        });
+    }
+
+
     private void markCategoryDeletedInDB(Long category) {
 //        Log.d(TAG, "markCategoryDeletedinDB");
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", 1);
+        cv.put("lastUpdate", Utils.getCurrentTimeAsString());
         String selection = "id=?";
         String[] selectionArgs = { String.valueOf(category)  };
         db.update(ctx.getString(R.string.table_category_name), cv, selection, selectionArgs);
