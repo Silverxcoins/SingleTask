@@ -52,8 +52,9 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             public void onClick(View view) {
                 mTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("Action")
-                        .setAction("Share")
+                        .setAction("CREATE NEW TASK/CATEGORY")
                         .build());
+
                 Log.d(TAG, "FLOAT BUTTON CLIKED");
                 Intent intent;
                 if (pager.getCurrentItem() == 0) {
@@ -88,13 +89,13 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "Setting screen name: " +  name);
-        mTracker.setScreenName("Image~" + name);
+        Log.i(TAG, "Setting screen name: " + this.getLocalClassName());
+        mTracker.setScreenName("Image~" + this.getLocalClassName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         mTracker.send(new HitBuilders.EventBuilder()
                 .setCategory("Action")
-                .setAction("Share")
+                .setAction("onResume() SettingsActivity")
                 .build());
     }
 
