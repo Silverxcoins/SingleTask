@@ -1,6 +1,5 @@
 package com.example.sasha.singletask.settings;
 
-// TODO: arrange imports and remove not used modules
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,13 +27,12 @@ import java.util.Set;
 
 public class CategoriesFragment extends Fragment {
 
-    private static final String TAG = "CategoriesFragment";
-
+    private final String TAG = "CategoriesFragment";
     private View rootView;
-    public static ArrayList<Map> items = new ArrayList<Map>();
-    public static RecyclerListAdapter mAdapter;
-    public static final String tabName = "categories_tab";
+    public RecyclerListAdapter mAdapter;
 
+    public static ArrayList<Map> items = new ArrayList<Map>();
+    public static String tabName = "categories_tab";
     private static CategoriesFragment categoriesFragment;
 
     public static CategoriesFragment getInstance(ArrayList<Map> mItems) {
@@ -46,7 +44,6 @@ public class CategoriesFragment extends Fragment {
         } else {
             items.clear();
             items.addAll(mItems);
-//            mAdapter.notifyDataSetChanged();
         }
         return categoriesFragment;
     }
@@ -63,8 +60,6 @@ public class CategoriesFragment extends Fragment {
         configureView();
         return rootView;
     }
-
-    // TODO FIX: this method calls multiple times and creates a lot of the same objects
 
     private void configureView() {
         int scrollPosition = 0;

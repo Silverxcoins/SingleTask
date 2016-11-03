@@ -38,8 +38,6 @@ public class TabsPagerFragmentAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // TODO FIX: swap positions (Tasks must be first)
-        // tabs = new String[] {"Задания", "Категории"};
         if (position == 0) {
             return CategoriesFragment.getInstance(categoryItems);
         } else {

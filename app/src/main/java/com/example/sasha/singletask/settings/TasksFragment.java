@@ -1,6 +1,5 @@
 package com.example.sasha.singletask.settings;
 
-// TODO: arrange imports and remove not used modules
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,14 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-// TODO: implement onSavedInstance (onRestore)
 public class TasksFragment extends Fragment {
-    // TODO: arrange these fields in right order
-    private static final String TAG = "TasksFragment";
 
     private View rootView;
+    public RecyclerListAdapter mAdapter;
+
     public static ArrayList<Map> items = new ArrayList<Map>();
-    public static RecyclerListAdapter mAdapter;
+    private static final String TAG = "TasksFragment";
     public static final String tabName = "tasks_tab";
 
     private static TasksFragment tasksFragment;
@@ -47,7 +45,6 @@ public class TasksFragment extends Fragment {
         } else {
             items.clear();
             items.addAll(mItems);
-            mAdapter.notifyDataSetChanged();
         }
 
         return tasksFragment;

@@ -35,14 +35,16 @@
                 android:background="#00ffffff"
                 android:layout_gravity="left"
                 android:tint="@color/colorPrimary"
-                android:src="@drawable/ic_keyboard_arrow_left_black_48dp"/>
+                />
+            <!--android:src="@drawable/ic_keyboard_arrow_left_black_48dp"-->
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="#00ffffff"
                 android:layout_gravity="right"
                 android:tint="@color/colorPrimary"
-                android:src="@drawable/ic_keyboard_arrow_right_black_48dp"/>
+                />
+            <!--android:src="@drawable/ic_keyboard_arrow_right_black_48dp"-->
         </FrameLayout>
 
     </android.support.design.widget.CoordinatorLayout>

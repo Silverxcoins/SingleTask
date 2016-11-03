@@ -28,39 +28,21 @@ import com.example.sasha.singletask.R;
 public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
-    // TODO: arrange fields
-    private static final String TAG = "RecyclerListAdapter";
+    private final String TAG = "RecyclerListAdapter";
     private Context context;
     private ArrayList<Map> mItems = new ArrayList<Map>();
+
     public static String mTabName;
 
-    // TODO: rename list
     public RecyclerListAdapter(String tabName, ArrayList<Map> list) {
-//        String[] CATEGORIES_STRINGS = new String[]{
-//                "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-//                "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-//                "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-//                "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
-//                "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"
-//        };
-//
-//        String[] TASKS_STRINGS = new String[]{
-//                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
-//                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
-//                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
-//                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
-//                "One11", "Two11", "Three11", "Four11", "Five11", "Six11", "Seven11", "Eight11", "Nine11", "Ten11",
-//        };
         mTabName = tabName;
 
-        // TODO ASK: remove it?
         mItems.clear();
         mItems.addAll(list);
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // TODO: refactor it without if
         View view;
         if (mTabName == CategoriesFragment.tabName) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
@@ -75,9 +57,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, final int position) {
         if (mItems.size() != 0) {
-            // TODO FIX: the realization via <if tabName == CategoriesFragment.tabName>
-            // doesn't work cause of not clear reason - tabNames for Category and Task fragments
-            // tabNames equal tasks!!
             try {
                 holder.textView.setText(mItems.get(position).get("categoryName").toString());
                 holder.wrapView.setOnClickListener(new View.OnClickListener() {
@@ -85,8 +64,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                     public void onClick(View view) {
                         view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
                         Log.d(TAG, mItems.get(position).get("categoryId").toString() + " clicked");
-
-                        // TODO: handle exceptions
                         Long categoryId = Long.parseLong(mItems.get(position).get("categoryId").toString());
                         Intent intent = new Intent(context, CategoryActivity.class);
                         intent.putExtra("category", categoryId);
@@ -101,8 +78,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
                         public void onClick(View view) {
                             view.startAnimation(AnimationUtils.loadAnimation(context, R.anim.click_anim));
                             Log.d(TAG, mItems.get(position).get("taskId").toString() + " clicked");
-
-                            // TODO: handle exceptions
                             Long taskId = Long.parseLong(mItems.get(position).get("taskId").toString());
                             Intent intent = new Intent(context, TaskActivity.class);
                             intent.putExtra("task", taskId);
@@ -119,8 +94,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
 
     @Override
     public void onItemDismiss(final int position) {
-
-        // TODO: don't hardcode! remove it in resources
         new AlertDialog.Builder(context)
             .setMessage("Вы действительно хотите удалить?")
             .setCancelable(false)
@@ -159,7 +132,6 @@ public class RecyclerListAdapter extends RecyclerView.Adapter<RecyclerListAdapte
         public ItemViewHolder(View itemView) {
             super(itemView);
             wrapView = itemView;
-            // TODO: rewrite it without if
             if (mTabName == CategoriesFragment.tabName) {
                 textView = (TextView) itemView.findViewById(R.id.category_item_view);
             } else {

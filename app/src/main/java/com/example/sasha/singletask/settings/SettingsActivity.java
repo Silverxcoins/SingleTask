@@ -37,8 +37,6 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-//        System.out.println(pager.getCurrentItem() + " aaaaaaaaaaaaaaaa");
-
         initToolbar();
         initTabs();
 
@@ -60,15 +58,10 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             }
         });
 
-
-
         DB.getInstance(this).open();
         DB.getInstance(this).setCallback(this);
         DB.getInstance(this).getTasks();
         DB.getInstance(this).getCategories();
-
-//        Intent intent = new Intent(this, TaskActivity.class);
-//        startActivity(intent);
     }
 
     private void initToolbar() {
@@ -143,7 +136,6 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
             do {
                 String taskName = result.getString(result.getColumnIndex("name"));
                 Long taskId = result.getLong(result.getColumnIndex("id"));
-                // TODO FIX: allocating too much memory! optimize this code!
                 Map helper = new HashMap();
                 helper.put("taskId", taskId);
                 helper.put("taskName", taskName);
