@@ -8,7 +8,12 @@ import android.widget.ImageButton;
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.helpers.Ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class VariantsItemViewHolder extends RecyclerView.ViewHolder {
+
+    private static final Logger logger = LoggerFactory.getLogger(VariantsItemViewHolder.class);
 
     private final EditText variantNameEditText;
     private final ImageButton deleteButton;
@@ -22,6 +27,9 @@ public class VariantsItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(final VariantsItem variant) {
+
+        logger.debug("bind");
+
         variantNameEditText.setText(variant.getVariantName());
         variantNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -50,10 +58,16 @@ public class VariantsItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setFocusOnVariantName() {
+
+        logger.debug("setFocusOnVariantName()");
+
         variantNameEditText.requestFocus();
     }
 
     public void setEditable() {
+
+        logger.debug("setEditable");
+
         variantNameEditText.setEnabled(true);
         variantNameEditText.requestFocus();
     }

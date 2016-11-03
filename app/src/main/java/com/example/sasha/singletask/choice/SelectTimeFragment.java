@@ -5,13 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.user.MainActivity;
-import com.example.sasha.singletask.user.UsersManager;
 
 
 public class SelectTimeFragment extends Fragment {

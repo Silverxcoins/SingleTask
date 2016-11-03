@@ -7,13 +7,21 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Calendar;
 
 public class Utils {
+
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
     private static int userId;
 
-    // ASK: что тут происходит?
     public static void clearBackStack(Activity activity) {
+
+        logger.debug("clearBackStack()");
+
         FragmentManager manager = activity.getFragmentManager();
         if (manager.getBackStackEntryCount() > 0) {
             FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
@@ -30,6 +38,8 @@ public class Utils {
     }
 
     public static void setListViewHeightBasedOnItems(ListView listView) {
+
+        logger.debug("setListViewHeightBasedOnItems()");
 
         ListAdapter listAdapter = listView.getAdapter();
 
@@ -55,12 +65,18 @@ public class Utils {
     }
     
     public static String getTimeAsString(int minutes) {
+
+        logger.debug("getTimeAsString(int minutes)");
+
         final int hours = minutes / 60;
         minutes = minutes % 60;
         return getTimeAsString(hours, minutes);
     }
     
     public static String getTimeAsString(int hours, int minutes) {
+
+        logger.debug("getTimeAsString(int hours, int minutes)");
+
         String timeString = "";
 
         if (hours != 0) {
@@ -92,6 +108,9 @@ public class Utils {
     }
 
     public static int getTimeAsInt(String timeString) {
+
+        logger.debug("getTimeAsInt()");
+
         String[] timeParts = timeString.split(" ");
         if (timeParts.length == 4) {
             return new Integer(timeParts[0]) * 60 + new Integer(timeParts[2]);
@@ -103,6 +122,9 @@ public class Utils {
     }
 
     public static boolean isDateEarlierThanNow(int year, int month, int day) {
+
+        logger.debug("isDateEarlierThanNow()");
+
         Calendar c = Calendar.getInstance();
         return year < c.get(Calendar.YEAR)
                 || (year == c.get(Calendar.YEAR) && month < c.get(Calendar.MONTH) + 1)
@@ -111,6 +133,9 @@ public class Utils {
     }
 
     public static String getCurrentTimeAsString() {
+
+        logger.debug("getCurrentTimeAsString()");
+
         Calendar c = Calendar.getInstance();
         StringBuilder timeBuilder = new StringBuilder();
         timeBuilder.append(c.get(Calendar.YEAR)).append("-")

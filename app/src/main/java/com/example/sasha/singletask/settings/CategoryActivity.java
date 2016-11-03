@@ -17,20 +17,31 @@ import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsAdapte
 import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsDataSource;
 import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsItem;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
 public class CategoryActivity extends AppCompatActivity implements DB.Callback {
 
-    private RecyclerView recyclerView;
+    private static final Logger logger = LoggerFactory.getLogger(CategoryActivity.class);
+
+    private static final String CATEGORY_KEY = "category";
+    private static final String VARIANTS_KEY = "variants";
+    private static final String TEXT_IN_FOCUS_KEY = "textInFocus";
+    private static final String NAME_KEY = "name";
+
     private VariantsDataSource dataSource;
     private EditText categoryNameEditText;
     private LinearLayoutManager layoutManager;
-    private VariantsAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+
+        logger.debug("onCreate()");
+
         categoryNameEditText = (EditText) findViewById(R.id.nameEditText);
         initToolbar();
         initVariantsRecyclerView();
@@ -39,30 +50,39 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
         DB.getInstance(this).setCallback(this);
         DB.getInstance(this).open();
         if (savedInstanceState == null) {
-            if (getIntent().hasExtra("category")) {
-                DB.getInstance(this).getCategoryById(getIntent().getLongExtra("category", 0));
+            if (getIntent().hasExtra(CATEGORY_KEY)) {
+                DB.getInstance(this).getCategoryById(getIntent().getLongExtra(CATEGORY_KEY, 0));
             }
         } else {
-            ArrayList<String> variantsNames = savedInstanceState.getStringArrayList("variants");
-            if (savedInstanceState.containsKey("textInFocus")) {
+            ArrayList<String> variantsNames = savedInstanceState.getStringArrayList(VARIANTS_KEY);
+            if (savedInstanceState.containsKey(TEXT_IN_FOCUS_KEY)) {
                 variantsNames.set(variantsNames.size() - 1,
-                        savedInstanceState.getString("textInFocus"));
+                        savedInstanceState.getString(TEXT_IN_FOCUS_KEY));
             }
-            dataSource.setItems(savedInstanceState.getStringArrayList("variants"));
+            dataSource.setItems(savedInstanceState.getStringArrayList(VARIANTS_KEY));
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList("variants", dataSource.getVariantsNames());
+
+        logger.debug("onSaveInstanceState()");
+
+        outState.putStringArrayList(VARIANTS_KEY, dataSource.getVariantsNames());
         if (getCurrentFocus() instanceof EditText && getCurrentFocus() != categoryNameEditText
                 && !((EditText) getCurrentFocus()).getText().toString().isEmpty()) {
-            outState.putString("textInFocus", ((EditText) getCurrentFocus()).getText().toString());
+            outState.putString(
+                    TEXT_IN_FOCUS_KEY,
+                    ((EditText) getCurrentFocus()).getText().toString()
+            );
         }
         super.onSaveInstanceState(outState);
     }
 
     private void initToolbar() {
+
+        logger.debug("initToolbar()");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.category_toolbar);
         setSupportActionBar(toolbar);
 
@@ -73,12 +93,15 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
     }
 
     private void initVariantsRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.variantsRecyclerView);
+
+        logger.debug("initVariantsRecyclerView()");
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.variantsRecyclerView);
         dataSource = new VariantsDataSource(recyclerView);
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
-        adapter = new VariantsAdapter(this, dataSource, layoutManager);
+        VariantsAdapter adapter = new VariantsAdapter(this, dataSource);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         (findViewById(R.id.btnAddVariant)).setOnClickListener(new View.OnClickListener() {
@@ -100,6 +123,9 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
     }
 
     private void setDoneButtonListener() {
+
+        logger.debug("setDoneButtonListener()");
+
         findViewById(R.id.btnDoneCategory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,9 +144,9 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
                     getCurrentFocus().clearFocus();
                 }
 
-                if (getIntent().hasExtra("category")) {
+                if (getIntent().hasExtra(CATEGORY_KEY)) {
                     DB.getInstance(CategoryActivity.this).updateCategory(
-                            getIntent().getLongExtra("category", 0),
+                            getIntent().getLongExtra(CATEGORY_KEY, 0),
                             categoryNameEditText.getText().toString(),
                             dataSource.getVariantsNames());
                 } else {
@@ -135,24 +161,37 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
 
     @Override
     public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+
+        logger.debug("onOperationFinished() Operation: {}", operation.name());
+
         if (operation == DB.Operation.GET_CATEGORY_BY_ID) {
+
             String categoryName = "";
             if (result.moveToFirst()) {
-                categoryName = result.getString(result.getColumnIndex("name"));
+                categoryName = result.getString(result.getColumnIndex(NAME_KEY));
             }
             categoryNameEditText.setText(categoryName);
-            DB.getInstance(this).getVariantsByCategory(getIntent().getLongExtra("category", 0), 0);
+            DB.getInstance(this).getVariantsByCategory(getIntent().getLongExtra(CATEGORY_KEY, 0), 0);
+
         } else if (operation == DB.Operation.GET_VARIANTS_BY_CATEGORY) {
+
             if (result.moveToFirst()) {
                 do {
-                    String variantName = result.getString(result.getColumnIndex("name"));
+                    String variantName = result.getString(result.getColumnIndex(NAME_KEY));
                     dataSource.addItem(new VariantsItem(variantName));
                 } while (result.moveToNext());
             }
 
-        } else if (operation == DB.Operation.INSERT_NEW_CATEGORY
-                || operation == DB.Operation.UPDATE_CATEGORY) {
+        } else if (operation == DB.Operation.INSERT_NEW_CATEGORY) {
+
+            logger.info("Add new category success");
             finish();
+
+        } else if(operation == DB.Operation.UPDATE_CATEGORY) {
+
+            logger.info("Update category success");
+            finish();
+
         }
     }
 }

@@ -2,7 +2,6 @@ package com.example.sasha.singletask.user;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,28 +14,30 @@ import com.example.sasha.singletask.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SignUpFragment extends Fragment implements UsersManager.SignUpCallback {
-    private static final String TAG = "SignUpFragment";
+
+    private static final Logger logger = LoggerFactory.getLogger(SignUpFragment.class);
 
     private static final String EMAIL_KEY = "email";
     private static final String PASSWORD_KEY = "password";
     private static final String PASSWORD_REPEAT_KEY = "passwordRepeat";
+    private static final String CODE_KEY = "code";
 
     private EditText emailEditText;
     private EditText passwordEditText;
     private EditText passwordRepeatEditText;
-    private Button signUpButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sign_up, null);
 
-        emailEditText = (EditText) view.findViewById(R.id.editTextEmailSignUp);
-        passwordEditText = (EditText) view.findViewById(R.id.editTextPasswordSignUp);
-        passwordRepeatEditText = (EditText) view.findViewById(R.id.editTextRepeatPasswordSignUp);
-        signUpButton = (Button) view.findViewById(R.id.buttonSignUp);
+        logger.debug("onCreateView()");
+
+        initViews(view);
 
         if (savedInstanceState != null) {
             emailEditText.setText(savedInstanceState.getString(EMAIL_KEY));
@@ -45,31 +46,48 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
         }
 
         UsersManager.getInstance().setSignUpCallback(this);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "signUpButton clicked");
-                signUp();
-            }
-        });
 
         return view;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState){
+
+        logger.debug("onSaveInstanceState()");
+
         if (emailEditText != null)
             outState.putString(EMAIL_KEY, emailEditText.getText().toString());
         if (passwordEditText != null)
             outState.putString(PASSWORD_KEY, passwordEditText.getText().toString());
         if (passwordRepeatEditText != null)
             outState.putString(PASSWORD_REPEAT_KEY, passwordRepeatEditText.getText().toString());
+
         super.onSaveInstanceState(outState);
     }
 
+    private void initViews(View view) {
+
+        logger.debug("initViews()");
+
+        emailEditText = (EditText) view.findViewById(R.id.editTextEmailSignUp);
+        passwordEditText = (EditText) view.findViewById(R.id.editTextPasswordSignUp);
+        passwordRepeatEditText = (EditText) view.findViewById(R.id.editTextRepeatPasswordSignUp);
+        Button signUpButton = (Button) view.findViewById(R.id.buttonSignUp);
+
+        signUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signUp();
+            }
+        });
+    }
+
     private void signUp() {
-        Log.d(TAG, "SignUp()");
+
+        logger.debug("signUp()");
+
         if (!Http.isNetworkAvailable(getActivity())) {
+            logger.warn("No internet connection");
             Toast.makeText(getActivity(), R.string.NO_INTERNET_CONNECTION, Toast.LENGTH_SHORT)
                     .show();
             return;
@@ -96,50 +114,66 @@ public class SignUpFragment extends Fragment implements UsersManager.SignUpCallb
 
     @Override
     public void onSignUpFinished(JSONObject json) {
-        Log.d(TAG, "onSignUpFinished()");
+
+        logger.debug("onSignUpFinished()");
+
         if (json == null) {
+            logger.warn("Something went wrong");
             Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            int code = json.getInt("code");
+            int code = json.getInt(CODE_KEY);
             if (code == Http.OK) {
+                logger.info("Sign up successful");
                 Toast.makeText(getActivity(), R.string.SIGN_UP_SUCCESSFULL, Toast.LENGTH_SHORT)
                         .show();
                 clearFields();
-                // ASK: как он узнает какой activity? Может надо (MainActivity) getActivity() = ..
-                // ASK: onBackPressed?
                 getActivity().onBackPressed();
             } else if (code == Http.ALREADY_EXIST) {
                 Toast.makeText(getActivity(), R.string.EMAIL_ALREADY_IN_USE,
                         Toast.LENGTH_SHORT).show();
             } else {
+                logger.warn("Something went wrong");
                 Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
+            logger.warn("Something went wrong");
             Toast.makeText(getActivity(), R.string.SOMETHING_WRONG, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void clearFields() {
+
+        logger.debug("clearFields()");
+
         emailEditText.getText().clear();
         passwordEditText.getText().clear();
         passwordRepeatEditText.getText().clear();
     }
 
     private boolean areThereEmptyFields() {
+
+        logger.debug("areThereEmptyFields()");
+
         return emailEditText.getText().toString().isEmpty()
                 || passwordEditText.getText().toString().isEmpty()
                 || passwordRepeatEditText.getText().toString().isEmpty();
     }
 
     private boolean isEmailValid() {
+
+        logger.debug("isEmailValid()");
+
         CharSequence email = emailEditText.getText().toString();
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean arePasswordsMatch() {
+
+        logger.debug("arePasswordsMatch()");
+
         return passwordEditText.getText().toString()
                 .equals(passwordRepeatEditText.getText().toString());
     }
