@@ -326,11 +326,16 @@ public class TaskActivity extends AppCompatActivity implements
 
         logger.debug("onReceiveVariantByTaskAndCategory()");
 
+        String variantName;
         if (variant != null) {
             variantsId.add(variant.getId());
-            itemsStrings.set(position, itemsStrings.get(position) + variant.getName());
-            adapter.notifyDataSetChanged();
+            variantName = variant.getName();
+        } else {
+            variantsId.add(0L);
+            variantName = getString(R.string.empty_variant_string);
         }
+        itemsStrings.set(position, itemsStrings.get(position) + variantName);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -368,6 +373,7 @@ public class TaskActivity extends AppCompatActivity implements
 
         itemsStrings.set(position, categoriesNames.get(position) + ": " +
                 getString(R.string.empty_variant_string));
+        logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + variantsId.size());
         variantsId.set(position, ids[0]);
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
