@@ -265,8 +265,6 @@ public class TaskActivity extends AppCompatActivity implements
         adapter = new ArrayAdapter<>(this,
                 R.layout.list_item, itemsStrings);
         list.setAdapter(adapter);
-        Utils.setListViewHeightBasedOnItems(list);
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -373,7 +371,6 @@ public class TaskActivity extends AppCompatActivity implements
 
         itemsStrings.set(position, categoriesNames.get(position) + ": " +
                 getString(R.string.empty_variant_string));
-        logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + variantsId.size());
         variantsId.set(position, ids[0]);
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override

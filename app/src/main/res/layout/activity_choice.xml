@@ -30,16 +30,20 @@
                 android:background="@android:color/white">
             </FrameLayout>
             <ImageButton
+                android:id="@+id/leftArrowBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="left"
+                android:background="@color/colorTransparent"
                 android:tint="@color/colorPrimary"
                 android:src="@drawable/ic_keyboard_arrow_left_black_48dp"
                 />
             <ImageButton
+                android:id="@+id/rightArrowBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
+                android:background="@color/colorTransparent"
                 android:tint="@color/colorPrimary"
                 android:src="@drawable/ic_keyboard_arrow_right_black_48dp"
                 />

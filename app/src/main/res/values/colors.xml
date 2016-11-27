@@ -18,4 +18,6 @@
     <color name="colorTaskActivityDeleteBtnTint">#BBBBBB</color>
     <color name="colorAddVariantButtonTint">#666666</color>
     <color name="colorCategoryActivityDivider">#BBBBBB</color>
+    <color name="colorTransparent">#00FFFFFF</color>
+    <color name="variantsChoiceDividerColor">#CCCCCC</color>
 </resources>

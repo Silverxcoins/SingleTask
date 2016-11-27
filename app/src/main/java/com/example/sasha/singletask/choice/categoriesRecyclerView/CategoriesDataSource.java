@@ -12,88 +12,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoriesDataSource {
-//    private static final Logger logger = LoggerFactory.getLogger(VariantsDataSource.class);
-//
-//    private final List<VariantsItem> variants = new ArrayList<>();
-//    private final RecyclerView recyclerView;
-//
-//    public CategoriesDataSource(RecyclerView recyclerView) {
-//        this.recyclerView = recyclerView;
-//    }
-//
-//    public ArrayList<String> getVariantsNames() {
-//
-//        logger.debug("getVariantsNames()");
-//
-//        ArrayList<String> variantsNames = new ArrayList<>();
-//        for (VariantsItem variant : variants) {
-//            variantsNames.add(variant.getVariantName());
-//        }
-//        return variantsNames;
-//    }
-//
-//    public void setItems(ArrayList<String> variantsNames) {
-//
-//        logger.debug("setItems()");
-//
-//        for (String variantName : variantsNames) {
-//            addItem(new VariantsItem(variantName));
-//        }
-//    }
-//
-//    public void updateItem(int position, String variantName) {
-//
-//        logger.debug("updateItem()");
-//
-//        variants.get(position).setVariantName(variantName);
-//        recyclerView.getAdapter().notifyItemChanged(position);
-//    }
-//
-//    public int getCount() {
-//
-//        logger.debug("getCount()");
-//
-//        return variants.size();
-//    }
-//
-//    public VariantsItem getItem(int position) {
-//
-//        logger.debug("getItem()");
-//
-//        return variants.get(position);
-//    }
-//
-//    private int getPosition(VariantsItem variant) {
-//
-//        logger.debug("getPosition()");
-//
-//        return variants.indexOf(variant);
-//    }
-//
-//    public void addItem(VariantsItem item) {
-//
-//        logger.debug("addItem()");
-//
-//        variants.add(item);
-//        recyclerView.getAdapter().notifyItemInserted(variants.size());
-//    }
-//
-//    private void remove(int position) {
-//
-//        logger.debug("remove(int position)");
-//
-//        if (!variants.isEmpty()) {
-//            variants.remove(position);
-//            recyclerView.getAdapter().notifyItemRemoved(position);
-//        }
-//    }
-//
-//    public void remove(VariantsItem variant) {
-//
-//        logger.debug("remove(VariantsItem variant)");
-//
-//        if (variants.contains(variant)) {
-//            remove(getPosition(variant));
-//        }
-//    }
+    private static final Logger logger = LoggerFactory.getLogger(VariantsDataSource.class);
+
+    private final List<CategoriesItem> categories = new ArrayList<>();
+    private final RecyclerView recyclerView;
+
+    public CategoriesDataSource(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+    }
+
+    public ArrayList<String> getStrings() {
+
+        logger.debug("getStrings()");
+
+        ArrayList<String> strings = new ArrayList<>();
+        for (CategoriesItem category : categories) {
+            strings.add(category.getText());
+        }
+        return strings;
+    }
+
+    public void updateVariant(int position, String variantName) {
+
+        logger.debug("updateVariant()");
+
+        categories.get(position).setVariantName(variantName);
+        recyclerView.getAdapter().notifyItemChanged(position);
+    }
+
+    public int getCount() {
+
+        logger.debug("getCount()");
+
+        return categories.size();
+    }
+
+    public CategoriesItem getItem(int position) {
+
+        logger.debug("getItem()");
+
+        return categories.get(position);
+    }
+
+    private int getPosition(CategoriesItem category) {
+
+        logger.debug("getPosition()");
+
+        return categories.indexOf(category);
+    }
+
+    public void addItem(CategoriesItem item) {
+
+        logger.debug("addItem()");
+
+        categories.add(item);
+        recyclerView.getAdapter().notifyItemInserted(categories.size());
+    }
 }

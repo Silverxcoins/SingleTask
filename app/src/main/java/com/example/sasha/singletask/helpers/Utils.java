@@ -36,33 +36,6 @@ public class Utils {
     public static long getUserId() {
         return userId;
     }
-
-    public static void setListViewHeightBasedOnItems(ListView listView) {
-
-        logger.debug("setListViewHeightBasedOnItems()");
-
-        ListAdapter listAdapter = listView.getAdapter();
-
-        int numberOfItems = listAdapter.getCount();
-
-        int totalItemsHeight = 0;
-        int measureHeight = 0;
-        for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-            View item = listAdapter.getView(itemPos, null, listView);
-            item.measure(0, 0);
-            measureHeight = item.getMeasuredHeight();
-            totalItemsHeight += measureHeight;
-        }
-        totalItemsHeight += measureHeight;
-
-        int totalDividersHeight = listView.getDividerHeight() *
-                (numberOfItems - 1);
-
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalItemsHeight + totalDividersHeight;
-        listView.setLayoutParams(params);
-        listView.requestLayout();
-    }
     
     public static String getTimeAsString(int minutes) {
 

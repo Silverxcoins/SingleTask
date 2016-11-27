@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/categories_list_item_text_view"
+            android:textColor="@color/colorTextPrimaryLight"
+            android:paddingLeft="@dimen/categories_list_text_view_left_right_padding"
+            android:paddingRight="@dimen/categories_list_text_view_left_right_padding"
+            android:textSize="@dimen/categories_list_text_size"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:layout_marginTop="@dimen/categoriesListItemTopBottomMargin"
+        android:layout_marginBottom="@dimen/categoriesListItemTopBottomMargin"
+        android:background="@color/colorPrimary"/>
+
+</LinearLayout>

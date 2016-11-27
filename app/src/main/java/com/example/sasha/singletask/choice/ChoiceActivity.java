@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.choice;
 
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,6 +31,9 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
     private ProgressBar progressBar;
 
+    private Fragment selectTimeFragment;
+    private Fragment variantsChoiceFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +44,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         initToolbar();
         initProgressBar();
         setUserIdToUtils();
+        setArrowsButtonsListeners();
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
             setLoading(true);
@@ -49,6 +54,9 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
                 SyncManager.getInstance().sync(this);
             }
         }
+
+        selectTimeFragment = new SelectTimeFragment();
+        variantsChoiceFragment = new VariantsChoiceFragment();
 
         setSelectTimeFragment();
     }
@@ -150,7 +158,32 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left);
-        ft.replace(R.id.choice_container, new SelectTimeFragment());
+        ft.replace(R.id.choice_container, selectTimeFragment);
         ft.commit();
+    }
+
+    private void setVariantsChoiceFragment() {
+
+        logger.debug("setVariantsChoiceFragment()");
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                R.anim.slide_in_right, R.anim.slide_out_right);
+        ft.replace(R.id.choice_container, variantsChoiceFragment);
+        ft.commit();
+    }
+
+    private void setArrowsButtonsListeners() {
+
+        logger.debug("setArrowsButtonsListeners");
+
+        findViewById(R.id.rightArrowBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectTimeFragment.isVisible()) {
+                    setVariantsChoiceFragment();
+                }
+            }
+        });
     }
 }

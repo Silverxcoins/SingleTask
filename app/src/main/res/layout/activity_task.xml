@@ -25,15 +25,11 @@
             android:src="@drawable/ic_done_white_24dp"
             style="@style/ToolbarButtonStyle" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white">
 
             <LinearLayout
                 android:id="@+id/task_activity_main_linear_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 style="@style/TaskActivityFieldsLinearLayoutStyle">
 
                 <LinearLayout
@@ -130,11 +126,10 @@
                 <ListView
                     android:id="@+id/lv"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
-        </ScrollView>
 
     </android.support.design.widget.CoordinatorLayout>
 

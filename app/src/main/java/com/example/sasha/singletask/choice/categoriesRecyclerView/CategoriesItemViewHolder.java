@@ -2,74 +2,29 @@ package com.example.sasha.singletask.choice.categoriesRecyclerView;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.helpers.Ui;
-import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CategoriesItemViewHolder {
-//
-//    private static final Logger logger = LoggerFactory.getLogger(CategoriesItemViewHolder.class);
-//
-//    private final EditText variantNameEditText;
-//    private final ImageButton deleteButton;
-//    private final CategoriesDataSource dataSource;
-//
-//    public CategoriesItemViewHolder(View itemView, CategoriesDataSource dataSource) {
-//        super(itemView);
-//        this.variantNameEditText = (EditText) itemView.findViewById(R.id.editTextVariantName);
-//        this.deleteButton = (ImageButton) itemView.findViewById(R.id.btnDeleteVariant);
-//        this.dataSource = dataSource;
-//    }
-//
-//    public void bind(final VariantsItem variant) {
-//
-//        logger.debug("bind");
-//
-//        variantNameEditText.setText(variant.getVariantName());
-//        variantNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (!hasFocus) {
-//                    variant.setVariantName(variantNameEditText.getText().toString());
-//                    if (variantNameEditText.getText().toString().isEmpty()) {
-//                        Ui.run(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                dataSource.remove(variant);
-//                            }
-//                        });
-//                    }
-//                }
-//                variantNameEditText.setEnabled(false);
-//            }
-//        });
-//        variantNameEditText.setEnabled(false);
-//        deleteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dataSource.remove(variant);
-//            }
-//        });
-//    }
-//
-//    public void setFocusOnVariantName() {
-//
-//        logger.debug("setFocusOnVariantName()");
-//
-//        variantNameEditText.requestFocus();
-//    }
-//
-//    public void setEditable() {
-//
-//        logger.debug("setEditable");
-//
-//        variantNameEditText.setEnabled(true);
-//        variantNameEditText.requestFocus();
-//    }
+public class CategoriesItemViewHolder extends RecyclerView.ViewHolder {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoriesItemViewHolder.class);
+
+    private final TextView categoryTextView;
+
+    public CategoriesItemViewHolder(View itemView) {
+        super(itemView);
+        this.categoryTextView =
+                (TextView) itemView.findViewById(R.id.categories_list_item_text_view);
+    }
+
+    public void bind(final CategoriesItem category) {
+
+        logger.debug("bind");
+
+        categoryTextView.setText(category.getText());
+    }
 }

@@ -20,7 +20,7 @@
     <dimen name="task_item_elevation">6dp</dimen>
     <dimen name="toolbar_edit_text_margin_right">64dp</dimen>
     <dimen name="DialogNumberPickerHorizontalMargin">24dp</dimen>
-    <dimen name="ChoiceActivityFragmentSecondaryLinearLayoutHMargin">40dp</dimen>
+    <dimen name="ChoiceActivityFragmentSecondaryLinearLayoutHMargin">16dp</dimen>
     <dimen name="ChoiceActivityFragmentSecondaryLinearLayoutTopMargin">80dp</dimen>
     <dimen name="ChoiceActivityFragmentSecondaryLinearLayoutBottomMargin">24dp</dimen>
     <dimen name="ChoiceActivityFragmentSecondaryLinearLayoutPadding">32dp</dimen>
@@ -48,4 +48,9 @@
     <dimen name="variants_label_right_padding">8dp</dimen>
     <dimen name="variants_label_text_size">16sp</dimen>
     <dimen name="add_variant_btn_top_right_bottom_padding">16dp</dimen>
+    <dimen name="TimeChoiceLayoutLeftRightMargin">16dp</dimen>
+    <dimen name="categoriesListItemTopBottomMargin">10dp</dimen>
+    <dimen name="VariantsChoiceMainLabelBottomMargin">16dp</dimen>
+    <dimen name="categories_list_text_view_left_right_padding">8dp</dimen>
+    <dimen name="categories_list_text_size">16sp</dimen>
 </resources>

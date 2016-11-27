@@ -157,6 +157,13 @@
         <item name="android:textSize">@dimen/ChoiceActivityPrimaryLabelSize</item>
     </style>
 
+    <style name="textViewWhatToDoStyle">
+        <item name="android:layout_marginBottom">@dimen/VariantsChoiceMainLabelBottomMargin</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/ChoiceActivityPrimaryLabelSize</item>
+    </style>
+
     <style name="ToolbarButtonStyle">
         <item name="android:layout_gravity">end|top</item>
         <item name="android:layout_marginRight">@dimen/toolbar_button_top_right_margin</item>

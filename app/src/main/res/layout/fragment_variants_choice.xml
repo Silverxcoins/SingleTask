@@ -11,9 +11,23 @@
         android:orientation="vertical"
         style="@style/ChoiceActivityLinearLayoutStyle">
 
+        <TextView
+            android:id="@+id/textViewIHaveTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Чем бы Вы хотели заняться?"
+            style="@style/textViewWhatToDoStyle" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:layout_marginTop="@dimen/categoriesListItemTopBottomMargin"
+            android:layout_marginBottom="@dimen/categoriesListItemTopBottomMargin"
+            android:background="@color/colorPrimary"/>
+
        <android.support.v7.widget.RecyclerView
            android:id="@+id/categories_recycler_view"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content"/>
+           android:layout_height="match_parent"/>
     </LinearLayout>
 </LinearLayout>
