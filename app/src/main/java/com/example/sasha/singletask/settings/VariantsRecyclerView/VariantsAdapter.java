@@ -1,4 +1,4 @@
-package com.example.sasha.singletask.settings.VariantsRecyclerView;
+package com.example.sasha.singletask.settings.variantsRecyclerView;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;

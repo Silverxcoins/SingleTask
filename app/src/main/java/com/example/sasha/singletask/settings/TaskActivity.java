@@ -3,7 +3,6 @@ package com.example.sasha.singletask.settings;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -22,6 +21,9 @@ import android.widget.Toast;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
+import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
+import com.example.sasha.singletask.db.dataSets.TaskDataSet;
+import com.example.sasha.singletask.db.dataSets.VariantDataSet;
 import com.example.sasha.singletask.helpers.Utils;
 
 import org.slf4j.Logger;
@@ -29,11 +31,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import static com.example.sasha.singletask.R.id.lv;
 
 public class TaskActivity extends AppCompatActivity implements
-        TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener, DB.Callback {
+        TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener,
+        DB.GetTaskByIdCallback, DB.GetCategoriesCallback, DB.GetVariantByTaskAndCategoryCallback,
+        DB.GetVariantsByCategoryCallback, DB.UpdateOrInsertTaskCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskActivity.class);
 
@@ -43,11 +48,6 @@ public class TaskActivity extends AppCompatActivity implements
     private static final String ITEMS_STRINGS_KEY = "itemsStrings";
     private static final String CATEGORIES_ID_KEY = "categoriesId";
     private static final String VARIANTS_ID_KEY = "variantsId";
-    private static final String NAME_KEY = "name";
-    private static final String ID_KEY = "id";
-    private static final String TIME_KEY = "time";
-    private static final String DATE_KEY = "date";
-    private static final String COMMENT_KEY = "comment";
 
     private EditText timeEditText;
     private EditText dateEditText;
@@ -75,7 +75,11 @@ public class TaskActivity extends AppCompatActivity implements
         setClearButtonsListeners();
         setDoneButtonListener();
 
-        DB.getInstance(this).setCallback(this);
+        DB.getInstance(this).setGetTaskByIdCallback(this);
+        DB.getInstance(this).setGetCategoriesCallback(this);
+        DB.getInstance(this).setGetVariantByTaskAndCategoryCallback(this);
+        DB.getInstance(this).setGetVariantsByCategoryCallback(this);
+        DB.getInstance(this).setUpdateOrInsertTaskCallback(this);
 
         variantsId = new ArrayList<>();
         categoriesId = new ArrayList<>();
@@ -273,94 +277,76 @@ public class TaskActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+    public void onReceiveTaskById(TaskDataSet task) {
 
-        logger.debug("onOperationFinished() Operation: {}", operation.name());
+        logger.debug("onReceiveTaskById()");
 
-        if (operation == DB.Operation.GET_TASK_BY_ID) {
-
-            if (result.moveToFirst()) {
-                String taskName = result.getString(result.getColumnIndex(NAME_KEY));
-                int time = result.getInt(result.getColumnIndex(TIME_KEY));
-                String date = result.getString(result.getColumnIndex(DATE_KEY));
-                String comment = result.getString(result.getColumnIndex(COMMENT_KEY));
-                taskEditText.setText(taskName);
-                taskEditText.setSelection(taskName.length());
-                timeEditText.setText(Utils.getTimeAsString(time));
-                if (date != null) {
-                    dateEditText.setText(date);
-                    String[] dateNumbers = date.split("-");
-                    if (Utils.isDateEarlierThanNow(Integer.valueOf(dateNumbers[0]),
-                            Integer.valueOf(dateNumbers[1]),
-                            Integer.valueOf(dateNumbers[2]))) {
-                        dateEditText.setTextColor(ContextCompat.getColor(this, R.color.errorColor));
-                    }
+        if (task != null) {
+            taskEditText.setText(task.getName());
+            taskEditText.setSelection(task.getName().length());
+            timeEditText.setText(Utils.getTimeAsString(task.getTime()));
+            if (task.getDate() != null) {
+                dateEditText.setText(task.getDate());
+                String[] dateNumbers = task.getDate().split("-");
+                if (Utils.isDateEarlierThanNow(Integer.valueOf(dateNumbers[0]),
+                        Integer.valueOf(dateNumbers[1]),
+                        Integer.valueOf(dateNumbers[2]))) {
+                    dateEditText.setTextColor(ContextCompat.getColor(this, R.color.errorColor));
                 }
-                if (comment != null) commentEditText.setText(comment);
             }
-
-        } else if (operation == DB.Operation.GET_CATEGORIES) {
-
-            if (result.moveToFirst()) {
-                do {
-                    String categoryName = result.getString(result.getColumnIndex(NAME_KEY));
-                    Long categoryId = result.getLong(result.getColumnIndex(ID_KEY));
-                    categoriesNames.add(categoryName);
-                    categoriesId.add(categoryId);
-                    String itemString = categoryName + ": ";
-                    if (getIntent().hasExtra(TASK_KEY)) {
-                        long taskId = getIntent().getLongExtra(TASK_KEY, 0);
-                        DB.getInstance(this).getVariantByTaskAndCategory(taskId, categoryId,
-                                categoriesId.size() - 1);
-                    } else {
-                        String variantName = getString(R.string.empty_variant_string);
-                        itemString += variantName;
-                        variantsNames.add(variantName);
-                        variantsId.add(0L);
-                    }
-                    itemsStrings.add(itemString);
-                } while (result.moveToNext());
-            }
-            Utils.setListViewHeightBasedOnItems(list);
-
-        } else if (operation == DB.Operation.GET_VARIANT_BY_TASK_AND_CATEGORY){
-
-            String variantName;
-            if (result.moveToFirst()) {
-                variantName = result.getString(result.getColumnIndex(NAME_KEY));
-                variantsId.add(result.getLong(result.getColumnIndex(ID_KEY)));
-            } else {
-                variantName = getString(R.string.empty_variant_string);
-                variantsId.add(0L);
-            }
-            itemsStrings.set(position, itemsStrings.get(position) + variantName);
-            adapter.notifyDataSetChanged();
-
-        } else if (operation == DB.Operation.GET_VARIANTS_BY_CATEGORY) {
-
-            showVariantsDialog(result, position);
-
-        } else if (operation == DB.Operation.INSERT_NEW_TASK) {
-            logger.info("Add new task success");
-            finish();
-        } else if (operation == DB.Operation.UPDATE_TASK) {
-            logger.info("Update task success");
-            finish();
+            if (task.getComment() != null) commentEditText.setText(task.getComment());
         }
     }
 
-    private  void showVariantsDialog(Cursor result, final int position) {
-        final String[] variants = new String[result.getCount() + 1];
-        final Long[] ids = new Long[result.getCount() + 1];
-        ids[0] = 0L;
-        variants[0] = getString(R.string.empty_variant_string);
+    @Override
+    public void onReceiveCategories(List<CategoryDataSet> categories) {
 
-        if (result.moveToFirst()) {
-            for (int i = 1; i < result.getCount() + 1; i++) {
-                variants[i] = result.getString(result.getColumnIndex(NAME_KEY));
-                ids[i] = result.getLong(result.getColumnIndex(ID_KEY));
-                result.moveToNext();
+        logger.debug("onReceiveCategories()");
+
+        for (CategoryDataSet category : categories) {
+            categoriesNames.add(category.getName());
+            categoriesId.add(category.getId());
+            String itemString = category.getName() + ": ";
+            if (getIntent().hasExtra(TASK_KEY)) {
+                long taskId = getIntent().getLongExtra(TASK_KEY, 0);
+                DB.getInstance(this).getVariantByTaskAndCategory(taskId, category.getId(),
+                        categoriesId.size() - 1);
+            } else {
+                String variantName = getString(R.string.empty_variant_string);
+                itemString += variantName;
+                variantsNames.add(variantName);
+                variantsId.add(0L);
             }
+            itemsStrings.add(itemString);
+        }
+    }
+
+    @Override
+    public void onReceiveVariantByTaskAndCategory(VariantDataSet variant, int position) {
+
+        logger.debug("onReceiveVariantByTaskAndCategory()");
+
+        if (variant != null) {
+            variantsId.add(variant.getId());
+            itemsStrings.set(position, itemsStrings.get(position) + variant.getName());
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onReceiveVariantsByCategory(List<VariantDataSet> variants, final int position) {
+
+        logger.debug("onReceiveVariantsByCategory()");
+
+        final String[] variantsNames = new String[variants.size() + 1];
+        final Long[] ids = new Long[variants.size() + 1];
+        ids[0] = 0L;
+        variantsNames[0] = getString(R.string.empty_variant_string);
+
+        int i = 1;
+        for (VariantDataSet variant : variants) {
+                variantsNames[i] = variant.getName();
+                ids[i++] = variant.getId();
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -377,8 +363,8 @@ public class TaskActivity extends AppCompatActivity implements
 
         NumberPicker numberPicker = ((NumberPicker) dialog.findViewById(R.id.numberPicker));
         numberPicker.setMinValue(0);
-        numberPicker.setMaxValue(variants.length - 1);
-        numberPicker.setDisplayedValues(variants);
+        numberPicker.setMaxValue(variants.size());
+        numberPicker.setDisplayedValues(variantsNames);
 
         itemsStrings.set(position, categoriesNames.get(position) + ": " +
                 getString(R.string.empty_variant_string));
@@ -386,10 +372,19 @@ public class TaskActivity extends AppCompatActivity implements
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                itemsStrings.set(position, categoriesNames.get(position) + ": " + variants[newVal]);
+                itemsStrings.set(position, categoriesNames.get(position) + ": "
+                        + variantsNames[newVal]);
                 variantsId.set(position, ids[newVal]);
             }
         });
+    }
+
+    @Override
+    public void onUpdateOrInsertTaskFinished() {
+
+        logger.debug("Update or insert task success");
+
+        finish();
     }
 
 

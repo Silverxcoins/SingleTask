@@ -1,4 +1,4 @@
-package com.example.sasha.singletask.settings.VariantsRecyclerView;
+package com.example.sasha.singletask.settings.variantsRecyclerView;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,7 +28,7 @@ public class VariantsItemViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(final VariantsItem variant) {
 
-        logger.debug("bind");
+        logger.debug("bind()");
 
         variantNameEditText.setText(variant.getVariantName());
         variantNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {

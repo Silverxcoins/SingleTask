@@ -28,8 +28,6 @@ public class DB {
 
     private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-    private static DB instance;
-
     public enum Operation {
         GET_CATEGORIES,
         GET_VARIANT_BY_TASK_AND_CATEGORY,
@@ -45,11 +43,10 @@ public class DB {
         MARK_CATEGORY_DELETED
     }
 
+    private static DB instance;
     private DbHelper dbHelper;
     private SQLiteDatabase db;
-
     private final ObjectMapper mapper = new ObjectMapper();
-
     private static Context ctx;
 
     public static DB getInstance(Context ctx) {
@@ -62,19 +59,83 @@ public class DB {
 
     private DB() {}
 
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
     public interface Callback {
         void onOperationFinished(Operation operation, Cursor result, int position);
     }
 
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    public interface GetCategoryByIdCallback {
+        void onReceiveCategoryById(String categoryName);
+    }
+
+    public interface GetVariantsByCategoryCallback {
+        void onReceiveVariantsByCategory(List<VariantDataSet> variants, int position);
+    }
+
+    public interface UpdateOrInsertCategoryCallback {
+        void onCategoryUpdateOrInsertFinished();
+    }
+
+    public interface GetTaskByIdCallback {
+        void onReceiveTaskById(TaskDataSet task);
+    }
+
+    public interface GetCategoriesCallback {
+        void onReceiveCategories(List<CategoryDataSet> categories);
+    }
+
+    public interface GetVariantByTaskAndCategoryCallback {
+        void onReceiveVariantByTaskAndCategory(VariantDataSet variant, int position);
+    }
+
+    public interface UpdateOrInsertTaskCallback {
+        void onUpdateOrInsertTaskFinished();
+    }
 
     private DB.Callback callback;
+    private DB.GetCategoryByIdCallback getCategoryNameByIdCallback;
+    private DB.GetVariantsByCategoryCallback getVariantsByCategoryCallback;
+    private DB.UpdateOrInsertCategoryCallback updateOrInsertCategoryCallback;
+    private DB.GetTaskByIdCallback getTaskByIdCallback;
+    private DB.GetCategoriesCallback getCategoriesCallback;
+    private DB.GetVariantByTaskAndCategoryCallback getVariantByTaskAndCategoryCallback;
+    private DB.UpdateOrInsertTaskCallback updateOrInsertTaskCallback;
 
     public void setCallback(DB.Callback callback) {
 
         logger.debug("setCallback()");
 
         this.callback = callback;
+    }
+
+    public void setGetCategoryNameByIdCallback(DB.GetCategoryByIdCallback callback) {
+        this.getCategoryNameByIdCallback = callback;
+    }
+
+    public void setGetVariantsByCategoryCallback(DB.GetVariantsByCategoryCallback callback) {
+        this.getVariantsByCategoryCallback = callback;
+    }
+
+    public void setUpdateOrInsertCategoryCallback(DB.UpdateOrInsertCategoryCallback callback) {
+        this.updateOrInsertCategoryCallback = callback;
+    }
+
+    public void setGetTaskByIdCallback(DB.GetTaskByIdCallback callback) {
+        this.getTaskByIdCallback = callback;
+    }
+
+    public void setGetCategoriesCallback(DB.GetCategoriesCallback callback) {
+        this.getCategoriesCallback = callback;
+    }
+
+    public void setGetVariantByTaskAndCategoryCallback(
+            DB.GetVariantByTaskAndCategoryCallback callback) {
+        this.getVariantByTaskAndCategoryCallback = callback;
+    }
+
+    public void setUpdateOrInsertTaskCallback(DB.UpdateOrInsertTaskCallback callback) {
+        this.updateOrInsertTaskCallback = callback;
     }
 
     private void notifyOperationFinished(final Operation operation, final Cursor result,
@@ -92,6 +153,106 @@ public class DB {
         });
     }
 
+    private void notifyReceiveCategoryNameById(final String categoryName) {
+
+        logger.debug("notifyReceiveCategoryNameById()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getCategoryNameByIdCallback != null) {
+                    getCategoryNameByIdCallback.onReceiveCategoryById(categoryName);
+                }
+            }
+        });
+    }
+
+    private void notifyReceiveVariantsByCategory(final List<VariantDataSet> variants, final int position) {
+
+        logger.debug("notifyReceiveVariantsByCategory()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getVariantsByCategoryCallback != null) {
+                    getVariantsByCategoryCallback.onReceiveVariantsByCategory(variants, position);
+                }
+            }
+        });
+    }
+
+    private void notifyUpdateOrInsertCategoryFinished() {
+
+        logger.debug("notifyReceiveCategoryNameById()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (updateOrInsertCategoryCallback != null) {
+                    updateOrInsertCategoryCallback.onCategoryUpdateOrInsertFinished();
+                }
+            }
+        });
+    }
+
+    private void notifyReceiveTaskById(final TaskDataSet task) {
+
+        logger.debug("notifyReceiveTaskById()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getTaskByIdCallback != null) {
+                    getTaskByIdCallback.onReceiveTaskById(task);
+                }
+            }
+        });
+    }
+
+    private void notifyReceiveCategories(final List<CategoryDataSet> categories) {
+
+        logger.debug("notifyReceiveCategories()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getCategoriesCallback != null) {
+                    getCategoriesCallback.onReceiveCategories(categories);
+                }
+            }
+        });
+    }
+
+    private void notifyReceiveVariantByTaskAndCategory(final VariantDataSet variant,
+                                                       final int position) {
+
+        logger.debug("notifyReceiveVariantByTaskAndCategory()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getVariantByTaskAndCategoryCallback != null) {
+                    getVariantByTaskAndCategoryCallback.onReceiveVariantByTaskAndCategory(
+                            variant,
+                            position);
+                }
+            }
+        });
+    }
+
+    private void notifyUpdateOrInsertTaskFinished() {
+
+        logger.debug("notifyUpdateOrInsertTaskFinished()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (updateOrInsertTaskCallback != null) {
+                    updateOrInsertTaskCallback.onUpdateOrInsertTaskFinished();
+                }
+            }
+        });
+    }
 
     public void open() {
 
@@ -132,6 +293,7 @@ public class DB {
                 tasks.add(new TaskDataSet(cursor));
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         try {
             logger.info("Tasks received from db : {}", mapper.writeValueAsString(tasks));
@@ -154,6 +316,7 @@ public class DB {
                 categories.add(new CategoryDataSet(cursor));
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         try {
             logger.info("Categories received from db: {}", mapper.writeValueAsString(categories));
@@ -187,6 +350,7 @@ public class DB {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         try {
             logger.info("Variants received from db: {}", mapper.writeValueAsString(variants));
@@ -230,6 +394,7 @@ public class DB {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         try {
             logger.info("TasksVariants received from db: {}", mapper.writeValueAsString(tvs));
@@ -309,7 +474,7 @@ public class DB {
                         if (inserted.contains(c)) {
                             category.setParent(c.getId());
                         } else {
-                            category.setParent((long) insertCategory(c));
+                            category.setParent(insertCategory(c));
                             inserted.add(c);
                         }
                         break;
@@ -335,7 +500,7 @@ public class DB {
         cv.put("isDeleted", 0);
 
         long id = db.insert(ctx.getString(R.string.table_category_name), null, cv);
-        category.setId((long)id);
+        category.setId(id);
         return id;
     }
 
@@ -413,6 +578,8 @@ public class DB {
             } else {
                 return;
             }
+            taskCursor.close();
+            variantCursor.close();
 
             ContentValues cv = new ContentValues();
             cv.put("task", tv.getTask());
@@ -455,7 +622,6 @@ public class DB {
         });
     }
 
-
     private void markCategoryDeletedInDB(Long category) {
 //        Log.d(TAG, "markCategoryDeletedinDB");
         ContentValues cv = new ContentValues();
@@ -495,8 +661,15 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor categories = getCategoriesFromDb();
-                notifyOperationFinished(Operation.GET_CATEGORIES, categories, 0);
+                Cursor cursor = getCategoriesFromDb();
+                List<CategoryDataSet> categories = new ArrayList<>();
+                if (cursor.moveToFirst()) {
+                    do {
+                        categories.add(new CategoryDataSet(cursor));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                notifyReceiveCategories(categories);
             }
         });
     }
@@ -510,6 +683,34 @@ public class DB {
                 null, null, null, null);
     }
 
+    public void getCategoryNameById(final long id) {
+
+        logger.debug("getCategoryNameById()");
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Cursor cursor = getCategoryByIdFromDb(id);
+                String categoryName = "";
+                if (cursor.moveToFirst()) {
+                    categoryName = cursor.getString(cursor.getColumnIndex("name"));
+                }
+                cursor.close();
+                notifyReceiveCategoryNameById(categoryName);
+            }
+        });
+    }
+
+    private Cursor getCategoryByIdFromDb(long id) {
+
+        logger.debug("getCategoryNameByIdFromDb()");
+
+        String selection = "id=?";
+        String[] selectionArgs = { String.valueOf(id) };
+        return db.query(ctx.getString(R.string.table_category_name), null, selection, selectionArgs,
+                null, null, null);
+    }
+
     public void getVariantsByCategory(final Long category, final int position) {
 
         logger.debug("getVariantsByCategory()");
@@ -517,8 +718,15 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor variants = getVariantsByCategoryFromDb(category, false);
-                notifyOperationFinished(Operation.GET_VARIANTS_BY_CATEGORY, variants, position);
+                Cursor cursor = getVariantsByCategoryFromDb(category, false);
+                List<VariantDataSet> variants = new ArrayList<>();
+                if (cursor.moveToFirst()) {
+                    do {
+                        variants.add(new VariantDataSet(cursor));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                notifyReceiveVariantsByCategory(variants, position);
             }
         });
     }
@@ -544,9 +752,16 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor variant = getVariantByTaskAndCategoryFromDb(task, category);
-                notifyOperationFinished(Operation.GET_VARIANT_BY_TASK_AND_CATEGORY, variant,
-                        position);
+                Cursor cursor = getVariantByTaskAndCategoryFromDb(task, category);
+                VariantDataSet variant;
+                if (cursor.moveToFirst()) {
+                    variant = new VariantDataSet(cursor);
+                    cursor.close();
+                    notifyReceiveVariantByTaskAndCategory(variant, position);
+                } else {
+                    cursor.close();
+                    notifyReceiveVariantByTaskAndCategory(null, position);
+                }
             }
         });
     }
@@ -566,8 +781,15 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor task = getTaskByIdFromDb(id);
-                notifyOperationFinished(Operation.GET_TASK_BY_ID, task, 0);
+                Cursor cursor = getTaskByIdFromDb(id);
+                if (cursor.moveToFirst()) {
+                    TaskDataSet task = new TaskDataSet(cursor);
+                    cursor.close();
+                    notifyReceiveTaskById(task);
+                } else {
+                    cursor.close();
+                    notifyReceiveTaskById(null);
+                }
             }
         });
 
@@ -591,7 +813,7 @@ public class DB {
             @Override
             public void run() {
                 insertNewTaskInDb(name, time, date, comment, variants);
-                notifyOperationFinished(Operation.INSERT_NEW_TASK, null, 0);
+                notifyUpdateOrInsertCategoryFinished();
             }
         });
     }
@@ -631,7 +853,7 @@ public class DB {
             @Override
             public void run() {
                 updateTaskInDb(id, name, time, date, comment, variants, categories);
-                notifyOperationFinished(Operation.UPDATE_TASK, null, 0);
+                notifyUpdateOrInsertTaskFinished();
             }
         });
     }
@@ -711,7 +933,7 @@ public class DB {
             @Override
             public void run() {
                 insertNewCategoryInDb(categoryName, variantsNames);
-                notifyOperationFinished(Operation.INSERT_NEW_CATEGORY, null, 0);
+                notifyUpdateOrInsertCategoryFinished();
             }
         });
     }
@@ -745,7 +967,7 @@ public class DB {
             @Override
             public void run() {
                 updateCategoryInDb(categoryId, categoryName, variantsNames);
-                notifyOperationFinished(Operation.UPDATE_CATEGORY, null, 0);
+                notifyUpdateOrInsertCategoryFinished();
             }
         });
     }
@@ -816,6 +1038,7 @@ public class DB {
                 }
             } while (cursor.moveToNext());
         }
+        cursor.close();
     }
 
     private void updateVariantInDb(long id, boolean isDeleted) {
@@ -830,26 +1053,4 @@ public class DB {
         db.update(ctx.getString(R.string.table_variant_name), cv, selection, selectionArgs);
     }
 
-    public void getCategoryById(final long id) {
-
-        logger.debug("getCategoryById()");
-
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Cursor result = getCategoryByIdFromDb(id);
-                notifyOperationFinished(Operation.GET_CATEGORY_BY_ID, result, 0);
-            }
-        });
-    }
-
-    private Cursor getCategoryByIdFromDb(long id) {
-
-        logger.debug("getCateforyByIdFromDb()");
-
-        String selection = "id=?";
-        String[] selectionArgs = { String.valueOf(id) };
-        return db.query(ctx.getString(R.string.table_category_name), null, selection, selectionArgs,
-                null, null, null);
-    }
 }

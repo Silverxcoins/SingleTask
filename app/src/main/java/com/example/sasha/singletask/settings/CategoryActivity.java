@@ -1,6 +1,5 @@
 package com.example.sasha.singletask.settings;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,23 +12,25 @@ import android.widget.Toast;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
-import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsAdapter;
-import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsDataSource;
-import com.example.sasha.singletask.settings.VariantsRecyclerView.VariantsItem;
+import com.example.sasha.singletask.db.dataSets.VariantDataSet;
+import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsAdapter;
+import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsDataSource;
+import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class CategoryActivity extends AppCompatActivity implements DB.Callback {
+public class CategoryActivity extends AppCompatActivity implements DB.GetCategoryByIdCallback,
+        DB.GetVariantsByCategoryCallback, DB.UpdateOrInsertCategoryCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryActivity.class);
 
     private static final String CATEGORY_KEY = "category";
     private static final String VARIANTS_KEY = "variants";
     private static final String TEXT_IN_FOCUS_KEY = "textInFocus";
-    private static final String NAME_KEY = "name";
 
     private VariantsDataSource dataSource;
     private EditText categoryNameEditText;
@@ -47,11 +48,14 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
         initVariantsRecyclerView();
         setDoneButtonListener();
 
-        DB.getInstance(this).setCallback(this);
+        DB.getInstance(this).setGetCategoryNameByIdCallback(this);
+        DB.getInstance(this).setGetVariantsByCategoryCallback(this);
+        DB.getInstance(this).setUpdateOrInsertCategoryCallback(this);
+
         DB.getInstance(this).open();
         if (savedInstanceState == null) {
             if (getIntent().hasExtra(CATEGORY_KEY)) {
-                DB.getInstance(this).getCategoryById(getIntent().getLongExtra(CATEGORY_KEY, 0));
+                DB.getInstance(this).getCategoryNameById(getIntent().getLongExtra(CATEGORY_KEY, 0));
             }
         } else {
             ArrayList<String> variantsNames = savedInstanceState.getStringArrayList(VARIANTS_KEY);
@@ -160,39 +164,30 @@ public class CategoryActivity extends AppCompatActivity implements DB.Callback {
     }
 
     @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
+    public void onReceiveCategoryById(String categoryName) {
 
-        logger.debug("onOperationFinished() Operation: {}", operation.name());
+        logger.debug("onGetCategoryByIdFinished()");
 
-        if (operation == DB.Operation.GET_CATEGORY_BY_ID) {
+        categoryNameEditText.setText(categoryName);
+        DB.getInstance(this).getVariantsByCategory(getIntent().getLongExtra(CATEGORY_KEY, 0), 0);
+    }
 
-            String categoryName = "";
-            if (result.moveToFirst()) {
-                categoryName = result.getString(result.getColumnIndex(NAME_KEY));
-            }
-            categoryNameEditText.setText(categoryName);
-            DB.getInstance(this).getVariantsByCategory(getIntent().getLongExtra(CATEGORY_KEY, 0), 0);
+    @Override
+    public void onReceiveVariantsByCategory(List<VariantDataSet> variants, final int position) {
 
-        } else if (operation == DB.Operation.GET_VARIANTS_BY_CATEGORY) {
+        logger.debug("onRecieveVariantsByCategory()");
 
-            if (result.moveToFirst()) {
-                do {
-                    String variantName = result.getString(result.getColumnIndex(NAME_KEY));
-                    dataSource.addItem(new VariantsItem(variantName));
-                } while (result.moveToNext());
-            }
-
-        } else if (operation == DB.Operation.INSERT_NEW_CATEGORY) {
-
-            logger.info("Add new category success");
-            finish();
-
-        } else if(operation == DB.Operation.UPDATE_CATEGORY) {
-
-            logger.info("Update category success");
-            finish();
-
+        for (VariantDataSet variant : variants) {
+            dataSource.addItem(new VariantsItem(variant.getName()));
         }
+    }
+
+    @Override
+    public void onCategoryUpdateOrInsertFinished() {
+
+        logger.info("onCategoryUpdateOrInsertFinished");
+
+        finish();
     }
 }
 

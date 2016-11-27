@@ -1,4 +1,4 @@
-package com.example.sasha.singletask.settings.VariantsRecyclerView;
+package com.example.sasha.singletask.settings.variantsRecyclerView;
 
 public class VariantsItem {
     private String variantName;

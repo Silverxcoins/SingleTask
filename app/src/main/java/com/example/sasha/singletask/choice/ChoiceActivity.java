@@ -39,7 +39,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         initToolbar();
         initProgressBar();
-//        setUserIdToUtils();
+        setUserIdToUtils();
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
             setLoading(true);
