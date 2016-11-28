@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.example.sasha.singletask.R;
@@ -30,6 +32,8 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
     private static final String ID_KEY = "id";
 
     private ProgressBar progressBar;
+    private ImageButton rightArrow;
+    private ImageButton leftArrow;
 
     private Fragment selectTimeFragment;
     private Fragment variantsChoiceFragment;
@@ -45,6 +49,9 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         initToolbar();
         initProgressBar();
         setUserIdToUtils();
+
+        leftArrow = (ImageButton) findViewById(R.id.leftArrowBtn);
+        rightArrow = (ImageButton) findViewById(R.id.rightArrowBtn);
         setArrowsButtonsListeners();
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
@@ -172,6 +179,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
         ft.replace(R.id.choice_container, variantsChoiceFragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -183,6 +191,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
         ft.replace(R.id.choice_container, chosenTaskFragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -190,15 +199,35 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("setArrowsButtonsListeners");
 
-        findViewById(R.id.rightArrowBtn).setOnClickListener(new View.OnClickListener() {
+        leftArrow.setVisibility(View.INVISIBLE);
+        rightArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (selectTimeFragment.isVisible()) {
+                    leftArrow.setVisibility(View.VISIBLE);
                     setVariantsChoiceFragment();
                 } else if (variantsChoiceFragment.isVisible()) {
+                    rightArrow.setVisibility(View.INVISIBLE);
                     setChosenTaskFragment();
                 }
             }
         });
+
+        leftArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (variantsChoiceFragment.isVisible()) {
+            leftArrow.setVisibility(View.INVISIBLE);
+        } else if (chosenTaskFragment.isVisible()) {
+            rightArrow.setVisibility(View.VISIBLE);
+        }
+        super.onBackPressed();
     }
 }
