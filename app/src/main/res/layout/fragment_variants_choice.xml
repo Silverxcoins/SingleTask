@@ -15,7 +15,7 @@
             android:id="@+id/textViewIHaveTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Чем бы Вы хотели заняться?"
+            android:text="@string/whatToDoString"
             style="@style/textViewWhatToDoStyle" />
 
         <View

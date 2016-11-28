@@ -38,4 +38,5 @@
     <string name="variants_label_text">Варианты</string>
     <string name="default_time_string">1 час</string>
     <string name="ok_btn_text">OK</string>
+    <string name="whatToDoString">Чем бы Вы хотели заняться?</string>
 </resources>

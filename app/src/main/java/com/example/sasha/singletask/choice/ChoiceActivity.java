@@ -33,6 +33,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
     private Fragment selectTimeFragment;
     private Fragment variantsChoiceFragment;
+    private Fragment chosenTaskFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         selectTimeFragment = new SelectTimeFragment();
         variantsChoiceFragment = new VariantsChoiceFragment();
+        chosenTaskFragment = new ChosenTaskFragment();
 
         setSelectTimeFragment();
     }
@@ -173,6 +175,17 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         ft.commit();
     }
 
+    private void setChosenTaskFragment() {
+
+        logger.debug("setChosenTaskFragment()");
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
+                R.anim.slide_in_right, R.anim.slide_out_right);
+        ft.replace(R.id.choice_container, chosenTaskFragment);
+        ft.commit();
+    }
+
     private void setArrowsButtonsListeners() {
 
         logger.debug("setArrowsButtonsListeners");
@@ -182,6 +195,8 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             public void onClick(View v) {
                 if (selectTimeFragment.isVisible()) {
                     setVariantsChoiceFragment();
+                } else if (variantsChoiceFragment.isVisible()) {
+                    setChosenTaskFragment();
                 }
             }
         });

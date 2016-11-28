@@ -69,9 +69,11 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
     public void onReceiveCategories(List<CategoryDataSet> categories) {
         logger.debug("onReceiveCategories()");
 
-        for (CategoryDataSet category : categories) {
-            dataSource.addItem(new CategoriesItem(category.getName(),
-                    getString(R.string.empty_variant_string), category.getId()));
+        if (isAdded()) {
+            for (CategoryDataSet category : categories) {
+                dataSource.addItem(new CategoriesItem(category.getName(),
+                        getString(R.string.empty_variant_string), category.getId()));
+            }
         }
     }
 
