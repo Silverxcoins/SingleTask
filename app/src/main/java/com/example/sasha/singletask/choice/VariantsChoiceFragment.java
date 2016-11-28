@@ -109,11 +109,12 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
         numberPicker.setMinValue(0);
         numberPicker.setMaxValue(variants.size());
         numberPicker.setDisplayedValues(variantsNames);
+
+        dataSource.getItem(position).setVariantName(getString(R.string.empty_variant_string));
         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 dataSource.getItem(position).setVariantName(variantsNames[newVal]);
-                adapter.notifyItemChanged(position);
             }
         });
     }
