@@ -2,19 +2,22 @@ package com.example.sasha.singletask.helpers;
 
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Utils {
 
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
+    private static final long DIVIDE_MILLISECONDS_FOR_DAYS = 86400000L;
+
+    public static final int DAYS_IN_WEEK = 7;
 
     private static long userId;
 
@@ -84,6 +87,8 @@ public class Utils {
 
         logger.debug("getTimeAsInt()");
 
+        if (timeString.equals("")) return 0;
+
         String[] timeParts = timeString.split(" ");
         if (timeParts.length == 4) {
             return new Integer(timeParts[0]) * 60 + new Integer(timeParts[2]);
@@ -118,5 +123,30 @@ public class Utils {
                 .append(c.get(Calendar.MINUTE)).append(":")
                 .append(c.get(Calendar.SECOND));
         return timeBuilder.toString();
+    }
+
+    public static Date parseDateString(String dateString) {
+
+        logger.debug("parseDateString()");
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
+        return date;
+    }
+
+    public static Integer getDaysBetweenDateAndCurrentDate(String dateString) {
+
+        logger.debug("getDaysBetweenDateAndCurrentDate()");
+
+        Date date = parseDateString(dateString);
+        Date currentDate = Calendar.getInstance().getTime();
+
+        long difference = date.getTime() - currentDate.getTime();
+        return (int) (difference/DIVIDE_MILLISECONDS_FOR_DAYS);
     }
 }

@@ -32,6 +32,8 @@ public class CategoriesDataSource {
         return strings;
     }
 
+    public List<CategoriesItem> getCategories() { return categories; }
+
     public void updateVariant(int position, String variantName) {
 
         logger.debug("updateVariant()");

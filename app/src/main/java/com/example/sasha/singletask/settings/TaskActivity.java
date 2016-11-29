@@ -390,5 +390,6 @@ public class TaskActivity extends AppCompatActivity implements
         finish();
     }
 
+    // TODO max lines in comment
 
 }

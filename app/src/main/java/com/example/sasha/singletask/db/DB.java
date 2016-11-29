@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.choice.CurrentChoice;
+import com.example.sasha.singletask.choice.categoriesRecyclerView.CategoriesItem;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskVariantDataSet;
@@ -20,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -93,6 +97,10 @@ public class DB {
         void onUpdateOrInsertTaskFinished();
     }
 
+    public interface SelectTasksCallback {
+        void onTasksSelectionFinished();
+    }
+
     private DB.Callback callback;
     private DB.GetCategoryByIdCallback getCategoryNameByIdCallback;
     private DB.GetVariantsByCategoryCallback getVariantsByCategoryCallback;
@@ -101,6 +109,7 @@ public class DB {
     private DB.GetCategoriesCallback getCategoriesCallback;
     private DB.GetVariantByTaskAndCategoryCallback getVariantByTaskAndCategoryCallback;
     private DB.UpdateOrInsertTaskCallback updateOrInsertTaskCallback;
+    private DB.SelectTasksCallback selectTasksCallback;
 
     public void setCallback(DB.Callback callback) {
 
@@ -136,6 +145,10 @@ public class DB {
 
     public void setUpdateOrInsertTaskCallback(DB.UpdateOrInsertTaskCallback callback) {
         this.updateOrInsertTaskCallback = callback;
+    }
+
+    public void setSelectTasksCallback(DB.SelectTasksCallback callback) {
+        this.selectTasksCallback = callback;
     }
 
     private void notifyOperationFinished(final Operation operation, final Cursor result,
@@ -249,6 +262,20 @@ public class DB {
             public void run() {
                 if (updateOrInsertTaskCallback != null) {
                     updateOrInsertTaskCallback.onUpdateOrInsertTaskFinished();
+                }
+            }
+        });
+    }
+
+    private void notifyTasksSelectionFinished() {
+
+        logger.debug("notifyTasksSelectionFinished()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (selectTasksCallback != null) {
+                    selectTasksCallback.onTasksSelectionFinished();
                 }
             }
         });
@@ -1051,6 +1078,74 @@ public class DB {
         String selection = "id=?";
         String[] selectionArgs = { String.valueOf(id) };
         db.update(ctx.getString(R.string.table_variant_name), cv, selection, selectionArgs);
+    }
+
+    public void selectTasks() {
+
+        logger.debug("selectTasks()");
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<TaskDataSet> tasks = selectTasksInDb();
+                List<TaskDataSet> urgent = new ArrayList<>();
+                List<TaskDataSet> simple = new ArrayList<>();
+                for (TaskDataSet task : tasks) {
+                    if (task.getDate() != null) {
+                        int days = Utils.getDaysBetweenDateAndCurrentDate(task.getDate());
+                        if (days < Utils.DAYS_IN_WEEK) {
+                            urgent.add(task);
+                        } else {
+                            simple.add(task);
+                        }
+                    } else {
+                        simple.add(task);
+                    }
+                }
+
+                CurrentChoice.getInstance().setUrgentTasks(urgent);
+                CurrentChoice.getInstance().setSimpleTasks(simple);
+                notifyTasksSelectionFinished();
+            }
+        });
+    }
+
+    private List<TaskDataSet> selectTasksInDb() {
+
+        logger.debug("selectTaskInDb()");
+
+        String selection = "time<=?";
+        String[] selectionArgs = { String.valueOf(CurrentChoice.getInstance().getTime()) };
+        Cursor cursor = db.query(ctx.getString(R.string.table_task_name), null, selection,
+                selectionArgs, null, null, null);
+
+        List<TaskDataSet> tasks = new ArrayList<>();
+        List<CategoriesItem> categories = CurrentChoice.getInstance().getCategories();
+        if (cursor.moveToFirst()) {
+            do {
+                TaskDataSet task = new TaskDataSet(cursor);
+                boolean isTaskApproach = true;
+                for (CategoriesItem category : categories) {
+                    long variantId = category.getVariantId();
+                    Cursor variantCursor = getVariantByTaskAndCategoryFromDb(
+                            task.getId(),
+                            category.getCategoryId());
+                    if (!variantCursor.moveToFirst()
+                            || variantCursor.getInt(cursor.getColumnIndex("id")) != variantId) {
+                        variantCursor.close();
+                        isTaskApproach = false;
+                        break;
+                    }
+                    variantCursor.close();
+                }
+                if (isTaskApproach) {
+                    tasks.add(task);
+                }
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return tasks;
     }
 
 }

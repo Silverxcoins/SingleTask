@@ -46,20 +46,21 @@
                         android:layout_gravity="center">
 
                         <ImageView
+                            android:id="@+id/dateIcon"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_query_builder_black_24dp"
+                            android:src="@drawable/ic_date_range_black_24dp"
                             android:tint="@color/colorPrimary"
                             android:paddingRight="8dp"
                             android:paddingTop="16dp" />
 
                         <TextView
-                            android:id="@+id/textViewChosenTaskTime"
+                            android:id="@+id/textViewChosenTaskDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textColor="@color/colorTextPrimaryLight"
-                            android:text="1 час"
+                            android:text="21.03.2017"
                             android:paddingTop="16dp" />
                     </LinearLayout>
                 </FrameLayout>
@@ -76,18 +77,18 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:src="@drawable/ic_date_range_black_24dp"
+                            android:src="@drawable/ic_query_builder_black_24dp"
                             android:tint="@color/colorPrimary"
                             android:paddingRight="8dp"
                             android:paddingTop="16dp" />
 
                         <TextView
-                            android:id="@+id/textViewChosenTaskDate"
+                            android:id="@+id/textViewChosenTaskTime"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textSize="16sp"
                             android:textColor="@color/colorTextPrimaryLight"
-                            android:text="21.03.2017"
+                            android:text="1 час"
                             android:paddingTop="16dp" />
                     </LinearLayout>
                 </FrameLayout>
@@ -113,7 +114,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/buttonGoToSignUp"
+                        android:id="@+id/buttonOther"
                         android:background="@color/colorTransparent"
                         android:text="Другое"
                         android:textSize="14sp"
@@ -122,7 +123,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/buttonSignIn"
+                        android:id="@+id/buttonAccept"
                         android:background="@drawable/button_task_ok"
                         android:text="Принять"
                         android:textSize="14sp"

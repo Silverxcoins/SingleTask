@@ -83,14 +83,13 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
         logger.debug("onReceiveVariantsByCategory()");
 
         final String[] variantsNames = new String[variants.size() + 1];
-        final Long[] ids = new Long[variants.size() + 1];
-        ids[0] = 0L;
+        dataSource.getItem(position).addVariant(0L);
         variantsNames[0] = getString(R.string.empty_variant_string);
 
         int i = 1;
         for (VariantDataSet variant : variants) {
-            variantsNames[i] = variant.getName();
-            ids[i++] = variant.getId();
+            variantsNames[i++] = variant.getName();
+            dataSource.getItem(position).addVariant(variant.getId());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -115,7 +114,17 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 dataSource.getItem(position).setVariantName(variantsNames[newVal]);
+                dataSource.getItem(position).setVariantIdByVariantPosition(newVal);
             }
         });
+    }
+
+    public List<CategoriesItem> getNotEmptyCategories() {
+        List<CategoriesItem> allCategories = dataSource.getCategories();
+        List<CategoriesItem> categories = new ArrayList<>();
+        for (CategoriesItem category : allCategories) {
+            if (category.getVariantId() != 0L) categories.add(category);
+        }
+        return categories;
     }
 }

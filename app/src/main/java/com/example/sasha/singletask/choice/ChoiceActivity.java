@@ -10,11 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.choice.categoriesRecyclerView.CategoriesItem;
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.Utils;
 import com.example.sasha.singletask.settings.SettingsActivity;
@@ -22,6 +22,8 @@ import com.example.sasha.singletask.user.MainActivity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class ChoiceActivity extends AppCompatActivity implements SyncManager.Callback {
 
@@ -205,9 +207,16 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             public void onClick(View v) {
                 if (selectTimeFragment.isVisible()) {
                     leftArrow.setVisibility(View.VISIBLE);
+                    int time = ((SelectTimeFragment)selectTimeFragment).getTime();
+                    CurrentChoice.getInstance().setTime(time);
                     setVariantsChoiceFragment();
                 } else if (variantsChoiceFragment.isVisible()) {
                     rightArrow.setVisibility(View.INVISIBLE);
+                    List<CategoriesItem> categories =
+                            ((VariantsChoiceFragment) variantsChoiceFragment)
+                                    .getNotEmptyCategories();
+                    CurrentChoice.getInstance().setCategories(categories);
+                    DB.getInstance(ChoiceActivity.this).selectTasks();
                     setChosenTaskFragment();
                 }
             }

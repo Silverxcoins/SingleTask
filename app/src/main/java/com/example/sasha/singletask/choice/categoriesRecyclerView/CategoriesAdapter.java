@@ -38,7 +38,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
                 int position = recyclerView.getChildLayoutPosition(view);
-                long categoryId = dataSource.getItem(position).getId();
+                long categoryId = dataSource.getItem(position).getCategoryId();
                 DB.getInstance(activity).getVariantsByCategory(categoryId, position);
             }
         });
