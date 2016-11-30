@@ -1,16 +1,8 @@
 package com.example.sasha.singletask.helpers;
 
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import com.example.sasha.singletask.settings.CategoriesFragment;
 import com.example.sasha.singletask.settings.TasksFragment;

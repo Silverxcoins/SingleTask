@@ -32,6 +32,10 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
     private static final String AFTER_SIGN_IN_KEY = "afterSignIn";
     private static final String IS_SIGNED_IN_KEY = "isSignedIn";
     private static final String ID_KEY = "id";
+    private static final String SELECT_TIME_FRAGMENT_KEY = "selectTimeFragment";
+    private static final String VARIANTS_CHOICE_FRAGMENT_KEY = "variantsChoiceFragment";
+    private static final String CHOSEN_TASK_FRAGMENT_KEY = "chosenTaskFragment";
+    private static final String VISIBLE_FRAGMENT_NUMBER_KEY = "visibleFragmentNumber";
 
     private ProgressBar progressBar;
     private ImageButton rightArrow;
@@ -63,13 +67,67 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             } else {
                 SyncManager.getInstance().sync(this);
             }
+            selectTimeFragment = new SelectTimeFragment();
+            variantsChoiceFragment = new VariantsChoiceFragment();
+            chosenTaskFragment = new ChosenTaskFragment();
+            setSelectTimeFragment();
+        } else {
+            if (savedInstanceState.containsKey(SELECT_TIME_FRAGMENT_KEY)) {
+                selectTimeFragment = getSupportFragmentManager()
+                        .getFragment(savedInstanceState, SELECT_TIME_FRAGMENT_KEY);
+            } else {
+                selectTimeFragment = new SelectTimeFragment();
+            }
+            setSelectTimeFragment();
+
+            if (savedInstanceState.containsKey(VARIANTS_CHOICE_FRAGMENT_KEY)) {
+                variantsChoiceFragment = getSupportFragmentManager()
+                        .getFragment(savedInstanceState, VARIANTS_CHOICE_FRAGMENT_KEY);
+                if (savedInstanceState.getInt(VISIBLE_FRAGMENT_NUMBER_KEY, 0) > 0) {
+                    setVariantsChoiceFragment();
+                }
+            } else {
+                variantsChoiceFragment = new VariantsChoiceFragment();
+            }
+
+            if (savedInstanceState.containsKey(CHOSEN_TASK_FRAGMENT_KEY)) {
+                chosenTaskFragment = getSupportFragmentManager()
+                        .getFragment(savedInstanceState, CHOSEN_TASK_FRAGMENT_KEY);
+                if (savedInstanceState.getInt(VISIBLE_FRAGMENT_NUMBER_KEY, 0) > 1) {
+                    setChosenTaskFragment();
+                }
+            } else {
+                chosenTaskFragment = new ChosenTaskFragment();
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Utils.clearBackStack(this);
+        if (selectTimeFragment != null) {
+            getSupportFragmentManager().putFragment(outState, SELECT_TIME_FRAGMENT_KEY,
+                    selectTimeFragment);
+        }
+        if (variantsChoiceFragment != null
+                && (variantsChoiceFragment.isVisible() || (chosenTaskFragment != null
+                && chosenTaskFragment.isVisible()))) {
+            getSupportFragmentManager().putFragment(outState, VARIANTS_CHOICE_FRAGMENT_KEY,
+                    variantsChoiceFragment);
+        }
+        if (chosenTaskFragment != null && chosenTaskFragment.isVisible()) {
+            getSupportFragmentManager().putFragment(outState, CHOSEN_TASK_FRAGMENT_KEY,
+                    chosenTaskFragment);
         }
 
-        selectTimeFragment = new SelectTimeFragment();
-        variantsChoiceFragment = new VariantsChoiceFragment();
-        chosenTaskFragment = new ChosenTaskFragment();
+        int visibleFragmentNumber = 0;
+        if (variantsChoiceFragment.isVisible())
+            visibleFragmentNumber = 1;
+        else if (chosenTaskFragment.isVisible())
+            visibleFragmentNumber = 2;
+        outState.putInt(VISIBLE_FRAGMENT_NUMBER_KEY, visibleFragmentNumber);
 
-        setSelectTimeFragment();
+        super.onSaveInstanceState(outState);
     }
 
     private void initToolbar() {
@@ -177,6 +235,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("setVariantsChoiceFragment()");
 
+        leftArrow.setVisibility(View.VISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
@@ -189,6 +248,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("setChosenTaskFragment()");
 
+        rightArrow.setVisibility(View.INVISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left,
                 R.anim.slide_in_right, R.anim.slide_out_right);
@@ -206,16 +266,17 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             @Override
             public void onClick(View v) {
                 if (selectTimeFragment.isVisible()) {
-                    leftArrow.setVisibility(View.VISIBLE);
                     int time = ((SelectTimeFragment)selectTimeFragment).getTime();
                     CurrentChoice.getInstance().setTime(time);
+                    variantsChoiceFragment = new VariantsChoiceFragment();
+                    DB.getInstance(ChoiceActivity.this).getCategories();
                     setVariantsChoiceFragment();
                 } else if (variantsChoiceFragment.isVisible()) {
-                    rightArrow.setVisibility(View.INVISIBLE);
                     List<CategoriesItem> categories =
                             ((VariantsChoiceFragment) variantsChoiceFragment)
                                     .getNotEmptyCategories();
                     CurrentChoice.getInstance().setCategories(categories);
+                    chosenTaskFragment = new ChosenTaskFragment();
                     DB.getInstance(ChoiceActivity.this).selectTasks();
                     setChosenTaskFragment();
                 }

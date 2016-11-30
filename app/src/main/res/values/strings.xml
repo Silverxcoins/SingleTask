@@ -39,4 +39,7 @@
     <string name="default_time_string">1 час</string>
     <string name="ok_btn_text">OK</string>
     <string name="whatToDoString">Чем бы Вы хотели заняться?</string>
+    <string name="otherTaskButtonString">Другое</string>
+    <string name="acceptTaskButtonString">Принять</string>
+    <string name="noApproachTasksText">Не найдено подходящих заданий!</string>
 </resources>

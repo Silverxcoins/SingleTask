@@ -49,8 +49,21 @@
     <dimen name="variants_label_text_size">16sp</dimen>
     <dimen name="add_variant_btn_top_right_bottom_padding">16dp</dimen>
     <dimen name="TimeChoiceLayoutLeftRightMargin">16dp</dimen>
-    <dimen name="categoriesListItemTopBottomMargin">10dp</dimen>
+    <dimen name="categoriesListItemTopBottomMargin">8dp</dimen>
     <dimen name="VariantsChoiceMainLabelBottomMargin">16dp</dimen>
     <dimen name="categories_list_text_view_left_right_padding">8dp</dimen>
     <dimen name="categories_list_text_size">16sp</dimen>
+    <dimen name="variantsChoiceMainLabelBottomMargin">24dp</dimen>
+    <dimen name="bigDividerHeight">1dp</dimen>
+    <dimen name="bigDividerLeftRightMargin">24dp</dimen>
+    <dimen name="categoriesItemLeftRightMargin">40dp</dimen>
+    <dimen name="taskCardLinearLayoutPadding">16dp</dimen>
+    <dimen name="taskCardIconRightPadding">8dp</dimen>
+    <dimen name="taskCardIconTopPadding">16dp</dimen>
+    <dimen name="taskCardDateTimeTextTopPadding">16dp</dimen>
+    <dimen name="taskCardTextSize">16sp</dimen>
+    <dimen name="taskCardButtonsTopBottomRightMargin">8dp</dimen>
+    <dimen name="taskCardButtonTextSize">14sp</dimen>
+    <dimen name="textViewNoApproachTasksPadding">16dp</dimen>
+    <dimen name="textViewNoApproachTasksBottomMargin">0dp</dimen>
 </resources>

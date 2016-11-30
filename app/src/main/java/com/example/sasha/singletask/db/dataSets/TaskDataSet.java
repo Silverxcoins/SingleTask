@@ -2,7 +2,6 @@ package com.example.sasha.singletask.db.dataSets;
 
 
 import android.database.Cursor;
-import android.util.Log;
 
 import com.example.sasha.singletask.helpers.Utils;
 

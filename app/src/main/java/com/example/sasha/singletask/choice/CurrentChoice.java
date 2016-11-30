@@ -1,7 +1,6 @@
 package com.example.sasha.singletask.choice;
 
 import com.example.sasha.singletask.choice.categoriesRecyclerView.CategoriesItem;
-import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ public class CurrentChoice {
 
     private int time;
     private List<CategoriesItem> categories;
-    private static CurrentChoice instance;
+    private static final CurrentChoice instance;
     private List<TaskDataSet> urgentTasks;
     private List<TaskDataSet> simpleTasks;
 

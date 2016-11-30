@@ -26,37 +26,94 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
 
     private static final Logger logger = LoggerFactory.getLogger(ChosenTaskFragment.class);
 
-    TextView taskNameTextView;
-    TextView taskCommentTextView;
-    TextView taskTimeTextView;
-    TextView taskDateTextView;
+    private static final String NAME_KEY = "name";
+    private static final String COMMENT_KEY = "comment";
+    private static final String DATE_KEY = "date";
+    private static final String TIME_KEY = "time";
+    private static final String IS_TASK_FOUND_KEY = "isTaskFound";
 
-    Animation animationFadeIn;
-    Animation animationFadeOut;
+    private TextView taskNameTextView;
+    private TextView taskCommentTextView;
+    private TextView taskTimeTextView;
+    private TextView taskDateTextView;
 
-    View view;
+    private View dateIcon;
+    private View taskCardContent;
+    private View noApproachTasksLabel;
+
+    private Animation animationFadeIn;
+    private Animation animationFadeOut;
+
+    private Bundle state;
+
+    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        logger.debug("onCreateView()");
+
         view = inflater.inflate(R.layout.fragment_chosen_task, null);
 
         taskNameTextView = (TextView) view.findViewById(R.id.textViewChosenTask);
         taskCommentTextView = (TextView) view.findViewById(R.id.textViewChosenTaskComment);
         taskTimeTextView = (TextView) view.findViewById(R.id.textViewChosenTaskTime);
         taskDateTextView = (TextView) view.findViewById(R.id.textViewChosenTaskDate);
+        dateIcon = view.findViewById(R.id.dateIcon);
+        taskCardContent = view.findViewById(R.id.taskCardContent);
+        noApproachTasksLabel = view.findViewById(R.id.noApproachTasks);
 
         animationFadeIn = AnimationUtils.loadAnimation(getActivity(), R.anim.fadein);
         animationFadeOut = AnimationUtils.loadAnimation(getActivity(), R.anim.fadeout);
 
-        setButtonsClickListeners(view);
+        setButtonsClickListeners();
 
         DB.getInstance(getActivity()).setSelectTasksCallback(this);
+
+        if (state != null && state.containsKey(IS_TASK_FOUND_KEY)) {
+            logger.debug("restoooooooooooooooooooore");
+            taskCardContent.setVisibility(View.VISIBLE);
+            noApproachTasksLabel.setVisibility(View.INVISIBLE);
+            taskNameTextView.setText(state.getString(NAME_KEY));
+            if (state.containsKey(COMMENT_KEY)) {
+                taskCommentTextView.setText(state.getString(COMMENT_KEY));
+            }
+            if(state.containsKey(DATE_KEY)) {
+                taskDateTextView.setText(state.getString(DATE_KEY));
+            } else {
+                dateIcon.setVisibility(View.INVISIBLE);
+            }
+            taskTimeTextView.setText(state.getString(TIME_KEY));
+        }
+
+        if (savedInstanceState != null) {
+            state = new Bundle(savedInstanceState);
+        }
 
         return view;
     }
 
-    private void setButtonsClickListeners(final View view) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        logger.debug("onSaveInstanceState()");
+
+        if (isAdded() && taskCardContent.getVisibility() == View.VISIBLE) {
+            outState.putBoolean(IS_TASK_FOUND_KEY, true);
+            outState.putString(NAME_KEY, taskNameTextView.getText().toString());
+            if (!taskCommentTextView.getText().toString().isEmpty()) {
+                outState.putString(COMMENT_KEY, taskCommentTextView.getText().toString());
+            }
+            if (!taskDateTextView.getText().toString().isEmpty()) {
+                outState.putString(DATE_KEY, taskDateTextView.getText().toString());
+            }
+            outState.putString(TIME_KEY, taskTimeTextView.getText().toString());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private void setButtonsClickListeners() {
         view.findViewById(R.id.buttonOther).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,10 +141,15 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
             taskTimeTextView.setText(Utils.getTimeAsString(task.getTime()));
             taskDateTextView.setText(task.getDate());
             if (task.getDate() != null) {
-                view.findViewById(R.id.dateIcon).setVisibility(View.VISIBLE);
+                dateIcon.setVisibility(View.VISIBLE);
             } else {
-                view.findViewById(R.id.dateIcon).setVisibility(View.INVISIBLE);
+                dateIcon.setVisibility(View.INVISIBLE);
             }
+            noApproachTasksLabel.setVisibility(View.INVISIBLE);
+            taskCardContent.setVisibility(View.VISIBLE);
+        } else {
+            taskCardContent.setVisibility(View.INVISIBLE);
+            noApproachTasksLabel.setVisibility(View.VISIBLE);
         }
     }
 

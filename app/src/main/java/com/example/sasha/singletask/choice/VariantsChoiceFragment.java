@@ -1,18 +1,15 @@
 package com.example.sasha.singletask.choice;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 
 import com.example.sasha.singletask.R;
@@ -22,9 +19,6 @@ import com.example.sasha.singletask.choice.categoriesRecyclerView.CategoriesItem
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.db.dataSets.VariantDataSet;
-import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsAdapter;
-import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsDataSource;
-import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,34 +26,60 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 public class VariantsChoiceFragment extends Fragment implements DB.GetCategoriesCallback,
         DB.GetVariantsByCategoryCallback {
+
     private static final Logger logger = LoggerFactory.getLogger(VariantsChoiceFragment.class);
 
-    View view;
-    CategoriesAdapter adapter;
-    CategoriesDataSource dataSource;
+    private static final String CATEGORIES_KEY = "categories";
+
+    private View view;
+    private CategoriesAdapter adapter;
+    private CategoriesDataSource dataSource;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        logger.debug("onCreateView");
+
         view = inflater.inflate(R.layout.fragment_variants_choice, null);
 
         DB.getInstance(getActivity()).setGetCategoriesCallback(this);
         DB.getInstance(getActivity()).setGetVariantsByCategoryCallback(this);
 
         initRecyclerView();
-        DB.getInstance(getActivity()).getCategories();
+        if (savedInstanceState != null) {
+            ArrayList<Parcelable> parcelables =
+                    savedInstanceState.getParcelableArrayList(CATEGORIES_KEY);
+            dataSource.clear();
+            for (Parcelable parcelable : parcelables) {
+                dataSource.addItem((CategoriesItem) parcelable);
+            }
+            adapter.notifyDataSetChanged();
+        }
 
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        logger.debug("onSaveInstanceState");
+
+        if (dataSource != null) {
+            outState.putParcelableArrayList(CATEGORIES_KEY, (ArrayList) dataSource.getCategories());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
     private void initRecyclerView() {
+
+        logger.debug("initRecyclerView()");
+
         RecyclerView recyclerView =
                 (RecyclerView) view.findViewById(R.id.categories_recycler_view);
-        dataSource = new CategoriesDataSource(recyclerView);
+        if (dataSource == null) dataSource = new CategoriesDataSource(recyclerView);
         adapter = new CategoriesAdapter(getActivity(), dataSource, recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -67,6 +87,7 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
 
     @Override
     public void onReceiveCategories(List<CategoryDataSet> categories) {
+
         logger.debug("onReceiveCategories()");
 
         if (isAdded()) {
@@ -120,6 +141,9 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
     }
 
     public List<CategoriesItem> getNotEmptyCategories() {
+
+        logger.debug("getNonEmptyCategories");
+
         List<CategoriesItem> allCategories = dataSource.getCategories();
         List<CategoriesItem> categories = new ArrayList<>();
         for (CategoriesItem category : allCategories) {

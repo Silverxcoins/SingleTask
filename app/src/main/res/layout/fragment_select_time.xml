@@ -24,7 +24,8 @@
             android:orientation="horizontal"
             android:weightSum="2"
             android:layout_marginLeft="@dimen/TimeChoiceLayoutLeftRightMargin"
-            android:layout_marginRight="@dimen/TimeChoiceLayoutLeftRightMargin">
+            android:layout_marginRight="@dimen/TimeChoiceLayoutLeftRightMargin"
+            android:baselineAligned="false">
 
             <FrameLayout
                 android:layout_width="match_parent"

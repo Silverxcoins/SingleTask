@@ -5,6 +5,5 @@
     android:theme="@style/TaskCategoryToolBarStyle">
     <EditText
         android:id="@+id/nameEditText"
-        android:hint="Название"
         style="@style/ToolbarEditTextStyle" />
 </android.support.v7.widget.Toolbar>

@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/categoriesItemLeftRightMargin"
+    android:layout_marginRight="@dimen/categoriesItemLeftRightMargin"
+    android:layout_marginTop="@dimen/categoriesListItemTopBottomMargin">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,8 +24,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
-        android:layout_marginTop="@dimen/categoriesListItemTopBottomMargin"
-        android:layout_marginBottom="@dimen/categoriesListItemTopBottomMargin"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"
+        android:layout_marginTop="@dimen/categoriesListItemTopBottomMargin"/>
 
 </LinearLayout>

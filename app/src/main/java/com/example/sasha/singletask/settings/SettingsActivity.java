@@ -23,15 +23,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.R.attr.name;
-
 public class SettingsActivity extends AppCompatActivity implements DB.Callback {
 
     private static final String TAG = "SettingsActivity";
     private ViewPager pager;
     private TabLayout tabs;
-    public ArrayList<Map> categoryItems = new ArrayList<Map>();
-    public ArrayList<Map> taskItems = new ArrayList<Map>();
+    private ArrayList<Map> categoryItems = new ArrayList<Map>();
+    private ArrayList<Map> taskItems = new ArrayList<Map>();
 
     private Tracker mTracker;
 
@@ -142,7 +140,7 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         return super.onOptionsItemSelected(item);
     }
 
-    public void getAllCategories(DB.Operation operation, Cursor result, int position) {
+    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
         if (result.moveToFirst()) {
             do {
                 String categoryName = result.getString(result.getColumnIndex("name"));
@@ -155,7 +153,7 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
         }
     }
 
-    public void getAllTasks(DB.Operation operation, Cursor result, int position) {
+    private void getAllTasks(DB.Operation operation, Cursor result, int position) {
         if (result.moveToFirst()) {
             do {
                 String taskName = result.getString(result.getColumnIndex("name"));

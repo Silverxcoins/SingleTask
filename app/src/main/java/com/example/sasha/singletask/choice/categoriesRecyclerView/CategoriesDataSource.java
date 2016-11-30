@@ -3,7 +3,6 @@ package com.example.sasha.singletask.choice.categoriesRecyclerView;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsDataSource;
-import com.example.sasha.singletask.settings.variantsRecyclerView.VariantsItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,5 +68,9 @@ public class CategoriesDataSource {
 
         categories.add(item);
         recyclerView.getAdapter().notifyItemInserted(categories.size());
+    }
+
+    public void clear() {
+        categories.clear();
     }
 }

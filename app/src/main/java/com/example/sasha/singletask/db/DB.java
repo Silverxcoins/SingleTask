@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -294,7 +292,7 @@ public class DB {
 
         logger.debug("close()");
 
-        if (dbHelper!=null) dbHelper.close();
+        //if (dbHelper!=null) dbHelper.close();
         logger.info("Db closed");
     }
 
@@ -1148,4 +1146,5 @@ public class DB {
         return tasks;
     }
 
+    // TODO разобраться когда закрывать БД
 }

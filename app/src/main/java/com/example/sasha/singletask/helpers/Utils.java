@@ -91,11 +91,11 @@ public class Utils {
 
         String[] timeParts = timeString.split(" ");
         if (timeParts.length == 4) {
-            return new Integer(timeParts[0]) * 60 + new Integer(timeParts[2]);
+            return Integer.valueOf(timeParts[0]) * 60 + Integer.valueOf(timeParts[2]);
         } else if (timeParts[1].charAt(0) == 'ч') {
-            return new Integer(timeParts[0]) * 60;
+            return Integer.valueOf(timeParts[0]) * 60;
         } else {
-            return new Integer(timeParts[0]);
+            return Integer.valueOf(timeParts[0]);
         }
     }
 

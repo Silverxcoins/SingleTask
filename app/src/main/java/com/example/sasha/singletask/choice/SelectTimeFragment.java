@@ -13,8 +13,11 @@ import com.example.sasha.singletask.helpers.Utils;
 
 public class SelectTimeFragment extends Fragment {
 
-    NumberPicker hourNumberPicker;
-    NumberPicker minuteNumberPicker;
+    private static final String HOUR_KEY = "hour";
+    private static final String MINUTE_KEY = "minute";
+
+    private NumberPicker hourNumberPicker;
+    private NumberPicker minuteNumberPicker;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -30,7 +33,23 @@ public class SelectTimeFragment extends Fragment {
         minuteNumberPicker.setMinValue(0);
         minuteNumberPicker.setMaxValue(59);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(HOUR_KEY)) {
+                hourNumberPicker.setValue(savedInstanceState.getInt(HOUR_KEY));
+            }
+            if (savedInstanceState.containsKey(MINUTE_KEY)) {
+                minuteNumberPicker.setValue(savedInstanceState.getInt(MINUTE_KEY));
+            }
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(HOUR_KEY, hourNumberPicker.getValue());
+        outState.putInt(MINUTE_KEY, minuteNumberPicker.getValue());
+        super.onSaveInstanceState(outState);
     }
 
     public int getTime() {

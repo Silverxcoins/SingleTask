@@ -1,29 +1,20 @@
 package com.example.sasha.singletask.settings;
 
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.choice.SyncManager;
-import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class CategoriesFragment extends Fragment {
 
@@ -31,8 +22,8 @@ public class CategoriesFragment extends Fragment {
     private View rootView;
     public RecyclerListAdapter mAdapter;
 
-    public static ArrayList<Map> items = new ArrayList<Map>();
-    public static String tabName = "categories_tab";
+    public static final ArrayList<Map> items = new ArrayList<Map>();
+    public static final String tabName = "categories_tab";
     private static CategoriesFragment categoriesFragment;
 
     public static CategoriesFragment getInstance(ArrayList<Map> mItems) {
