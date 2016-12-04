@@ -1,127 +1,61 @@
 package com.example.sasha.singletask.settings;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.util.Log;
-import android.view.View;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.analytics.AnalyticsApplication;
-import com.example.sasha.singletask.db.DB;
-import com.example.sasha.singletask.helpers.TabsPagerFragmentAdapter;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+public class SettingsActivity extends AppCompatActivity {
 
-public class SettingsActivity extends AppCompatActivity implements DB.Callback {
-
-    private static final String TAG = "SettingsActivity";
-    private ViewPager pager;
-    private TabLayout tabs;
-    private ArrayList<Map> categoryItems = new ArrayList<Map>();
-    private ArrayList<Map> taskItems = new ArrayList<Map>();
-
-    private Tracker mTracker;
+    private Toolbar toolbar;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
-
         initToolbar();
-        initTabs();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Action")
-                        .setAction("CREATE NEW TASK/CATEGORY")
-                        .build());
-
-                Log.d(TAG, "FLOAT BUTTON CLIKED");
-                Intent intent;
-                if (pager.getCurrentItem() == 0) {
-                    Log.d(TAG, "CURRENT TAB IS FIRST");
-                    intent = new Intent(getBaseContext(), TaskActivity.class);
-                    startActivity(intent);
-                } else if (pager.getCurrentItem() == 1) {
-                    Log.d(TAG, "CURRENT TAB IS SECONDE");
-                    intent = new Intent(getBaseContext(), CategoryActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        DB.getInstance(this).open();
-        DB.getInstance(this).setCallback(this);
-        DB.getInstance(this).getTasks();
-        DB.getInstance(this).getCategories();
+        initViewPager();
+        initTabLayout();
     }
 
     private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+        // toolbar initialization
+        toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
         toolbar.setTitle(R.string.settings_tag);
         setSupportActionBar(toolbar);
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // add back arrow to toolbar
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i(TAG, "Setting screen name: " + this.getLocalClassName());
-        mTracker.setScreenName("Image~" + this.getLocalClassName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("onResume() SettingsActivity")
-                .build());
+    private void initViewPager() {
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        setupViewPager(viewPager);
     }
 
-    private TabsPagerFragmentAdapter mAdapter;
-
-    private void initTabs() {
-        pager = (ViewPager) findViewById(R.id.pager);
-        mAdapter = new TabsPagerFragmentAdapter(getSupportFragmentManager(), taskItems, categoryItems);
-        pager.setAdapter(mAdapter);
-        tabs = (TabLayout) findViewById(R.id.tabs);
-        tabs.setupWithViewPager(pager);
+    private void setupViewPager(ViewPager viewPager) {
+        SettingsPagerAdapter adapter = new SettingsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new TasksFragment(), getString(R.string.tasks_tab_title));
+        adapter.addFragment(new CategoriesFragment(), getString(R.string.categories_tab_title));
+        viewPager.setAdapter(adapter);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("tab", tabs.getSelectedTabPosition());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.d(TAG, "restore");
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey("tab")
-                && savedInstanceState.getInt("tab") == 2) {
-            tabs.getTabAt(2).select();
-        }
-        super.onRestoreInstanceState(savedInstanceState);
+    private void initTabLayout() {
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -132,48 +66,12 @@ public class SettingsActivity extends AppCompatActivity implements DB.Callback {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
+        // handle clicking on the back arrow
+        if (item.getItemId() == android.R.id.home) {
             finish();
+            // add animation for transition between activities
             overridePendingTransition(R.anim.empty_anim, R.anim.exit_bottom);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void getAllCategories(DB.Operation operation, Cursor result, int position) {
-        if (result.moveToFirst()) {
-            do {
-                String categoryName = result.getString(result.getColumnIndex("name"));
-                Long categoryId = result.getLong(result.getColumnIndex("id"));
-                Map helper = new HashMap();
-                helper.put("categoryId", categoryId);
-                helper.put("categoryName", categoryName);
-                categoryItems.add(helper);
-            } while (result.moveToNext());
-        }
-    }
-
-    private void getAllTasks(DB.Operation operation, Cursor result, int position) {
-        if (result.moveToFirst()) {
-            do {
-                String taskName = result.getString(result.getColumnIndex("name"));
-                Long taskId = result.getLong(result.getColumnIndex("id"));
-                Map helper = new HashMap();
-                helper.put("taskId", taskId);
-                helper.put("taskName", taskName);
-                taskItems.add(helper);
-            } while (result.moveToNext());
-        }
-    }
-
-    @Override
-    public void onOperationFinished(DB.Operation operation, Cursor result, int position) {
-        Log.d(TAG, "onOperationFinished()");
-        if (operation == DB.Operation.GET_CATEGORIES) {
-            getAllCategories(operation, result, position);
-        } else if (operation == DB.Operation.GET_TASKS) {
-            getAllTasks(operation, result, position);
-        }
-        mAdapter.notifyDataSetChanged();
     }
 }

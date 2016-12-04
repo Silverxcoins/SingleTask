@@ -47,4 +47,5 @@ dependencies {
     compile 'com.github.tony19:logback-android-classic:1.1.1-4'
 
     testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-appindexing:9.0.0'
 }

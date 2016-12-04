@@ -42,4 +42,8 @@
     <string name="otherTaskButtonString">Другое</string>
     <string name="acceptTaskButtonString">Принять</string>
     <string name="noApproachTasksText">Не найдено подходящих заданий!</string>
+
+    <string name="tasks_tab_title">Задания</string>
+    <string name="categories_tab_title">Категории</string>
+
 </resources>
