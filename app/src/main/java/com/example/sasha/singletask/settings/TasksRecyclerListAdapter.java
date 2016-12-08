@@ -1,6 +1,8 @@
 package com.example.sasha.singletask.settings;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,14 +23,15 @@ import java.util.Map;
 public class TasksRecyclerListAdapter extends RecyclerView.Adapter<TasksRecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
+    private Context context;
     private final ArrayList<Map> mItems;
-
     public TasksRecyclerListAdapter(ArrayList<Map> tasks) {
         mItems = tasks;
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item, parent, false);
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         return itemViewHolder;
@@ -37,6 +40,19 @@ public class TasksRecyclerListAdapter extends RecyclerView.Adapter<TasksRecycler
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
         holder.textView.setText(mItems.get(position).get("taskName").toString());
+        handleItemClick(holder, position);
+    }
+
+    private void handleItemClick(final ItemViewHolder holder, final int position) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Long taskId = Long.parseLong(mItems.get(position).get("taskId").toString());
+                Intent intent = new Intent(context, TaskActivity.class);
+                intent.putExtra("task", taskId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -63,10 +79,12 @@ public class TasksRecyclerListAdapter extends RecyclerView.Adapter<TasksRecycler
             ItemTouchHelperViewHolder {
 
         public final TextView textView;
+        public final View itemView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.task_item_view);
+            this.itemView = itemView;
         }
 
         @Override

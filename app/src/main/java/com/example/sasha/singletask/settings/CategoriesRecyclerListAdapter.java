@@ -1,11 +1,14 @@
 package com.example.sasha.singletask.settings;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.example.sasha.singletask.R;
@@ -22,14 +25,17 @@ import java.util.Map;
 public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<CategoriesRecyclerListAdapter.ItemViewHolder>
         implements ItemTouchHelperAdapter {
 
-    private final ArrayList<Map> mItems;
+    private String TAG = getClass().getName();
 
+    private Context context;
+    private final ArrayList<Map> mItems;
     public CategoriesRecyclerListAdapter(ArrayList<Map> categories) {
         mItems = categories;
     }
 
     @Override
     public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        context = parent.getContext();
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
         ItemViewHolder itemViewHolder = new ItemViewHolder(view);
         return itemViewHolder;
@@ -38,6 +44,20 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
     @Override
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
         holder.textView.setText(mItems.get(position).get("categoryName").toString());
+
+        handleItemClick(holder, position);
+    }
+
+    private void handleItemClick(final ItemViewHolder holder, final int position) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Long categoryId = Long.parseLong(mItems.get(position).get("categoryId").toString());
+                Intent intent = new Intent(context, CategoryActivity.class);
+                intent.putExtra("category", categoryId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -64,10 +84,12 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
             ItemTouchHelperViewHolder {
 
         public final TextView textView;
+        public final View itemView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(R.id.category_item_view);
+            this.itemView = itemView;
         }
 
         @Override
