@@ -52,6 +52,33 @@ public class TasksFragment extends Fragment implements DB.GetTasksCallback{
         return rootView;
     }
 
+//    @Override
+//    public void onResume() {
+//        // retrieve data
+//        String taskName = prefs.getString("mTaskName", "");
+//        long taskId = prefs.getLong("mTaskId", 0);
+//
+//        // clean
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putLong("mTaskId", 0);
+//        editor.putString("mTaskName", "");
+//        editor.commit();
+//
+//        // add new item and notify adapter about changing data
+//        if (taskId != 0 && taskName != "") {
+//            Map helper = new HashMap();
+//            helper.put("taskId", taskId);
+//            helper.put("taskName", taskName);
+//            this.tasks.add(helper);
+//            try {
+//                mAdapter.notifyItemInserted(this.tasks.size());
+//            } catch (NullPointerException e) {
+//                Log.w(TAG, "NPE exception");
+//            }
+//        }
+//        super.onResume();
+//    }
+
     @Override
     public void onResume() {
         // retrieve data
@@ -64,16 +91,36 @@ public class TasksFragment extends Fragment implements DB.GetTasksCallback{
         editor.putString("mTaskName", "");
         editor.commit();
 
-        // add new item and notify adapter about changing data
+        // add (update) item and notify adapter about changing data
         if (taskId != 0 && taskName != "") {
             Map helper = new HashMap();
             helper.put("taskId", taskId);
             helper.put("taskName", taskName);
-            this.tasks.add(helper);
-            try {
-                mAdapter.notifyItemInserted(this.tasks.size());
-            } catch (NullPointerException e) {
-                Log.w(TAG, "NPE exception");
+
+            // update
+            boolean hasTask = false;
+            for (int position = 0; position < this.tasks.size(); position++) {
+                long currentId = Long.parseLong(this.tasks.get(position).get("taskId").toString());
+                if (currentId == taskId) {
+                    this.tasks.set(position, helper);
+                    hasTask = true;
+                    try {
+                        mAdapter.notifyItemChanged(position);
+                    } catch (NullPointerException e) {
+                        Log.w(TAG, "NPE exception");
+                    }
+                    break;
+                }
+            }
+
+            // create
+            if (!hasTask) {
+                this.tasks.add(helper);
+                try {
+                    mAdapter.notifyItemInserted(this.tasks.size());
+                } catch (NullPointerException e) {
+                    Log.w(TAG, "NPE exception");
+                }
             }
         }
         super.onResume();

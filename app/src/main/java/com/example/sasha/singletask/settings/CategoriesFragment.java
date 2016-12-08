@@ -67,16 +67,36 @@ public class CategoriesFragment extends Fragment implements DB.GetCategoriesCall
         editor.putString("mCategoryName", "");
         editor.commit();
 
-        // add new item and notify adapter about changing data
+        // add (update) item and notify adapter about changing data
         if (categoryId != 0 && categoryName != "") {
             Map helper = new HashMap();
             helper.put("categoryId", categoryId);
             helper.put("categoryName", categoryName);
-            this.categories.add(helper);
-            try {
-                mAdapter.notifyItemInserted(this.categories.size());
-            } catch (NullPointerException e) {
-                Log.w(TAG, "NPE exception");
+
+            // update
+            boolean hasCategory = false;
+            for (int position = 0; position < this.categories.size(); position++) {
+                long currentId = Long.parseLong(this.categories.get(position).get("categoryId").toString());
+                if (currentId == categoryId) {
+                    this.categories.set(position, helper);
+                    hasCategory = true;
+                    try {
+                        mAdapter.notifyItemChanged(position);
+                    } catch (NullPointerException e) {
+                        Log.w(TAG, "NPE exception");
+                    }
+                    break;
+                }
+            }
+
+            // create
+            if (!hasCategory) {
+                this.categories.add(helper);
+                try {
+                    mAdapter.notifyItemInserted(this.categories.size());
+                } catch (NullPointerException e) {
+                    Log.w(TAG, "NPE exception");
+                }
             }
         }
         super.onResume();
