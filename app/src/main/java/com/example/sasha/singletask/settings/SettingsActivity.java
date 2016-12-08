@@ -99,4 +99,20 @@ public class SettingsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("tab", viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey("tab")
+                && savedInstanceState.getInt("tab") == 1) {
+            tabLayout.getTabAt(1).select();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }
