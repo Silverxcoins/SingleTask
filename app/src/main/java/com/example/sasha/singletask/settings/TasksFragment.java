@@ -1,8 +1,10 @@
 package com.example.sasha.singletask.settings;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,50 +13,87 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.db.DB;
+import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
+import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class TasksFragment extends Fragment {
+public class TasksFragment extends Fragment implements DB.GetTasksCallback{
+
+    private String TAG = getClass().getName();
 
     private View rootView;
-    public RecyclerListAdapter mAdapter;
+    public TasksRecyclerListAdapter mAdapter;
+    private SharedPreferences prefs;
+    private ArrayList<Map> tasks = new ArrayList<Map>();
 
-    public static ArrayList<Map> items = new ArrayList<Map>();
-    private static final String TAG = "TasksFragment";
-    public static final String tabName = "tasks_tab";
-
-    private static TasksFragment tasksFragment;
-
-    public static TasksFragment getInstance(ArrayList<Map> mItems) {
-        Bundle bundle = new Bundle();
-
-        if (tasksFragment == null) {
-            tasksFragment = new TasksFragment();
-            tasksFragment.setArguments(bundle);
-        } else {
-            items.clear();
-            items.addAll(mItems);
-        }
-
-        return tasksFragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        prefs = getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+
+        DB.getInstance(getActivity()).setGetTasksCallback(this);
+        DB.getInstance(getActivity()).open();
+        DB.getInstance(getActivity()).getTasks();
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tasks, container, false);
-        configureView();
         return rootView;
     }
 
-    private void configureView() {
+    @Override
+    public void onResume() {
+        // retrieve data
+        String taskName = prefs.getString("mTaskName", "");
+        long taskId = prefs.getLong("mTaskId", 0);
+
+        // clean
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("mTaskId", 0);
+        editor.putString("mTaskName", "");
+        editor.commit();
+
+        // add new item and notify adapter about changing data
+        if (taskId != 0 && taskName != "") {
+            Map helper = new HashMap();
+            helper.put("taskId", taskId);
+            helper.put("taskName", taskName);
+            this.tasks.add(helper);
+            try {
+                mAdapter.notifyItemInserted(this.tasks.size());
+            } catch (NullPointerException e) {
+                Log.w(TAG, "NPE exception");
+            }
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onReceiveTasks(List<TaskDataSet> mTasks) {
+        configureView(mTasks);
+    }
+
+    private void initTaskData(List<TaskDataSet> mTasks) {
+        for (TaskDataSet task : mTasks) {
+            Map helper = new HashMap();
+            helper.put("taskId", task.getId());
+            helper.put("taskName", task.getName());
+            this.tasks.add(helper);
+        }
+    }
+
+    private void configureView(List<TaskDataSet> mTasks) {
         int scrollPosition = 0;
         RecyclerView mRecyclerView = (RecyclerView) rootView.findViewById(R.id.tasks_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -62,7 +101,8 @@ public class TasksFragment extends Fragment {
         mRecyclerView.scrollToPosition(scrollPosition);
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new RecyclerListAdapter(tabName, items);
+        initTaskData(mTasks);
+        mAdapter = new TasksRecyclerListAdapter(tasks);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);

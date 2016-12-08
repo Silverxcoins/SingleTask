@@ -76,7 +76,7 @@ public class DB {
     }
 
     public interface UpdateOrInsertCategoryCallback {
-        void onCategoryUpdateOrInsertFinished();
+        void onCategoryUpdateOrInsertFinished(final long categoryId, String categoryName);
     }
 
     public interface GetTaskByIdCallback {
@@ -87,17 +87,23 @@ public class DB {
         void onReceiveCategories(List<CategoryDataSet> categories);
     }
 
+    public interface GetTasksCallback {
+        void onReceiveTasks(List<TaskDataSet> tasks);
+    }
+
     public interface GetVariantByTaskAndCategoryCallback {
         void onReceiveVariantByTaskAndCategory(VariantDataSet variant, int position);
     }
 
     public interface UpdateOrInsertTaskCallback {
-        void onUpdateOrInsertTaskFinished();
+        void onUpdateOrInsertTaskFinished(final long taskId, String taskName);
     }
 
     public interface SelectTasksCallback {
         void onTasksSelectionFinished();
     }
+
+
 
     private DB.Callback callback;
     private DB.GetCategoryByIdCallback getCategoryNameByIdCallback;
@@ -105,6 +111,7 @@ public class DB {
     private DB.UpdateOrInsertCategoryCallback updateOrInsertCategoryCallback;
     private DB.GetTaskByIdCallback getTaskByIdCallback;
     private DB.GetCategoriesCallback getCategoriesCallback;
+    private DB.GetTasksCallback getTasksCallback;
     private DB.GetVariantByTaskAndCategoryCallback getVariantByTaskAndCategoryCallback;
     private DB.UpdateOrInsertTaskCallback updateOrInsertTaskCallback;
     private DB.SelectTasksCallback selectTasksCallback;
@@ -147,6 +154,10 @@ public class DB {
 
     public void setSelectTasksCallback(DB.SelectTasksCallback callback) {
         this.selectTasksCallback = callback;
+    }
+
+    public void setGetTasksCallback(DB.GetTasksCallback callback) {
+        this.getTasksCallback = callback;
     }
 
     private void notifyOperationFinished(final Operation operation, final Cursor result,
@@ -192,7 +203,7 @@ public class DB {
         });
     }
 
-    private void notifyUpdateOrInsertCategoryFinished() {
+    private void notifyUpdateOrInsertCategoryFinished(final long categoryId, final String categoryName) {
 
         logger.debug("notifyReceiveCategoryNameById()");
 
@@ -200,7 +211,7 @@ public class DB {
             @Override
             public void run() {
                 if (updateOrInsertCategoryCallback != null) {
-                    updateOrInsertCategoryCallback.onCategoryUpdateOrInsertFinished();
+                    updateOrInsertCategoryCallback.onCategoryUpdateOrInsertFinished(categoryId, categoryName);
                 }
             }
         });
@@ -234,6 +245,20 @@ public class DB {
         });
     }
 
+    private void notifyReceiveTasks(final List<TaskDataSet> tasks) {
+
+        logger.debug("notifyReceiveTasks()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (getTasksCallback != null) {
+                    getTasksCallback.onReceiveTasks(tasks);
+                }
+            }
+        });
+    }
+
     private void notifyReceiveVariantByTaskAndCategory(final VariantDataSet variant,
                                                        final int position) {
 
@@ -251,7 +276,7 @@ public class DB {
         });
     }
 
-    private void notifyUpdateOrInsertTaskFinished() {
+    private void notifyUpdateOrInsertTaskFinished(final long taskId, final String taskName) {
 
         logger.debug("notifyUpdateOrInsertTaskFinished()");
 
@@ -259,7 +284,7 @@ public class DB {
             @Override
             public void run() {
                 if (updateOrInsertTaskCallback != null) {
-                    updateOrInsertTaskCallback.onUpdateOrInsertTaskFinished();
+                    updateOrInsertTaskCallback.onUpdateOrInsertTaskFinished(taskId, taskName);
                 }
             }
         });
@@ -664,8 +689,15 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                Cursor tasks = getTasksFromDb();
-                notifyOperationFinished(Operation.GET_TASKS, tasks, 0);
+                Cursor cursor = getTasksFromDb();
+                List<TaskDataSet> tasks = new ArrayList<>();
+                if (cursor.moveToFirst()) {
+                    do {
+                        tasks.add(new TaskDataSet(cursor));
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+                notifyReceiveTasks(tasks);
             }
         });
     }
@@ -837,13 +869,15 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                insertNewTaskInDb(name, time, date, comment, variants);
-                notifyUpdateOrInsertCategoryFinished();
+                long taskId = insertNewTaskInDb(name, time, date, comment, variants);
+//                It looks like here should be Task instead of Category
+//                notifyUpdateOrInsertCategoryFinished();
+                notifyUpdateOrInsertTaskFinished(taskId, name);
             }
         });
     }
 
-    private void insertNewTaskInDb(String name, int time, String date, String comment,
+    private long insertNewTaskInDb(String name, int time, String date, String comment,
                                    ArrayList<Long> variants) {
 
         logger.debug("insertNewTaskInDb()");
@@ -866,6 +900,7 @@ public class DB {
                 db.insert(ctx.getString(R.string.table_task_variant_name), null, cv);
             }
         }
+        return taskId;
     }
 
     public void updateTask(final long id, final String name, final int time, final String date,
@@ -878,7 +913,7 @@ public class DB {
             @Override
             public void run() {
                 updateTaskInDb(id, name, time, date, comment, variants, categories);
-                notifyUpdateOrInsertTaskFinished();
+                notifyUpdateOrInsertTaskFinished(id, name);
             }
         });
     }
@@ -957,13 +992,13 @@ public class DB {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                insertNewCategoryInDb(categoryName, variantsNames);
-                notifyUpdateOrInsertCategoryFinished();
+                long categoryId =  insertNewCategoryInDb(categoryName, variantsNames);
+                notifyUpdateOrInsertCategoryFinished(categoryId, categoryName);
             }
         });
     }
 
-    private void insertNewCategoryInDb(String categoryName, List<String> variantsNames) {
+    private long insertNewCategoryInDb(String categoryName, List<String> variantsNames) {
 
         logger.debug("insertNewCategoryInDb()");
 
@@ -981,6 +1016,7 @@ public class DB {
             cv.put("isDeleted", 0);
             db.insert(ctx.getString(R.string.table_variant_name), null, cv);
         }
+        return categoryId;
     }
 
     public void updateCategory(final long categoryId, final String categoryName,
@@ -992,7 +1028,7 @@ public class DB {
             @Override
             public void run() {
                 updateCategoryInDb(categoryId, categoryName, variantsNames);
-                notifyUpdateOrInsertCategoryFinished();
+                notifyUpdateOrInsertCategoryFinished(categoryId, categoryName);
             }
         });
     }

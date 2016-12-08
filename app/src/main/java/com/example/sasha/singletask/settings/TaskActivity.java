@@ -3,6 +3,7 @@ package com.example.sasha.singletask.settings;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -383,9 +384,15 @@ public class TaskActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onUpdateOrInsertTaskFinished() {
+    public void onUpdateOrInsertTaskFinished(long taskId, String taskName) {
 
         logger.debug("Update or insert task success");
+
+        SharedPreferences prefs = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("mTaskId", taskId);
+        editor.putString("mTaskName", taskName);
+        editor.commit();
 
         finish();
     }

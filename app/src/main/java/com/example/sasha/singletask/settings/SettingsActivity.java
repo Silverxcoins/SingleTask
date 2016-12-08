@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.settings;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
@@ -7,15 +8,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.sasha.singletask.R;
+
+import static com.example.sasha.singletask.R.id.pager;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabLayout;
+    private SettingsPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +31,25 @@ public class SettingsActivity extends AppCompatActivity {
         initToolbar();
         initViewPager();
         initTabLayout();
+
+        handleFabClick();
+    }
+
+    private void handleFabClick() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent;
+                if (viewPager.getCurrentItem() == 0) {
+                    intent = new Intent(getBaseContext(), TaskActivity.class);
+                    startActivity(intent);
+                } else if (viewPager.getCurrentItem() == 1) {
+                    intent = new Intent(getBaseContext(), CategoryActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     private void initToolbar() {
@@ -42,12 +67,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initViewPager() {
-        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager = (ViewPager) findViewById(pager);
         setupViewPager(viewPager);
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        SettingsPagerAdapter adapter = new SettingsPagerAdapter(getSupportFragmentManager());
+        adapter = new SettingsPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new TasksFragment(), getString(R.string.tasks_tab_title));
         adapter.addFragment(new CategoriesFragment(), getString(R.string.categories_tab_title));
         viewPager.setAdapter(adapter);
