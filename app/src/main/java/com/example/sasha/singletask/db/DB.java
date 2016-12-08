@@ -103,9 +103,19 @@ public class DB {
         void onTasksSelectionFinished();
     }
 
+    public interface MarkCategoryDeletedCallback {
+        void onMarkCategoryDeleted(final long categoryId);
+    }
+
+    public interface MarkTaskDeletedCallback {
+        void onMarkTaskDeleted(final long taskId);
+    }
 
 
     private DB.Callback callback;
+    private DB.MarkCategoryDeletedCallback markCategoryDeletedCallback;
+    private DB.MarkTaskDeletedCallback markTaskDeletedCallback;
+
     private DB.GetCategoryByIdCallback getCategoryNameByIdCallback;
     private DB.GetVariantsByCategoryCallback getVariantsByCategoryCallback;
     private DB.UpdateOrInsertCategoryCallback updateOrInsertCategoryCallback;
@@ -125,6 +135,14 @@ public class DB {
 
     public void setGetCategoryNameByIdCallback(DB.GetCategoryByIdCallback callback) {
         this.getCategoryNameByIdCallback = callback;
+    }
+
+    public void setMarkCategoryDeletedCallback(DB.MarkCategoryDeletedCallback callback) {
+        this.markCategoryDeletedCallback = callback;
+    }
+
+    public void setMarkTaskDeletedCallback(DB.MarkTaskDeletedCallback callback) {
+        this.markTaskDeletedCallback = callback;
     }
 
     public void setGetVariantsByCategoryCallback(DB.GetVariantsByCategoryCallback callback) {
@@ -184,6 +202,34 @@ public class DB {
             public void run() {
                 if (getCategoryNameByIdCallback != null) {
                     getCategoryNameByIdCallback.onReceiveCategoryById(categoryName);
+                }
+            }
+        });
+    }
+
+    private void notifyMarkCategoryDeleted(final long categoryId) {
+
+        logger.debug("notifyMarkCategoryDeleted()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (markCategoryDeletedCallback != null) {
+                    markCategoryDeletedCallback.onMarkCategoryDeleted(categoryId);
+                }
+            }
+        });
+    }
+
+    private void notifyMarkTaskDeleted(final long taskId) {
+
+        logger.debug("notifyMarkTaskDeleted()");
+
+        Ui.run(new Runnable() {
+            @Override
+            public void run() {
+                if (markTaskDeletedCallback != null) {
+                    markTaskDeletedCallback.onMarkTaskDeleted(taskId);
                 }
             }
         });
@@ -640,19 +686,18 @@ public class DB {
         }
     }
 
-    public void markTaskDeleted(final Long task, final int position) {
-//        Log.d(TAG, "markTaskDeleted()");
+    public void markTaskDeleted(final Long task) {
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 markTaskDeletedInDB(task);
-                notifyOperationFinished(Operation.MARK_TASK_DELETED, null, position);
+                notifyMarkTaskDeleted(task);
             }
         });
     }
 
     private void markTaskDeletedInDB(Long category) {
-//        Log.d(TAG, "markTaskDeletedInDB");
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", 1);
         cv.put("lastUpdate", Utils.getCurrentTimeAsString());
@@ -661,19 +706,19 @@ public class DB {
         db.update(ctx.getString(R.string.table_task_name), cv, selection, selectionArgs);
     }
 
-    public void markCategoryDeleted(final Long category, final int position) {
-//        Log.d(TAG,"markCategoryDeleted()");
+    public void markCategoryDeleted(final Long category) {
+
         executor.execute(new Runnable() {
             @Override
             public void run() {
                 markCategoryDeletedInDB(category);
-                notifyOperationFinished(Operation.MARK_CATEGORY_DELETED, null, position);
+                notifyMarkCategoryDeleted(category);
             }
         });
     }
 
     private void markCategoryDeletedInDB(Long category) {
-//        Log.d(TAG, "markCategoryDeletedinDB");
+
         ContentValues cv = new ContentValues();
         cv.put("isDeleted", 1);
         cv.put("lastUpdate", Utils.getCurrentTimeAsString());

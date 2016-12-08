@@ -1,7 +1,11 @@
 package com.example.sasha.singletask.helpers;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+import android.view.View;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
@@ -24,7 +28,9 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+//        final int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+//        disable swipe
+        final int swipeFlags = 0;
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 

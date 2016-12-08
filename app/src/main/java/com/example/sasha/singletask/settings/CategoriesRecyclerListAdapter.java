@@ -2,16 +2,23 @@ package com.example.sasha.singletask.settings;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.widget.helper.ItemTouchUIUtil;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.helpers.ItemTouchHelperAdapter;
 import com.example.sasha.singletask.helpers.ItemTouchHelperViewHolder;
@@ -23,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<CategoriesRecyclerListAdapter.ItemViewHolder>
-        implements ItemTouchHelperAdapter {
+        implements ItemTouchHelperAdapter, DB.MarkCategoryDeletedCallback {
 
     private String TAG = getClass().getName();
 
@@ -45,6 +52,7 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
     public void onBindViewHolder(final ItemViewHolder holder, int position) {
         holder.textView.setText(mItems.get(position).get("categoryName").toString());
 
+        handleDeleteItemClick(holder, position);
         handleItemClick(holder, position);
     }
 
@@ -59,6 +67,51 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
             }
         });
     }
+
+    private void handleDeleteItemClick(final ItemViewHolder holder, final int position) {
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAlertDialog(position);
+            }
+        });
+    }
+
+    private void showAlertDialog(final int position) {
+        new AlertDialog.Builder(context)
+            .setMessage("Вы действительно хотите удалить?")
+            .setCancelable(false)
+            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    deleteItem(position);
+                }
+            })
+            .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                }
+            })
+            .show();
+    }
+
+    private void deleteItem(final int position) {
+        long categoryId = Long.parseLong(mItems.get(position).get("categoryId").toString());
+
+        DB.getInstance(context).setMarkCategoryDeletedCallback(this);
+        DB.getInstance(context).open();
+        DB.getInstance(context).markCategoryDeleted(categoryId);
+    }
+
+    @Override
+    public void onMarkCategoryDeleted(final long categoryId) {
+        for (int position = 0; position < mItems.size(); position++) {
+            if (Long.parseLong(mItems.get(position).get("categoryId").toString()) == categoryId) {
+                mItems.remove(position);
+                notifyItemRemoved(position);
+                break;
+            }
+        }
+    }
+
 
     @Override
     public void onItemDismiss(int position) {
@@ -85,11 +138,13 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
 
         public final TextView textView;
         public final View itemView;
+        public final ImageView imageView;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
-            textView = (TextView) itemView.findViewById(R.id.category_item_view);
             this.itemView = itemView;
+            textView = (TextView) itemView.findViewById(R.id.category_item_view);
+            imageView = (ImageView) itemView.findViewById(R.id.category_item_delete);
         }
 
         @Override
@@ -99,7 +154,7 @@ public class CategoriesRecyclerListAdapter extends RecyclerView.Adapter<Categori
 
         @Override
         public void onItemClear() {
-//            itemView.setBackgroundColor(0);
+//            itemView.setBackgroundColor(Color.RED);
         }
     }
 }
