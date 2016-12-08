@@ -2,6 +2,7 @@ package com.example.sasha.singletask.helpers;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.os.Bundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

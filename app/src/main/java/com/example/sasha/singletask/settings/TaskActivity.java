@@ -391,5 +391,6 @@ public class TaskActivity extends AppCompatActivity implements
     }
 
     // TODO max lines in comment
+    // TODO разобраться с закрытием нового таска
 
 }
