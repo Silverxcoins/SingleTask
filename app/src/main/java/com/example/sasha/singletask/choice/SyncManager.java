@@ -1,7 +1,10 @@
 package com.example.sasha.singletask.choice;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 
+import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskDataSet;
@@ -12,6 +15,8 @@ import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +39,8 @@ public class SyncManager {
             "http://188.120.235.252/singletask/api/variant/sync";
     private static final String SYNC_TASKS_VARIANTS_URL =
             "http://188.120.235.252/singletask/api/task-variant/sync";
+    private static final String SYNC_CURRENT_TASK_URL =
+            "http://188.120.235.252/singletask/api/user/sync-current-task";
     private static final String LIST_TASKS_URL =
             "http://188.120.235.252/singletask/api/task/list?user=";
     private static final String LIST_CATEGORIES_URL =
@@ -42,7 +49,8 @@ public class SyncManager {
             "http://188.120.235.252/singletask/api/variant/list?user=";
     private static final String LIST_TASKS_VARIANTS_URL =
             "http://188.120.235.252/singletask/api/task-variant/list?user=";
-
+    private static final String GET_CURRENT_TASK_URL =
+            "http://188.120.235.252/singletask/api/user/get-current-task?user=";
     private DB db;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -68,7 +76,7 @@ public class SyncManager {
         this.callback = callback;
     }
 
-    public void sync(Context ctx) {
+    public void sync(final Context ctx) {
 
         logger.debug("sync()");
 
@@ -77,7 +85,7 @@ public class SyncManager {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                boolean wasSuccessful = syncInternal();
+                boolean wasSuccessful = syncInternal(ctx);
                 notifySyncFinished(wasSuccessful);
             }
         });
@@ -135,7 +143,7 @@ public class SyncManager {
         return true;
     }
 
-    private boolean syncInternal() {
+    private boolean syncInternal(Context ctx) {
 
         logger.debug("syncInternal()");
 
@@ -172,6 +180,14 @@ public class SyncManager {
         }
         db.insertTasksVariantsFromJson(Http.sendGetRequest(LIST_TASKS_VARIANTS_URL
                 + Utils.getUserId()));
+
+        String currentTaskResponse = Http.sendPostRequest(SYNC_CURRENT_TASK_URL,
+                getCurrentTaskInJson(ctx, insertedTasks));
+        if (!isServerOperationSuccessful(currentTaskResponse)) {
+            return false;
+        }
+        setCurrentTaskFromJson(ctx, Http.sendGetRequest(GET_CURRENT_TASK_URL + Utils.getUserId()));
+
         return true;
     }
 
@@ -191,5 +207,58 @@ public class SyncManager {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private String getCurrentTaskInJson(Context ctx, List<TaskDataSet> tasks) {
+
+        logger.debug("getCurrentTaskInJson()");
+
+        SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME),0);
+        Long id = settings.getLong("currentTask", 0);
+        if (id == 0) id = null;
+        String taskStart = settings.getString("taskStart",null);
+        String lastUpdate = settings.getString("lastUpdate",null);
+        if (id != null) {
+            for (TaskDataSet task : tasks) {
+                if (task.getOldId() == id) {
+                    id = task.getServerId();
+                    break;
+                }
+            }
+        }
+
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{\"user\":")
+                .append(Utils.getUserId())
+                .append(",\"currentTask\":")
+                .append((id != null) ? id : "null")
+                .append(",\"taskStart\":")
+                .append((taskStart != null) ? ("\"" + taskStart + "\"") : "null")
+                .append(",\"lastUpdate\":")
+                .append((lastUpdate != null) ? ("\"" + lastUpdate + "\"") : "null")
+                .append("}");
+
+        logger.debug(jsonBuilder.toString());
+        return jsonBuilder.toString();
+    }
+
+    private void setCurrentTaskFromJson(Context ctx, String json) {
+        logger.debug(json);
+
+        logger.debug("setCurrentTaskFromJson()");
+
+        JsonNode response;
+        try {
+            JsonNode node = mapper.readValue(json, JsonNode.class);
+            response = node.get("response");
+        } catch (IOException e ){
+            logger.warn("Failed to parse current task json");
+            return;
+        }
+        SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME), 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong("currentTask", response.get("id").asLong(0));
+        editor.putString("taskStart", response.get("taskStart").getTextValue());
+        editor.putString("lastUpdate", response.get("lastUpdate").getTextValue());
     }
 }
