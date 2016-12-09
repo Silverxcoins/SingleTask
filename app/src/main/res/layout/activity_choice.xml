@@ -36,9 +36,8 @@
                 android:layout_gravity="left"
                 android:background="@color/colorTransparent"
                 android:tint="@color/colorPrimary"
-
+                android:src="@drawable/ic_keyboard_arrow_left_black_48dp"
                 />
-            <!--android:src="@drawable/ic_keyboard_arrow_left_black_48dp"-->
             <ImageButton
                 android:id="@+id/rightArrowBtn"
                 android:layout_width="wrap_content"
@@ -46,9 +45,8 @@
                 android:layout_gravity="right"
                 android:background="@color/colorTransparent"
                 android:tint="@color/colorPrimary"
-
+                android:src="@drawable/ic_keyboard_arrow_right_black_48dp"
                 />
-            <!--android:src="@drawable/ic_keyboard_arrow_right_black_48dp"-->
 
             <ProgressBar
                 style="?android:attr/progressBarStyleLarge"

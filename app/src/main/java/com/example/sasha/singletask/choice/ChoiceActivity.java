@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
@@ -44,6 +46,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
     private Fragment selectTimeFragment;
     private Fragment variantsChoiceFragment;
     private Fragment chosenTaskFragment;
+    private Fragment currentTaskFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,11 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
                 chosenTaskFragment = new ChosenTaskFragment();
             }
         }
+
+        ///////////////////
+//        currentTaskFragment = new CurrentTaskFragment();
+//        setCurrentTaskFragment();
+        //////////////////
     }
 
     @Override
@@ -225,6 +233,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("setSelectTimeFragment()");
 
+        rightArrow.setVisibility(View.VISIBLE);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left);
         ft.replace(R.id.choice_container, selectTimeFragment);
@@ -254,6 +263,17 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
                 R.anim.slide_in_right, R.anim.slide_out_right);
         ft.replace(R.id.choice_container, chosenTaskFragment);
         ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    private void setCurrentTaskFragment() {
+
+        logger.debug("setCurrentTaskFragment");
+
+        rightArrow.setVisibility(View.INVISIBLE);
+        leftArrow.setVisibility(View.INVISIBLE);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.choice_container, currentTaskFragment);
         ft.commit();
     }
 
@@ -293,11 +313,26 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
     @Override
     public void onBackPressed() {
-        if (variantsChoiceFragment.isVisible()) {
-            leftArrow.setVisibility(View.INVISIBLE);
-        } else if (chosenTaskFragment.isVisible()) {
-            rightArrow.setVisibility(View.VISIBLE);
+        if (currentTaskFragment == null || !currentTaskFragment.isVisible()) {
+            if (variantsChoiceFragment.isVisible()) {
+                leftArrow.setVisibility(View.INVISIBLE);
+            } else if (chosenTaskFragment.isVisible()) {
+                rightArrow.setVisibility(View.VISIBLE);
+            }
+            super.onBackPressed();
+        } else {
+            finish();
         }
-        super.onBackPressed();
     }
+
+    public void onTaskAccepted(long taskId) {
+        currentTaskFragment = new CurrentTaskFragment();
+        setCurrentTaskFragment();
+    }
+
+    public void onTaskUpdated() {
+        setSelectTimeFragment();
+    }
+
+    // TODO разобраться почему иногда не видит таска или категорий
 }

@@ -51,6 +51,7 @@ public class SyncManager {
             "http://188.120.235.252/singletask/api/task-variant/list?user=";
     private static final String GET_CURRENT_TASK_URL =
             "http://188.120.235.252/singletask/api/user/get-current-task?user=";
+
     private DB db;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -216,6 +217,7 @@ public class SyncManager {
         SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME),0);
         Long id = settings.getLong("currentTask", 0);
         if (id == 0) id = null;
+
         String taskStart = settings.getString("taskStart",null);
         String lastUpdate = settings.getString("lastUpdate",null);
         if (id != null) {
@@ -255,10 +257,17 @@ public class SyncManager {
             logger.warn("Failed to parse current task json");
             return;
         }
+
+        long id = response.get("id").asLong(0);
+        if (id != 0) {
+            id = DB.getInstance(ctx).getTaskIdByServerId(id);
+        }
+
         SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME), 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putLong("currentTask", response.get("id").asLong(0));
+        editor.putLong("currentTask", id);
         editor.putString("taskStart", response.get("taskStart").getTextValue());
         editor.putString("lastUpdate", response.get("lastUpdate").getTextValue());
+        editor.apply();
     }
 }

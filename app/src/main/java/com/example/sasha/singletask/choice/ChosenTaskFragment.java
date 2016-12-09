@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.choice;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -37,6 +38,8 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
     private TextView taskTimeTextView;
     private TextView taskDateTextView;
 
+    private long taskId;
+
     private View dateIcon;
     private View taskCardContent;
     private View noApproachTasksLabel;
@@ -72,7 +75,6 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
         DB.getInstance(getActivity()).setSelectTasksCallback(this);
 
         if (state != null && state.containsKey(IS_TASK_FOUND_KEY)) {
-            logger.debug("restoooooooooooooooooooore");
             taskCardContent.setVisibility(View.VISIBLE);
             noApproachTasksLabel.setVisibility(View.INVISIBLE);
             taskNameTextView.setText(state.getString(NAME_KEY));
@@ -127,6 +129,26 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
                 view.startAnimation(animationFadeIn);
             }
         });
+
+        view.findViewById(R.id.buttonAccept).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences settings =
+                        getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putLong("currentTask", taskId);
+                editor.putString("taskStart", Utils.getCurrentTimeAsString());
+                editor.putString("lastUpdate", Utils.getCurrentTimeAsString());
+                editor.apply();
+                view.startAnimation(animationFadeOut);
+                Ui.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ChoiceActivity)getActivity()).onTaskAccepted(taskId);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -136,6 +158,7 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
 
         TaskDataSet task = selectOneTask();
         if (task != null) {
+            taskId = task.getId();
             taskNameTextView.setText(task.getName());
             taskCommentTextView.setText(task.getComment());
             taskTimeTextView.setText(Utils.getTimeAsString(task.getTime()));

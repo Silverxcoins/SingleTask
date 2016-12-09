@@ -915,8 +915,6 @@ public class DB {
             @Override
             public void run() {
                 long taskId = insertNewTaskInDb(name, time, date, comment, variants);
-//                It looks like here should be Task instead of Category
-//                notifyUpdateOrInsertCategoryFinished();
                 notifyUpdateOrInsertTaskFinished(taskId, name);
             }
         });
@@ -1225,6 +1223,16 @@ public class DB {
 
         cursor.close();
         return tasks;
+    }
+
+    public long getTaskIdByServerId(long serverId) {
+        Cursor cursor = selectByServerId(ctx.getString(R.string.table_task_name), serverId);
+        long id = 0;
+        if (cursor.moveToFirst()) {
+            id = cursor.getLong(cursor.getColumnIndex("id"));
+        }
+        cursor.close();
+        return id;
     }
 
     // TODO разобраться когда закрывать БД

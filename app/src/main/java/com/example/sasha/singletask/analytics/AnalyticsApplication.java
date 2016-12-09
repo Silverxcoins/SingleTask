@@ -1,9 +1,4 @@
 package com.example.sasha.singletask.analytics;
-
-/**
- * Created by temirlan on 11/3/16.
- */
-
 /*
  * Copyright Google Inc. All Rights Reserved.
  *
