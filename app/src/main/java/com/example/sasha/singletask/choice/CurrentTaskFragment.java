@@ -24,9 +24,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
 
     private static final String NAME_KEY = "name";
     private static final String COMMENT_KEY = "comment";
-    private static final String DATE_KEY = "date";
     private static final String TIME_KEY = "time";
-    private static final String IS_TASK_FOUND_KEY = "isTaskFound";
 
     private TextView taskNameTextView;
     private TextView taskCommentTextView;
@@ -55,7 +53,30 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         setButtonsClickListeners();
         DB.getInstance(getActivity()).setMarkTaskDeletedCallback(this);
 
+        if (savedInstanceState != null) {
+            taskNameTextView.setText(savedInstanceState.getString(NAME_KEY));
+            if (savedInstanceState.containsKey(COMMENT_KEY)) {
+                taskCommentTextView.setText(savedInstanceState.getString(COMMENT_KEY));
+            }
+            taskTimeTextView.setText(savedInstanceState.getString(TIME_KEY));
+        }
+
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        logger.debug("onSaveInstanceState()");
+
+        if (isAdded()) {
+            outState.putString(NAME_KEY, taskNameTextView.getText().toString());
+            if (!taskCommentTextView.getText().toString().isEmpty()) {
+                outState.putString(COMMENT_KEY, taskCommentTextView.getText().toString());
+            }
+            outState.putString(TIME_KEY, taskTimeTextView.getText().toString());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     private void setButtonsClickListeners() {
@@ -94,6 +115,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         editor.putLong("currentTask", 0);
         editor.putString("taskStart", null);
         editor.putString("lastUpdate", Utils.getCurrentTimeAsString());
+        editor.apply();
         if (!isDeleted) {
             ((ChoiceActivity) getActivity()).onTaskUpdated();
         }

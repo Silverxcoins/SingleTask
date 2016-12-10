@@ -91,6 +91,8 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
 
         if (savedInstanceState != null) {
             state = new Bundle(savedInstanceState);
+        } else {
+            DB.getInstance(getActivity()).selectTasks();
         }
 
         return view;

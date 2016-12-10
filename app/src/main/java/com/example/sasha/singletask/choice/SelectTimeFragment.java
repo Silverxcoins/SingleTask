@@ -47,8 +47,10 @@ public class SelectTimeFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(HOUR_KEY, hourNumberPicker.getValue());
-        outState.putInt(MINUTE_KEY, minuteNumberPicker.getValue());
+        if (hourNumberPicker != null)
+            outState.putInt(HOUR_KEY, hourNumberPicker.getValue());
+        if (minuteNumberPicker != null)
+            outState.putInt(MINUTE_KEY, minuteNumberPicker.getValue());
         super.onSaveInstanceState(outState);
     }
 
