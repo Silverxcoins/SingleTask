@@ -153,7 +153,6 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
                 Intent intent = new Intent(getActivity(), TimeLeftService.class);
                 intent.putExtra(NAME_KEY, taskName);
                 intent.putExtra(TIME_KEY, taskTime);
-                logger.debug("starting service");
                 getActivity().startService(intent);
 
                 view.startAnimation(animationFadeOut);

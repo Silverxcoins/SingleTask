@@ -1,6 +1,5 @@
 package com.example.sasha.singletask.choice;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -9,8 +8,6 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.user.MainActivity;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +17,9 @@ public class TimeLeftService extends Service {
     public static final String ACTION_TIME_LEFT_CHANGED = "action.TIME_LEFT_CHANGED";
     private static final String TIME_KEY = "time";
     private static final String NAME_KEY = "name";
+    private static final String FROM_SERVICE_KEY = "isIntentFromService";
 
-    private Thread thread;
+    private static Thread thread;
     private NotificationManager nm;
 
     @Override
@@ -33,6 +31,7 @@ public class TimeLeftService extends Service {
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
+    @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
 
         logger.debug("onStartCommand()");
@@ -44,18 +43,23 @@ public class TimeLeftService extends Service {
                     int time = intent.getIntExtra(TIME_KEY, 0);
                     String name = intent.getStringExtra(NAME_KEY);
 
-                    while (time != 0) {
+                    while (!Thread.interrupted() && time != 0) {
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             logger.warn("Sleep failed");
+                            Thread.currentThread().interrupt();
+                            TimeLeftService.super.stopSelf();
                         }
                         time--;
                         Intent timeIntent = new Intent(ACTION_TIME_LEFT_CHANGED);
                         timeIntent.putExtra(TIME_KEY, time);
                         sendBroadcast(timeIntent);
+                        if (time == 0) {
+                            sendNotification(name);
+                        }
                     }
-                    sendNotification(name);
+                    Thread.currentThread().interrupt();
                     TimeLeftService.super.stopSelf();
                 }
             });
@@ -65,15 +69,28 @@ public class TimeLeftService extends Service {
         return START_REDELIVER_INTENT;
     }
 
+    @Override
+    public void onDestroy() {
+        logger.debug("onDestroy()");
+
+        super.onDestroy();
+        if (thread != null) {
+            thread.interrupt();
+            thread = null;
+        }
+    }
+
     void sendNotification(String name) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_ic_googleplayservices)
                         .setContentTitle("Время задания истекло")
                         .setContentText(name);
+        mBuilder.setAutoCancel(true);
 
 
         Intent resultIntent = new Intent(this, ChoiceActivity.class);
+        resultIntent.putExtra(FROM_SERVICE_KEY, true);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,

@@ -66,12 +66,12 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         setArrowsButtonsListeners();
         SyncManager.getInstance().setCallback(this);
         if (savedInstanceState == null) {
-            setLoading(true);
-            if (getIntent().hasExtra(AFTER_SIGN_IN_KEY)) {
-                SyncManager.getInstance().getDataFromServer(this);
-            } else {
-                SyncManager.getInstance().sync(this);
-            }
+//            setLoading(true);
+//            if (getIntent().hasExtra(AFTER_SIGN_IN_KEY)) {
+//                SyncManager.getInstance().getDataFromServer(this);
+//            } else {
+//                SyncManager.getInstance().sync(this);
+//            }
             selectTimeFragment = new SelectTimeFragment();
 
             SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBox
+        android:text="Отказаться"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginLeft="@dimen/TimeChoiceLayoutLeftRightMargin"
+        android:layout_marginRight="@dimen/TimeChoiceLayoutLeftRightMargin"
+        android:baselineAligned="false">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <NumberPicker
+                android:id="@+id/postponeNumberPickerHour"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/SelectTimeFragmentNumberPickerPadding" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingLeft="@dimen/HourMinuteTextViewPaddingLeft"
+                android:text="@string/hour_short_text" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <NumberPicker
+                android:id="@+id/postponeNumberPickerMinute"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/SelectTimeFragmentNumberPickerPadding" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingLeft="@dimen/HourMinuteTextViewPaddingLeft"
+                android:text="@string/minute_short_text" />
+        </FrameLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -55,6 +55,7 @@ public class DB {
         if (instance == null) {
             instance = new DB();
             DB.ctx = ctx;
+            instance.open();
         }
         return instance;
     }
@@ -1226,6 +1227,9 @@ public class DB {
     }
 
     public long getTaskIdByServerId(long serverId) {
+
+        logger.debug("getTaskIdByServerId()");
+
         Cursor cursor = selectByServerId(ctx.getString(R.string.table_task_name), serverId);
         long id = 0;
         if (cursor.moveToFirst()) {
@@ -1233,6 +1237,27 @@ public class DB {
         }
         cursor.close();
         return id;
+    }
+
+    public void updateTaskTime(final long id, final int postponeTime) {
+
+        logger.debug("updateTaskTime()");
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                updateTaskTimeInDb(id, postponeTime);
+            }
+        });
+    }
+
+    private void updateTaskTimeInDb(long id, int postponeTime) {
+
+        logger.debug("updateTaskTimeInDb()");
+
+        String[] updateArgs = { String.valueOf(postponeTime), Utils.getCurrentTimeAsString(),
+                String.valueOf(id) };
+        db.execSQL(SqlQueries.UPDATE_TASK_TIME_AND_LAST_UPDATE, updateArgs);
     }
 
     // TODO разобраться когда закрывать БД

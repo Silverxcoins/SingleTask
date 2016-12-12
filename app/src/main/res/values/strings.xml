@@ -45,5 +45,9 @@
 
     <string name="tasks_tab_title">Задания</string>
     <string name="categories_tab_title">Категории</string>
+    <string name="time_expired">Истекло время задания</string>
+    <string name="postpone">Отложить</string>
+    <string name="reject">Отказаться</string>
+    <string name="task_executing">"Выполняется задание: "</string>
 
 </resources>
