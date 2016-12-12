@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.choice;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,8 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
     private TextView taskDateTextView;
 
     private long taskId;
+    private String taskName;
+    private int taskTime;
 
     private View dateIcon;
     private View taskCardContent;
@@ -50,6 +53,7 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
     private Bundle state;
 
     private View view;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,25 +78,28 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
 
         DB.getInstance(getActivity()).setSelectTasksCallback(this);
 
-        if (state != null && state.containsKey(IS_TASK_FOUND_KEY)) {
-            taskCardContent.setVisibility(View.VISIBLE);
-            noApproachTasksLabel.setVisibility(View.INVISIBLE);
-            taskNameTextView.setText(state.getString(NAME_KEY));
-            if (state.containsKey(COMMENT_KEY)) {
-                taskCommentTextView.setText(state.getString(COMMENT_KEY));
+        if (state != null) {
+            if (state.containsKey(IS_TASK_FOUND_KEY)){
+                taskCardContent.setVisibility(View.VISIBLE);
+                noApproachTasksLabel.setVisibility(View.INVISIBLE);
+                taskNameTextView.setText(state.getString(NAME_KEY));
+                if (state.containsKey(COMMENT_KEY)) {
+                    taskCommentTextView.setText(state.getString(COMMENT_KEY));
+                }
+                if (state.containsKey(DATE_KEY)) {
+                    taskDateTextView.setText(state.getString(DATE_KEY));
+                } else {
+                    dateIcon.setVisibility(View.INVISIBLE);
+                }
+                taskTimeTextView.setText(state.getString(TIME_KEY));
             }
-            if(state.containsKey(DATE_KEY)) {
-                taskDateTextView.setText(state.getString(DATE_KEY));
-            } else {
-                dateIcon.setVisibility(View.INVISIBLE);
-            }
-            taskTimeTextView.setText(state.getString(TIME_KEY));
+        } else {
+            DB.getInstance(getActivity()
+            ).selectTasks();
         }
 
         if (savedInstanceState != null) {
             state = new Bundle(savedInstanceState);
-        } else {
-            DB.getInstance(getActivity()).selectTasks();
         }
 
         return view;
@@ -142,11 +149,18 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
                 editor.putString("taskStart", Utils.getCurrentTimeAsString());
                 editor.putString("lastUpdate", Utils.getCurrentTimeAsString());
                 editor.apply();
+
+                Intent intent = new Intent(getActivity(), TimeLeftService.class);
+                intent.putExtra(NAME_KEY, taskName);
+                intent.putExtra(TIME_KEY, taskTime);
+                logger.debug("starting service");
+                getActivity().startService(intent);
+
                 view.startAnimation(animationFadeOut);
                 Ui.run(new Runnable() {
                     @Override
                     public void run() {
-                        ((ChoiceActivity)getActivity()).onTaskAccepted(taskId);
+                        ((ChoiceActivity)getActivity()).onTaskAccepted();
                     }
                 });
             }
@@ -161,8 +175,10 @@ public class ChosenTaskFragment extends Fragment implements DB.SelectTasksCallba
         TaskDataSet task = selectOneTask();
         if (task != null) {
             taskId = task.getId();
-            taskNameTextView.setText(task.getName());
+            taskName = task.getName();
+            taskNameTextView.setText(taskName);
             taskCommentTextView.setText(task.getComment());
+            taskTime = task.getTime();
             taskTimeTextView.setText(Utils.getTimeAsString(task.getTime()));
             taskDateTextView.setText(task.getDate());
             if (task.getDate() != null) {

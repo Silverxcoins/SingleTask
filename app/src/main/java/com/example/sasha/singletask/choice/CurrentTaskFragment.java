@@ -1,5 +1,9 @@
 package com.example.sasha.singletask.choice;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,18 +17,21 @@ import android.widget.TextView;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
+import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.helpers.Utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedCallback {
+public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedCallback, DB.GetTaskByIdCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(CurrentTaskFragment.class);
 
+    public static final String ACTION_TIME_LEFT_CHANGED = "action.TIME_LEFT_CHANGED";
     private static final String NAME_KEY = "name";
     private static final String COMMENT_KEY = "comment";
     private static final String TIME_KEY = "time";
+    private static final String CURRENT_TASK_KEY = "currentTask";
 
     private TextView taskNameTextView;
     private TextView taskCommentTextView;
@@ -52,6 +59,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
 
         setButtonsClickListeners();
         DB.getInstance(getActivity()).setMarkTaskDeletedCallback(this);
+        DB.getInstance(getActivity()).setGetTaskByIdCallback(this);
 
         if (savedInstanceState != null) {
             taskNameTextView.setText(savedInstanceState.getString(NAME_KEY));
@@ -59,7 +67,20 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
                 taskCommentTextView.setText(savedInstanceState.getString(COMMENT_KEY));
             }
             taskTimeTextView.setText(savedInstanceState.getString(TIME_KEY));
+        } else {
+            SharedPreferences settings =
+                    getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+            DB.getInstance(getActivity()).getTaskById(settings.getLong(CURRENT_TASK_KEY, 0));
         }
+
+        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                taskTimeTextView.setText(Utils.getTimeAsString(intent.getIntExtra(TIME_KEY, 0)));
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(ACTION_TIME_LEFT_CHANGED);
+        getActivity().registerReceiver(broadcastReceiver, intentFilter);
 
         return view;
     }
@@ -118,6 +139,15 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         editor.apply();
         if (!isDeleted) {
             ((ChoiceActivity) getActivity()).onTaskUpdated();
+        }
+    }
+
+    @Override
+    public void onReceiveTaskById(TaskDataSet task) {
+        if (task != null) {
+            taskNameTextView.setText(task.getName());
+            taskCommentTextView.setText(task.getComment());
+            taskTimeTextView.setText(Utils.getTimeAsString(task.getTime()));
         }
     }
 

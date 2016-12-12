@@ -57,9 +57,6 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
 
         logger.debug("onCreate()");
 
-        SharedPreferences setings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
-        logger.debug("++++++++++++++++++++++++++"+String.valueOf(setings.getLong("currentTask", 0)));
-
         initToolbar();
         initProgressBar();
         setUserIdToUtils();
@@ -144,9 +141,9 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
             }
 
             int visibleFragmentNumber = 0;
-            if (variantsChoiceFragment.isVisible())
+            if (variantsChoiceFragment != null && variantsChoiceFragment.isVisible())
                 visibleFragmentNumber = 1;
-            else if (chosenTaskFragment.isVisible())
+            else if (chosenTaskFragment != null && chosenTaskFragment.isVisible())
                 visibleFragmentNumber = 2;
             outState.putInt(VISIBLE_FRAGMENT_NUMBER_KEY, visibleFragmentNumber);
         } else {
@@ -234,6 +231,16 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         setLoading(false);
         if (wasSuccessful) {
             logger.info("Sync success");
+
+            SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME),0);
+            if (settings.getLong(CURRENT_TASK_KEY, 0) == 0
+                    && currentTaskFragment != null && currentTaskFragment.isVisible()) {
+                setSelectTimeFragment();
+            } else if (settings.getLong(CURRENT_TASK_KEY, 0) != 0
+                    && (currentTaskFragment == null || !currentTaskFragment.isVisible())) {
+                currentTaskFragment = new CurrentTaskFragment();
+                setCurrentTaskFragment();
+            }
         } else {
             logger.warn("Sync failed");
         }
@@ -343,7 +350,7 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
         }
     }
 
-    public void onTaskAccepted(long taskId) {
+    public void onTaskAccepted() {
         currentTaskFragment = new CurrentTaskFragment();
         setCurrentTaskFragment();
     }

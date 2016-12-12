@@ -1191,7 +1191,7 @@ public class DB {
 
         logger.debug("selectTaskInDb()");
 
-        String selection = "time<=?";
+        String selection = "time<=?  AND (isDeleted IS NULL OR isDeleted=0)";
         String[] selectionArgs = { String.valueOf(CurrentChoice.getInstance().getTime()) };
         Cursor cursor = db.query(ctx.getString(R.string.table_task_name), null, selection,
                 selectionArgs, null, null, null);

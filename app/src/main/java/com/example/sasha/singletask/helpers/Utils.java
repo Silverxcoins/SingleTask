@@ -17,6 +17,7 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private static final long DIVIDE_MILLISECONDS_FOR_DAYS = 86400000L;
+    private static final long DIVIDE_MILLISECONDS_FOR_MINUTES = 60000L;
 
     public static final int DAYS_IN_WEEK = 7;
 
@@ -149,5 +150,16 @@ public class Utils {
 
         long difference = date.getTime() - currentDate.getTime();
         return (int) (difference/DIVIDE_MILLISECONDS_FOR_DAYS);
+    }
+
+    public static Integer getMinutesBetweenDateAndCurrentDate(String dateString) {
+
+        logger.debug("getMinutesBetweenDateAndCurrentDate()");
+
+        Date date = parseDateString(dateString);
+        Date currentDate = Calendar.getInstance().getTime();
+
+        long difference = date.getTime() - currentDate.getTime();
+        return (int) (difference/DIVIDE_MILLISECONDS_FOR_MINUTES);
     }
 }
