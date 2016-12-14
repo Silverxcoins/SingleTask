@@ -216,13 +216,14 @@ public class SyncManager {
 
         SharedPreferences settings = ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME),0);
         Long id = settings.getLong("currentTask", 0);
+        logger.debug("id " + id);
         if (id == 0) id = null;
 
         String taskStart = settings.getString("taskStart",null);
         String lastUpdate = settings.getString("lastUpdate",null);
         if (id != null) {
             for (TaskDataSet task : tasks) {
-                if (task.getOldId() == id) {
+                if (task.getOldId() == (long) id) {
                     id = task.getServerId();
                     break;
                 }

@@ -55,7 +55,6 @@ public class DB {
         if (instance == null) {
             instance = new DB();
             DB.ctx = ctx;
-            instance.open();
         }
         return instance;
     }
