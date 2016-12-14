@@ -77,17 +77,9 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         DB.getInstance(getActivity()).setMarkTaskDeletedCallback(this);
         DB.getInstance(getActivity()).setGetTaskByIdCallback(this);
 
-        if (savedInstanceState != null) {
-            taskNameTextView.setText(savedInstanceState.getString(NAME_KEY));
-            if (savedInstanceState.containsKey(COMMENT_KEY)) {
-                taskCommentTextView.setText(savedInstanceState.getString(COMMENT_KEY));
-            }
-            taskTimeTextView.setText(savedInstanceState.getString(TIME_KEY));
-        } else {
-            SharedPreferences settings =
-                    getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
-            DB.getInstance(getActivity()).getTaskById(settings.getLong(CURRENT_TASK_KEY, 0));
-        }
+        SharedPreferences settings =
+                getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+        DB.getInstance(getActivity()).getTaskById(settings.getLong(CURRENT_TASK_KEY, 0));
 
         if (getActivity().getIntent().hasExtra(FROM_SERVICE_KEY)) {
             isIntentFromService = true;
@@ -167,13 +159,18 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
     }
 
     private void registerBroadcastReceiver() {
-
-        logger.debug("registerBroadcastReceiver()");
-
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                taskTimeTextView.setText(Utils.getTimeAsString(intent.getIntExtra(TIME_KEY, 0)));
+                int time = intent.getIntExtra(TIME_KEY, 0);
+                if (time != 0) {
+                    taskTimeTextView.setText(Utils.getTimeAsString(time));
+                } else {
+                    textViewCurrentTaskFragment.setText(R.string.time_expired);
+                    setButtons(true);
+                    taskTimeTextView.setVisibility(View.INVISIBLE);
+                    taskTimeIcon.setVisibility(View.INVISIBLE);
+                }
             }
         };
         IntentFilter intentFilter = new IntentFilter(ACTION_TIME_LEFT_CHANGED);
@@ -209,7 +206,17 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
             taskName = task.getName();
             taskNameTextView.setText(taskName);
             taskCommentTextView.setText(task.getComment());
-            taskTimeTextView.setText(Utils.getTimeAsString(task.getTime()));
+            int taskTime = task.getTime();
+            int timeBetweenStartAndNow =
+                    Utils.getMinutesBetweenStartTimeAndCurrentTime(getActivity());
+            if (taskTime < timeBetweenStartAndNow) {
+                textViewCurrentTaskFragment.setText(R.string.time_expired);
+                setButtons(true);
+            } else {
+                taskTimeTextView.setText(Utils.getTimeAsString(taskTime - timeBetweenStartAndNow));
+                textViewCurrentTaskFragment.setText(R.string.task_executing);
+                setButtons(false);
+            }
         }
     }
 

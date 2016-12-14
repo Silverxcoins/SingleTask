@@ -25,14 +25,12 @@
                     android:id="@+id/textViewCurrentTaskFragment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Выполняется задание:"
                     style="@style/textViewIHaveTimeStyle" />
 
                 <TextView
                     android:id="@+id/textViewCurrentTask"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Задание"
                     style="@style/textViewIHaveTimeStyle" />
 
                 <TextView
@@ -41,7 +39,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/taskCardTextSize"
                     android:textColor="@color/colorTextPrimaryLight"
-                    android:text="Комментарий"
                     android:gravity="center"/>
 
                 <LinearLayout
@@ -64,7 +61,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/taskCardTextSize"
-                        android:text="1 час"
                         android:textColor="@color/colorTextPrimaryLight"
                         android:paddingTop="@dimen/taskCardDateTimeTextTopPadding" />
                 </LinearLayout>

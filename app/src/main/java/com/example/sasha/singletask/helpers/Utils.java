@@ -2,7 +2,11 @@ package com.example.sasha.singletask.helpers;
 
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.example.sasha.singletask.R;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +21,7 @@ public class Utils {
     private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private static final long DIVIDE_MILLISECONDS_FOR_DAYS = 86400000L;
-    private static final long DIVIDE_MILLISECONDS_FOR_MINUTES = 60000L;
+    private static final long DIVIDE_MILLISECONDS_FOR_MINUTES = 3000L;
 
     public static final int DAYS_IN_WEEK = 7;
 
@@ -141,6 +145,21 @@ public class Utils {
         return date;
     }
 
+    public static Date parseTimeString(String timeString) {
+
+        logger.debug("parseTimeString()");
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date;
+        try {
+            date = format.parse(timeString);
+        } catch (ParseException e) {
+            return null;
+        }
+        return date;
+
+    }
+
     public static Integer getDaysBetweenDateAndCurrentDate(String dateString) {
 
         logger.debug("getDaysBetweenDateAndCurrentDate()");
@@ -152,14 +171,18 @@ public class Utils {
         return (int) (difference/DIVIDE_MILLISECONDS_FOR_DAYS);
     }
 
-    public static Integer getMinutesBetweenDateAndCurrentDate(String dateString) {
+    public static Integer getMinutesBetweenStartTimeAndCurrentTime(Context ctx) {
 
-        logger.debug("getMinutesBetweenDateAndCurrentDate()");
+        logger.debug("getMinutesBetweenStartTimeAndCurrentTime()");
 
-        Date date = parseDateString(dateString);
-        Date currentDate = Calendar.getInstance().getTime();
+        SharedPreferences settings =
+                ctx.getSharedPreferences(ctx.getString(R.string.PREFS_NAME), 0);
+        Date time = parseTimeString(settings.getString("taskStart", ""));
+        Date currentTime = parseTimeString(getCurrentTimeAsString());
 
-        long difference = date.getTime() - currentDate.getTime();
-        return (int) (difference/DIVIDE_MILLISECONDS_FOR_MINUTES);
+        long difference = currentTime.getTime() - time.getTime();
+        long rest = difference % DIVIDE_MILLISECONDS_FOR_MINUTES;
+        long minutes = difference / DIVIDE_MILLISECONDS_FOR_MINUTES;
+        return (int) ((rest > 0) ? minutes + 1 : minutes);
     }
 }
