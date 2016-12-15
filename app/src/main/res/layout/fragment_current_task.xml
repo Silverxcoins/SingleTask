@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/firstButton"
                         android:background="@color/colorTransparent"
-                        android:text="Удалить"
+                        android:text="@string/delete_string"
                         android:textSize="@dimen/taskCardButtonTextSize"
                         android:textColor="@color/colorPrimary"
                         android:layout_weight="1"/>
@@ -99,7 +99,7 @@
                         android:id="@+id/rejectButton"
                         android:background="@color/colorTransparent"
                         android:layout_marginRight="16dp"
-                        android:text="Отказаться"
+                        android:text="@string/reject_string"
                         android:textSize="@dimen/taskCardButtonTextSize"
                         android:textColor="@color/colorPrimary"
                         android:layout_weight="1"/>
@@ -109,7 +109,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/doneButton"
                         android:background="@drawable/button_task_ok"
-                        android:text="Сделано"
+                        android:text="@string/done_string"
                         android:textSize="@dimen/taskCardButtonTextSize"
                         android:textColor="@color/colorTextPrimaryDark"
                         android:layout_weight="1" />

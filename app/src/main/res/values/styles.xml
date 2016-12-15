@@ -246,4 +246,19 @@
         <item name="android:tint">@color/colorAddVariantButtonTint</item>
         <item name="android:background">@android:color/white</item>
     </style>
+
+    <style name="TaskCategoryItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?selectableItemBackground</item>
+        <item name="android:elevation">@dimen/task_item_elevation</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginBottom">@dimen/task_category_item_margin</item>
+        <item name="android:layout_marginLeft">@dimen/task_category_item_margin</item>
+        <item name="android:layout_marginRight">@dimen/task_category_item_margin</item>
+        <item name="android:paddingBottom">@dimen/task_category_item_padding</item>
+        <item name="android:paddingTop">@dimen/task_category_item_padding</item>
+    </style>
 </resources>

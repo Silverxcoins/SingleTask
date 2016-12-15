@@ -48,7 +48,10 @@
     <string name="time_expired">Истекло время задания</string>
     <string name="postpone">Отложить</string>
     <string name="reject">Отказаться</string>
-    <string name="task_executing">"Выполняется задание: "</string>
+    <string name="task_executing">Выполняется задание:</string>
     <string name="internet_is_available">Интернет доступен</string>
+    <string name="reject_string">Отказаться</string>
+    <string name="delete_string">Удалить</string>
+    <string name="done_string">Сделано</string>
 
 </resources>

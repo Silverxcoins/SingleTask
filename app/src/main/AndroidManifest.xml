@@ -42,9 +42,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".choice.ChoiceActivity" />
-        <activity android:name=".settings.SettingsActivity"/>
-        <activity android:name=".settings.TaskActivity"/>
-        <activity android:name=".settings.CategoryActivity" />
+        <activity android:name=".settings.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".choice.ChoiceActivity" />
+        </activity>
+        <activity android:name=".settings.TaskActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".settings.SettingsActivity" />
+        </activity>
+        <activity android:name=".settings.CategoryActivity" >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".settings.SettingsActivity"/>
+        </activity>
         <service
             android:name=".choice.TimeLeftService"
             android:exported="false" />

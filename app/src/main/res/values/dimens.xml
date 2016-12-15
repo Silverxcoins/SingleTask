@@ -67,4 +67,7 @@
     <dimen name="textViewNoApproachTasksPadding">16dp</dimen>
     <dimen name="textViewNoApproachTasksBottomMargin">0dp</dimen>
     <dimen name="rejectCheckBoxTextSize">16sp</dimen>
+    <dimen name="task_category_item_margin">8dp</dimen>
+    <dimen name="task_category_item_padding">8dp</dimen>
+    <dimen name="categories_task_fragment_margin_top">16dp</dimen>
 </resources>
