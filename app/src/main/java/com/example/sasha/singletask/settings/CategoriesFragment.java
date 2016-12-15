@@ -1,6 +1,5 @@
 package com.example.sasha.singletask.settings;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.example.sasha.singletask.R;
-import com.example.sasha.singletask.choice.categoriesRecyclerView.CategoriesItem;
 import com.example.sasha.singletask.db.DB;
 import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;

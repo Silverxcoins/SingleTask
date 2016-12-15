@@ -70,4 +70,5 @@
     <dimen name="task_category_item_margin">8dp</dimen>
     <dimen name="task_category_item_padding">8dp</dimen>
     <dimen name="categories_task_fragment_margin_top">16dp</dimen>
+    <dimen name="variants_choice_margin_top">88dp</dimen>
 </resources>

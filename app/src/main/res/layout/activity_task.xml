@@ -106,7 +106,8 @@
                             android:id="@+id/commentEditText"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            style="@style/TaskActivityCommentEditTextStyle" />
+                            style="@style/TaskActivityCommentEditTextStyle"
+                            android:maxLength="100"/>
 
                         <ImageButton
                             android:id="@+id/btnClearComment"

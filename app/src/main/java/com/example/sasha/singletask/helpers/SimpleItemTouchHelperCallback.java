@@ -1,11 +1,7 @@
 package com.example.sasha.singletask.helpers;
 
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
-import android.view.View;
 
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 

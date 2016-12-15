@@ -2,7 +2,6 @@ package com.example.sasha.singletask.choice;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
@@ -15,8 +14,6 @@ import com.example.sasha.singletask.helpers.Utils;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

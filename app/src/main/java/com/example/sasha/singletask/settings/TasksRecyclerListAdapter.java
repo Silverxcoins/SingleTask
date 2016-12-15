@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +14,10 @@ import android.widget.TextView;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
-import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.helpers.ItemTouchHelperAdapter;
 import com.example.sasha.singletask.helpers.ItemTouchHelperViewHolder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class TasksRecyclerListAdapter extends RecyclerView.Adapter<TasksRecyclerListAdapter.ItemViewHolder>

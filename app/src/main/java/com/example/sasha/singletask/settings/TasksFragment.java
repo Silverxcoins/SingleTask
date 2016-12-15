@@ -14,7 +14,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 import com.example.sasha.singletask.R;
 import com.example.sasha.singletask.db.DB;
-import com.example.sasha.singletask.db.dataSets.CategoryDataSet;
 import com.example.sasha.singletask.db.dataSets.TaskDataSet;
 import com.example.sasha.singletask.helpers.SimpleItemTouchHelperCallback;
 
