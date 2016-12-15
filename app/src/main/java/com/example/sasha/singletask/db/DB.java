@@ -30,21 +30,6 @@ public class DB {
 
     private static final Logger logger = LoggerFactory.getLogger(DB.class);
 
-    public enum Operation {
-        GET_CATEGORIES,
-        GET_VARIANT_BY_TASK_AND_CATEGORY,
-        GET_VARIANTS_BY_CATEGORY,
-        GET_TASK_BY_ID,
-        INSERT_NEW_TASK,
-        UPDATE_TASK,
-        GET_TASKS,
-        GET_CATEGORY_BY_ID,
-        INSERT_NEW_CATEGORY,
-        UPDATE_CATEGORY,
-        MARK_TASK_DELETED,
-        MARK_CATEGORY_DELETED
-    }
-
     private static DB instance;
     private DbHelper dbHelper;
     private SQLiteDatabase db;
@@ -62,10 +47,6 @@ public class DB {
     private DB() {}
 
     private final Executor executor = Executors.newSingleThreadExecutor();
-
-    public interface Callback {
-        void onOperationFinished(Operation operation, Cursor result, int position);
-    }
 
     public interface GetCategoryByIdCallback {
         void onReceiveCategoryById(String categoryName);
@@ -111,11 +92,8 @@ public class DB {
         void onMarkTaskDeleted(final long taskId);
     }
 
-
-    private DB.Callback callback;
     private DB.MarkCategoryDeletedCallback markCategoryDeletedCallback;
     private DB.MarkTaskDeletedCallback markTaskDeletedCallback;
-
     private DB.GetCategoryByIdCallback getCategoryNameByIdCallback;
     private DB.GetVariantsByCategoryCallback getVariantsByCategoryCallback;
     private DB.UpdateOrInsertCategoryCallback updateOrInsertCategoryCallback;
@@ -125,13 +103,6 @@ public class DB {
     private DB.GetVariantByTaskAndCategoryCallback getVariantByTaskAndCategoryCallback;
     private DB.UpdateOrInsertTaskCallback updateOrInsertTaskCallback;
     private DB.SelectTasksCallback selectTasksCallback;
-
-    public void setCallback(DB.Callback callback) {
-
-        logger.debug("setCallback()");
-
-        this.callback = callback;
-    }
 
     public void setGetCategoryNameByIdCallback(DB.GetCategoryByIdCallback callback) {
         this.getCategoryNameByIdCallback = callback;
@@ -176,21 +147,6 @@ public class DB {
 
     public void setGetTasksCallback(DB.GetTasksCallback callback) {
         this.getTasksCallback = callback;
-    }
-
-    private void notifyOperationFinished(final Operation operation, final Cursor result,
-                                         final int position) {
-
-        logger.debug("notifyOperationFinished()");
-
-        Ui.run(new Runnable() {
-            @Override
-            public void run() {
-                if (callback != null) {
-                    callback.onOperationFinished(operation, result, position);
-                }
-            }
-        });
     }
 
     private void notifyReceiveCategoryNameById(final String categoryName) {

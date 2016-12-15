@@ -92,7 +92,7 @@ public class SyncManager {
         });
     }
 
-    public void getDataFromServer(Context ctx) {
+    public void getDataFromServer(final Context ctx) {
 
         logger.debug("getDataFromServer()");
 
@@ -101,7 +101,7 @@ public class SyncManager {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                boolean wasSuccessful = getDataFromServerInternal();
+                boolean wasSuccessful = getDataFromServerInternal(ctx);
                 notifySyncFinished(wasSuccessful);
             }
         });
@@ -121,7 +121,7 @@ public class SyncManager {
         });
     }
 
-    private boolean getDataFromServerInternal() {
+    private boolean getDataFromServerInternal(Context ctx) {
 
         logger.debug("getDataFromServerInternal()");
 
@@ -140,6 +140,10 @@ public class SyncManager {
         response = Http.sendGetRequest(LIST_TASKS_VARIANTS_URL + Utils.getUserId());
         if (!isServerOperationSuccessful(response)) return false;
         db.insertTasksVariantsFromJson(response);
+
+        response = Http.sendGetRequest(GET_CURRENT_TASK_URL + Utils.getUserId());
+        if (!isServerOperationSuccessful(response)) return false;
+        setCurrentTaskFromJson(ctx, response);
 
         return true;
     }

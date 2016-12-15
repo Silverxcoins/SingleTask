@@ -42,25 +42,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".choice.ChoiceActivity" />
-        <activity android:name=".settings.SettingsActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".choice.ChoiceActivity" />
-        </activity>
-        <activity android:name=".settings.TaskActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".settings.SettingsActivity" />
-        </activity>
-        <activity android:name=".settings.CategoryActivity" >
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value=".settings.SettingsActivity"/>
-        </activity>
+        <activity android:name=".settings.SettingsActivity"/>
+        <activity android:name=".settings.TaskActivity"/>
+        <activity android:name=".settings.CategoryActivity" />
         <service
             android:name=".choice.TimeLeftService"
             android:exported="false" />
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <receiver
+            android:name=".choice.ConnectivityReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

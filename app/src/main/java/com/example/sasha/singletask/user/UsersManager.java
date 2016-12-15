@@ -72,7 +72,6 @@ public class UsersManager {
             @Override
             public void run() {
                 JSONObject json = signInInternal(email, password);
-                logger.debug("server response: {}", json.toString());
                 notifySignInFinished(json);
             }
         });

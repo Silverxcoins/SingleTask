@@ -1,5 +1,6 @@
 package com.example.sasha.singletask.choice;
 
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -169,6 +170,12 @@ public class ChoiceActivity extends AppCompatActivity implements SyncManager.Cal
                 } else if (item.getTitle() == getString(R.string.settings_title)) {
                     startSettingsActivity();
                 } else {
+                    SharedPreferences settings = getSharedPreferences(getString(R.string.PREFS_NAME), 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putLong("currentTask", 0);
+                    editor.putString("taskStart", null);
+                    editor.putString("lastUpdate", null);
+                    editor.apply();
                     exit();
                 }
                 return false;

@@ -12,6 +12,7 @@
     <color name="colorButtonAuthMainDark">#1A237E</color>
     <color name="errorColor">#D32F2F</color>
     <color name="colorVariantsItemBackground">#FDFDFD</color>
+    <color name="colorItemBackground">#FCFCFC</color>
     <color name="colorVariantsDeleteButtonTint">#CCCCCC</color>
     <color name="colorToolbarEditTextBackground">#00000000</color>
     <color name="colorTaskActivityDivider">#EEEEEE</color>

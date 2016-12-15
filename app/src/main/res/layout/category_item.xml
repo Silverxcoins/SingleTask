@@ -1,15 +1,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    android:background="#fff"
-    android:elevation="15dp"
-    android:layout_marginBottom="2dp"
+    android:elevation="@dimen/task_item_elevation"
+    android:background="@android:color/white"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp">
+    android:layout_marginRight="8dp"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
     <!--android:background="@drawable/ripple_effect"-->
     <TextView
@@ -27,7 +29,8 @@
         android:layout_gravity="center_vertical|right"
         android:scaleType="center"
         android:src="@drawable/ic_delete_black_24dp"
-        style="@style/VariantsItemDeleteButtonStyle"/>
+        style="@style/VariantsItemDeleteButtonStyle"
+        android:background="@android:color/white"/>
 </FrameLayout>
 <!--android:layout_height="?listPreferredItemHeight"-->
 

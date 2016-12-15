@@ -94,7 +94,6 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         } else {
             textViewCurrentTaskFragment.setText(R.string.task_executing);
             setButtons(false);
-            registerBroadcastReceiver();
         }
 
         return view;

@@ -18,6 +18,7 @@ package com.example.sasha.singletask.analytics;
 import android.app.Application;
 
 import com.example.sasha.singletask.R;
+import com.example.sasha.singletask.db.DB;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 
@@ -40,4 +41,17 @@ public class AnalyticsApplication extends Application {
         }
         return mTracker;
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public void onTerminate() {
+        DB.getInstance(this).close();
+        super.onTerminate();
+    }
+
+
 }

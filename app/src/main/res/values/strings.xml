@@ -49,5 +49,6 @@
     <string name="postpone">Отложить</string>
     <string name="reject">Отказаться</string>
     <string name="task_executing">"Выполняется задание: "</string>
+    <string name="internet_is_available">Интернет доступен</string>
 
 </resources>
