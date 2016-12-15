@@ -104,7 +104,7 @@ public class SyncManager {
         });
     }
 
-    private void notifySyncFinished(final boolean wasSuccessfull) {
+    private void notifySyncFinished(final boolean wasSuccessful) {
 
         logger.debug("notifySyncFinished()");
 
@@ -112,7 +112,7 @@ public class SyncManager {
             @Override
             public void run() {
                 if (callback != null) {
-                    callback.onSyncFinished(wasSuccessfull);
+                    callback.onSyncFinished(wasSuccessful);
                 }
             }
         });

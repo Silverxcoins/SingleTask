@@ -56,7 +56,6 @@ public class TaskActivity extends AppCompatActivity implements
     private EditText taskEditText;
 
     private ArrayAdapter<String> adapter;
-    private ListView list;
     private ArrayList<Long> categoriesId;
     private ArrayList<String> categoriesNames;
     private ArrayList<Long> variantsId;
@@ -262,7 +261,7 @@ public class TaskActivity extends AppCompatActivity implements
 
         logger.debug("initList()");
 
-        list = (ListView) findViewById(lv);
+        ListView list = (ListView) findViewById(lv);
         adapter = new ArrayAdapter<>(this,
                 R.layout.list_item, itemsStrings);
         list.setAdapter(adapter);

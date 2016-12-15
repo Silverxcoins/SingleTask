@@ -20,7 +20,6 @@ public class TimeLeftService extends Service {
     private static final String FROM_SERVICE_KEY = "isIntentFromService";
 
     private static Thread thread;
-    private NotificationManager nm;
 
     @Override
     public void onCreate() {
@@ -28,7 +27,7 @@ public class TimeLeftService extends Service {
         logger.debug("onCreate()");
 
         super.onCreate();
-        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     }
 
     @Override

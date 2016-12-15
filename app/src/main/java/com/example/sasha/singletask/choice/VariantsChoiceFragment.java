@@ -62,6 +62,7 @@ public class VariantsChoiceFragment extends Fragment implements DB.GetCategories
         return view;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onSaveInstanceState(Bundle outState) {
 

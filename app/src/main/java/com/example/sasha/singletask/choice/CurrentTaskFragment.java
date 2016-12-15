@@ -33,7 +33,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
 
     private static final Logger logger = LoggerFactory.getLogger(CurrentTaskFragment.class);
 
-    public static final String ACTION_TIME_LEFT_CHANGED = "action.TIME_LEFT_CHANGED";
+    private static final String ACTION_TIME_LEFT_CHANGED = "action.TIME_LEFT_CHANGED";
     private static final String NAME_KEY = "name";
     private static final String COMMENT_KEY = "comment";
     private static final String TIME_KEY = "time";
@@ -48,10 +48,9 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
 
     private String taskName;
 
-    BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver broadcastReceiver;
 
     private int postponeTime;
-    private boolean isIntentFromService;
 
     private View view;
 
@@ -81,6 +80,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
                 getActivity().getSharedPreferences(getString(R.string.PREFS_NAME), 0);
         DB.getInstance(getActivity()).getTaskById(settings.getLong(CURRENT_TASK_KEY, 0));
 
+        boolean isIntentFromService;
         if (getActivity().getIntent().hasExtra(FROM_SERVICE_KEY)) {
             isIntentFromService = true;
         } else {
@@ -285,7 +285,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
 
     }
 
-    void onNumberPickersChanged(NumberPicker hourNumberPicker, NumberPicker minuteNumberPicker) {
+    private void onNumberPickersChanged(NumberPicker hourNumberPicker, NumberPicker minuteNumberPicker) {
 
         logger.debug("onNumberPickerChanged()");
 
@@ -294,7 +294,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         postponeTime = hours * 60 + minutes;
     }
 
-    void okButtonClicked() {
+    private void okButtonClicked() {
 
         logger.debug("okButtonClicked");
 
@@ -321,7 +321,7 @@ public class CurrentTaskFragment extends Fragment implements DB.MarkTaskDeletedC
         }
     }
 
-    void updateCurrentTaskLastUpdate() {
+    private void updateCurrentTaskLastUpdate() {
 
         logger.debug("updateCurrentTaskLastUpdate");
 

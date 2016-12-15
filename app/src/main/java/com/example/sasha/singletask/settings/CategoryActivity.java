@@ -176,7 +176,7 @@ public class CategoryActivity extends AppCompatActivity implements DB.GetCategor
     @Override
     public void onReceiveVariantsByCategory(List<VariantDataSet> variants, final int position) {
 
-        logger.debug("onRecieveVariantsByCategory()");
+        logger.debug("onReceiveVariantsByCategory()");
 
         for (VariantDataSet variant : variants) {
             dataSource.addItem(new VariantsItem(variant.getName()));
